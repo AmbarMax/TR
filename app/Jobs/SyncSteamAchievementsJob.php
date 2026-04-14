@@ -15,6 +15,8 @@ class SyncSteamAchievementsJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    public $connection = 'sync'; // temporary: run inline until Supervisor is configured
+
     public int $tries = 2;
     public int $timeout = 300; // 5 minutes max — Steam API can be slow with many games
 
