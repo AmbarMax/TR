@@ -274,7 +274,8 @@ export default defineComponent({
             this.currentPage = newPage;
         },
         ImportData(type) {
-            window.location.href = '/login/' + type;
+            const token = localStorage.getItem('access_token');
+            window.location.href = '/login/' + type + '?token=' + encodeURIComponent(token);
             store.state.loaderStatus = true;
         },
         getAchievements() {

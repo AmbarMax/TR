@@ -47,7 +47,8 @@ export default {
         },
         ImportData(type) {
             store.state.showTestData = true;
-            window.location.href = '/login/' + type;
+            const token = localStorage.getItem('access_token');
+            window.location.href = '/login/' + type + '?token=' + encodeURIComponent(token);
             store.state.importBudgesModalOpen = false;
             store.state.loaderStatus = true;
         }
