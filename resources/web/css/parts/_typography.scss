@@ -1,0 +1,136 @@
+//@font-face {
+//    font-family: 'JetBrains Mono', monospace;
+//    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100;200;300;400;500;600;700;800&display=swap');
+//}
+//
+//@font-face {
+//    font-family: "Orbitron", sans-serif;
+//    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap');
+//}
+
+//@font-face {
+//  font-family: "JetBrains-Mono-100";
+//  src: url(../fonts/JetBrains_Mono/otf/JetBrainsMono-Thin.otf) format("otf"),
+//       url(../fonts/JetBrains_Mono/woff/JetBrainsMono-Thin.woff) format("woff"),
+//       url(../fonts/JetBrains_Mono/woff2/JetBrainsMono-Thin.woff2) format("woff2"),
+//       url(../fonts/JetBrains_Mono/eot/JetBrainsMono-Thin.eot) format("eot"),
+//       url(../fonts/JetBrains_Mono/ttf/JetBrainsMono-Thin.ttf) format("ttf");
+//}
+//
+//@font-face {
+//  font-family: "JetBrains-Mono-200";
+//  src: url(../fonts/JetBrains_Mono/otf/JetBrainsMono-ExtraLight.otf) format("otf"),
+//       url(../fonts/JetBrains_Mono/woff/JetBrainsMono-ExtraLight.woff) format("woff"),
+//       url(../fonts/JetBrains_Mono/woff2/JetBrainsMono-ExtraLight.woff2) format("woff2"),
+//       url(../fonts/JetBrains_Mono/eot/JetBrainsMono-ExtraLight.eot) format("eot"),
+//       url(../fonts/JetBrains_Mono/ttf/JetBrainsMono-ExtraLight.ttf) format("ttf");
+//}
+//
+//@font-face {
+//  font-family: "JetBrains-Mono-300";
+//  src: url(../fonts/JetBrains_Mono/otf/JetBrainsMono-Light.otf) format("otf"),
+//       url(../fonts/JetBrains_Mono/woff/JetBrainsMono-Light.woff) format("woff"),
+//       url(../fonts/JetBrains_Mono/woff2/JetBrainsMono-Light.woff2) format("woff2"),
+//       url(../fonts/JetBrains_Mono/eot/JetBrainsMono-Light.eot) format("eot"),
+//       url(../fonts/JetBrains_Mono/ttf/JetBrainsMono-Light.ttf) format("ttf");
+//}
+//
+//@font-face {
+//  font-family: "JetBrains-Mono-400";
+//  src: url(../fonts/JetBrains_Mono/otf/JetBrainsMono-Regular.otf) format("otf"),
+//       url(../fonts/JetBrains_Mono/woff/JetBrainsMono-Regular.woff) format("woff"),
+//       url(../fonts/JetBrains_Mono/woff2/JetBrainsMono-Regular.woff2) format("woff2"),
+//       url(../fonts/JetBrains_Mono/eot/JetBrainsMono-Regular.eot) format("eot"),
+//       url(../fonts/JetBrains_Mono/ttf/JetBrainsMono-Regular.ttf) format("ttf");
+//}
+//
+//@font-face {
+//  font-family: "JetBrains-Mono-500";
+//  src: url(../fonts/JetBrains_Mono/otf/JetBrainsMono-Medium.otf) format("otf"),
+//       url(../fonts/JetBrains_Mono/woff/JetBrainsMono-Medium.woff) format("woff"),
+//       url(../fonts/JetBrains_Mono/woff2/JetBrainsMono-Medium.woff2) format("woff2"),
+//       url(../fonts/JetBrains_Mono/eot/JetBrainsMono-Medium.eot) format("eot"),
+//       url(../fonts/JetBrains_Mono/ttf/JetBrainsMono-Medium.ttf) format("ttf");
+//}
+//
+//@font-face {
+//    font-family: "JetBrains-Mono-600";
+//    src: url(../fonts/JetBrains_Mono/otf/JetBrainsMono-SemiBold.otf) format("otf"),
+//    url(../fonts/JetBrains_Mono/woff/JetBrainsMono-SemiBold.woff) format("woff"),
+//    url(../fonts/JetBrains_Mono/woff2/JetBrainsMono-SemiBold.woff2) format("woff2"),
+//    url(../fonts/JetBrains_Mono/eot/JetBrainsMono-SemiBold.eot) format("eot"),
+//    url(../fonts/JetBrains_Mono/ttf/JetBrainsMono-SemiBold.ttf) format("ttf");
+//}
+//
+//@font-face {
+//  font-family: "JetBrains-Mono-700";
+//  src: url(../fonts/JetBrains_Mono/otf/JetBrainsMono-Bold.otf) format("otf"),
+//       url(../fonts/JetBrains_Mono/woff/JetBrainsMono-Bold.woff) format("woff"),
+//       url(../fonts/JetBrains_Mono/woff2/JetBrainsMono-Bold.woff2) format("woff2"),
+//       url(../fonts/JetBrains_Mono/eot/JetBrainsMono-Bold.eot) format("eot"),
+//       url(../fonts/JetBrains_Mono/ttf/JetBrainsMono-Bold.ttf) format("ttf");
+//}
+//
+//@font-face {
+//  font-family: "JetBrains-Mono-800";
+//  src: url(../fonts/JetBrains_Mono/otf/JetBrainsMono-ExtraBold.otf) format("otf"),
+//       url(../fonts/JetBrains_Mono/woff/JetBrainsMono-ExtraBold.woff) format("woff"),
+//       url(../fonts/JetBrains_Mono/woff2/JetBrainsMono-ExtraBold.woff2) format("woff2"),
+//       url(../fonts/JetBrains_Mono/eot/JetBrainsMono-ExtraBold.eot) format("eot"),
+//       url(../fonts/JetBrains_Mono/ttf/JetBrainsMono-ExtraBold.ttf) format("ttf");
+//}
+
+
+//@font-face {
+//  font-family: "Orbitron-400";
+//  src: url(../fonts/Orbitron/otf/Orbitron-Regular.otf) format("otf"),
+//       url(../fonts/Orbitron/woff/Orbitron-Regular.woff) format("woff"),
+//       url(../fonts/Orbitron/woff2/Orbitron-Regular.woff2) format("woff2"),
+//       url(../fonts/Orbitron/eot/Orbitron-Regular.eot) format("eot"),
+//       url(../fonts/Orbitron/ttf/Orbitron-Regular.ttf) format("ttf");
+//}
+//
+//@font-face {
+//  font-family: "Orbitron-500";
+//    src: url(../fonts/Orbitron/otf/Orbitron-Medium.otf) format("otf"),
+//         url(../fonts/Orbitron/woff/Orbitron-Medium.woff) format("woff"),
+//         url(../fonts/Orbitron/woff2/Orbitron-Medium.woff2) format("woff2"),
+//         url(../fonts/Orbitron/eot/Orbitron-Medium.eot) format("eot"),
+//         url(../fonts/Orbitron/ttf/Orbitron-Medium.ttf) format("ttf");
+//}
+//
+//@font-face {
+//  font-family: "Orbitron-600";
+//    src: url(../fonts/Orbitron/otf/Orbitron-SemiBold.otf) format("otf"),
+//         url(../fonts/Orbitron/woff/Orbitron-SemiBold.woff) format("woff"),
+//         url(../fonts/Orbitron/woff2/Orbitron-SemiBold.woff2) format("woff2"),
+//         url(../fonts/Orbitron/eot/Orbitron-SemiBold.eot) format("eot"),
+//         url(../fonts/Orbitron/ttf/Orbitron-SemiBold.ttf) format("ttf");
+//}
+//
+//@font-face {
+//  font-family: "Orbitron-700";
+//    src: url(../fonts/Orbitron/otf/Orbitron-Bold.otf) format("otf"),
+//         url(../fonts/Orbitron/woff/Orbitron-Bold.woff) format("woff"),
+//         url(../fonts/Orbitron/woff2/Orbitron-Bold.woff2) format("woff2"),
+//         url(../fonts/Orbitron/eot/Orbitron-Bold.eot) format("eot"),
+//         url(../fonts/Orbitron/ttf/Orbitron-Bold.ttf) format("ttf");
+//}
+//
+//@font-face {
+//  font-family: "Orbitron-800";
+//    src: url(../fonts/Orbitron/otf/Orbitron-ExtraBold.otf) format("otf"),
+//         url(../fonts/Orbitron/woff/Orbitron-ExtraBold.woff) format("woff"),
+//         url(../fonts/Orbitron/woff2/Orbitron-ExtraBold.woff2) format("woff2"),
+//         url(../fonts/Orbitron/eot/Orbitron-ExtraBold.eot) format("eot"),
+//         url(../fonts/Orbitron/ttf/Orbitron-ExtraBold.ttf) format("ttf");
+//}
+//
+//@font-face {
+//  font-family: "Orbitron-900";
+//    src: url(../fonts/Orbitron/otf/Orbitron-Black.otf) format("otf"),
+//    url(../fonts/Orbitron/woff/Orbitron-Black.woff) format("woff"),
+//    url(../fonts/Orbitron/woff2/Orbitron-Black.woff2) format("woff2"),
+//    url(../fonts/Orbitron/eot/Orbitron-Black.eot) format("eot"),
+//    url(../fonts/Orbitron/ttf/Orbitron-Black.ttf) format("ttf");
+//}

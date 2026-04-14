@@ -1,0 +1,178 @@
+.message-notification {
+    position: absolute;
+    background-color: #212124;
+    top: 0;
+    right: -62px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.20);
+    box-shadow: 0 4px 20px 0 rgba(10, 28, 95, 0.10);
+    padding: 16px 24px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 376px;
+    min-width: 376px;
+    z-index: 1000;
+    margin: 10px;
+    max-height: calc(100vh - 72px);
+
+    @media (max-width: 968px) {
+        top: 52px;
+        right: 0;
+    }
+
+    @media (max-width: 388px) {
+        min-width: calc(100% - 20px);
+    }
+
+    &__header {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+
+        h4 {
+            color: $auth-text;
+            font-family: $orbitron;
+            font-size: 20px;
+            font-style: normal;
+            font-weight: 700;
+            line-height: 140%;
+        }
+
+        img {
+            width: 20px;
+            height: 20px;
+            min-width: 20px;
+            min-height: 20px;
+            cursor: pointer;
+        }
+    }
+
+    &__view-all-button {
+        display: flex;
+        flex-direction: row;
+        gap: 6px;
+        align-items: center;
+        justify-content: flex-start;
+
+        span {
+            color: $accent-green;
+            text-align: center;
+            font-family: $mono;
+            font-size: 16px;
+            font-style: normal;
+            font-weight: 500;
+            line-height: 150%;
+        }
+
+        img {
+            width: 20px;
+            height: 20px;
+            min-width: 20px;
+            min-height: 20px;
+        }
+    }
+
+    &__list {
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        gap: 20px;
+        max-height: 262px;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(186, 186, 186, 0.60) #212124;
+        margin-right: -15px;
+        padding-right: 9px;
+    }
+
+    &__empty {
+        width: calc(100% - 15px);
+        color: $auth-text;
+        font-family: $mono;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 150%;
+        word-break: break-word;
+    }
+
+    &__list::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    &__list::-webkit-scrollbar-track {
+        background-color: #212124;
+    }
+
+    &__list::-webkit-scrollbar-thumb {
+        border-radius: 6px;
+        background-color: rgba(186, 186, 186, 0.60);
+    }
+
+    .notification-message {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 10px;
+
+        &__icon {
+            width: 20px;
+            height: 20px;
+            min-width: 20px;
+            min-height: 20px;
+        }
+
+        &__text-block {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+
+            span {
+                color: $auth-form-links;
+                font-family: $mono;
+                font-size: 12px;
+                font-style: normal;
+                font-weight: 400;
+                line-height: 130%;
+            }
+
+            p {
+                margin-top: 4px;
+                color: $auth-form-links;
+                font-family: $mono;
+                font-size: 14px;
+                font-style: normal;
+                font-weight: 400;
+                line-height: 130%;
+            }
+        }
+
+        &__more {
+            margin-top: 14px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 6px;
+
+            span {
+                color: $accent-green;
+                text-align: center;
+                font-family: $mono;
+                font-size: 16px;
+                font-style: normal;
+                font-weight: 500;
+                line-height: 150%;
+            }
+
+            img {
+                width: 20px;
+                height: 20px;
+                min-width: 20px;
+                min-height: 20px;
+            }
+        }
+    }
+}

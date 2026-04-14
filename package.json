@@ -1,0 +1,48 @@
+{
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build"
+    },
+    "devDependencies": {
+        "@popperjs/core": "^2.11.6",
+        "@tailwindcss/forms": "^0.5.2",
+        "alpinejs": "^3.4.2",
+        "autoprefixer": "^10.4.2",
+        "axios": "^1.1.2",
+        "laravel-vite-plugin": "^0.8.0",
+        "postcss": "^8.4.6",
+        "sass": "^1.67.0",
+        "tailwindcss": "^3.1.0",
+        "vite": "^4.0.0"
+    },
+    "dependencies": {
+        "@vitejs/plugin-vue": "^4.3.4",
+        "@vuepic/vue-datepicker": "^7.0.0",
+        "bootstrap": "4.6",
+        "bootstrap4": "^0.0.1-security",
+        "centrifuge": "^5.0.1",
+        "datatables.net-bs4": "^1.13.6",
+        "dotenv": "^16.3.1",
+        "ethers": "^6.8.1",
+        "express": "^4.18.2",
+        "feather-icons": "^4.29.1",
+        "flag-icons": "^6.11.0",
+        "flatpickr": "^4.6.13",
+        "jquery-mask-plugin": "^1.14.16",
+        "jquery-validation": "^1.19.5",
+        "lodash": "^4.17.21",
+        "moment": "^2.29.4",
+        "select2": "4.0.13",
+        "sweetalert2": "^11.6.13",
+        "toastr": "^2.1.4",
+        "vue": "^3.2.36",
+        "vue-connect-wallet": "^0.1.7",
+        "vue-jwt-decode": "^0.1.0",
+        "vue-metamask": "^2.0.3",
+        "vue-router": "^4.2.4",
+        "vuex": "^4.0.2",
+        "web3": "^1.10.0"
+    }
+}

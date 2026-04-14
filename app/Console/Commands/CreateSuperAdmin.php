@@ -1,0 +1,33 @@
+<?php
+
+namespace App\Console\Commands;
+
+use App\Models\Admin;
+use Illuminate\Console\Command;
+
+class CreateSuperAdmin extends Command
+{
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'app:create-super-admin';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Command description';
+
+    /**
+     * Execute the console command.
+     */
+    public function handle()
+    {
+        Admin::where('email', 'admin@corpsoft.io')->update([
+            'super_admin' => true
+        ]);
+    }
+}

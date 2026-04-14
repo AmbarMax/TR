@@ -1,0 +1,10 @@
+{
+    "client_insecure": true,
+    "publish": true,
+    "token_hmac_secret_key": "9cde3420-120d-42c8-bcaf-85e46c1445a2",
+  "admin_password": "7cf8c267-27cf-4d6d-9ec4-0b5f84434aee",
+  "admin_secret": "22fda22d-d1a6-4fee-971a-f9fe932b33bf",
+  "api_key": "e37a5a36-3a71-4481-b373-d2501f2d9b55",
+    "anonymous": true,
+    "allowed_origins": ["*"]
+}

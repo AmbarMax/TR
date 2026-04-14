@@ -1,0 +1,48 @@
+.notification {
+  position: fixed;
+  top: 0;
+  right: 0;
+  margin: 20px;
+  padding: 16px;
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  align-items: flex-start;
+  justify-content: center;
+  border-radius: 4px;
+  border: 1px solid;
+  background: #181A20;
+  box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.10);
+  max-width: 384px;
+  z-index: 1000;
+
+  &__text {
+    color: rgba(255, 255, 255, 0.90);
+    font-family: $mono;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 130%;
+    padding-top: 3px;
+  }
+
+  &__close-button {
+    cursor: pointer;
+  }
+
+  &_success {
+    border-color: #CAFB01;
+  }
+
+  &_warning {
+    border-color: rgba(255, 184, 0, 1);
+  }
+
+  &_error {
+    border-color: rgba(255, 0, 136, 1);
+  }
+
+  &_info {
+    border-color: rgba(0, 209, 255, 1);
+  }
+}

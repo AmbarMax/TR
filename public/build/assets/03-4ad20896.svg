@@ -1,0 +1,34 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M3.14064 5.63829C4.5117 4.32521 6.37102 3.58756 8.3097 3.58756C10.2484 3.58756 12.1077 4.32521 13.4788 5.63829L15.621 7.68875L17.7632 5.63829C18.4376 4.96932 19.2444 4.43573 20.1364 4.06864C21.0284 3.70156 21.9878 3.50835 22.9585 3.50026C23.9293 3.49218 24.8921 3.6694 25.7906 4.02158C26.6891 4.37375 27.5054 4.89383 28.1919 5.55147C28.8784 6.20911 29.4213 6.99114 29.7889 7.85192C30.1565 8.71271 30.3415 9.63501 30.3331 10.565C30.3246 11.495 30.1229 12.4141 29.7397 13.2686C29.3566 14.1232 28.7996 14.896 28.1013 15.5422L15.621 27.5L3.14064 15.5422C1.76999 14.2287 1 12.4475 1 10.5902C1 8.73297 1.76999 6.95176 3.14064 5.63829Z" fill="#D9D9D9"/>
+<g clip-path="url(#clip0_586_35050)">
+<rect width="32" height="32" rx="8" fill="#131129"/>
+<g clip-path="url(#clip1_586_35050)">
+<g filter="url(#filter0_f_586_35050)">
+<circle cx="15.5" cy="16.5" r="7.5" fill="#FF0088"/>
+</g>
+<path d="M25.3333 18.6666L16 26.6666L6.66667 18.6666L4 10.6666L6.66667 6.66665L10.6667 5.33331L16 8.66665L21.3333 5.33331L25.3333 6.66665L28 10.6666L25.3333 18.6666Z" stroke="#FF0088" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M20.6667 16.6666L16 20L11.3333 16.6666L10 13.3333L12 10.6666L16 12.6666L20 10.6666L22 13.3333L20.6667 16.6666Z" stroke="#FF0088" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M20.0002 10.6666L21.3335 5.33331" stroke="#FF0088" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M11.9998 10.6666L10.6665 5.33331" stroke="#FF0088" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M16 8.66663V12.6666" stroke="#FF0088" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M4 10.6666L10 13.3333" stroke="#FF0088" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M28 10.6666L22 13.3333" stroke="#FF0088" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M16 26.6667V20" stroke="#FF0088" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M6.6665 18.6666L11.3332 16.6666" stroke="#FF0088" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M25.3335 18.6666L20.6668 16.6666" stroke="#FF0088" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</g>
+<defs>
+<filter id="filter0_f_586_35050" x="-22" y="-21" width="75" height="75" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feGaussianBlur stdDeviation="15" result="effect1_foregroundBlur_586_35050"/>
+</filter>
+<clipPath id="clip0_586_35050">
+<rect width="32" height="32" rx="8" fill="white"/>
+</clipPath>
+<clipPath id="clip1_586_35050">
+<rect width="32" height="32" fill="white"/>
+</clipPath>
+</defs>
+</svg>

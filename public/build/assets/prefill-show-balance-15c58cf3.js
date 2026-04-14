@@ -1,0 +1,1 @@
+function i(t,a,c){t.find("input").each(function(){let n=$(this).attr("name");if(typeof a.balance=="object"&&n in a.balance){const e=a.balance[n];$(this).val(e.amount)}}),t.attr("action",c)}export{i as p};
