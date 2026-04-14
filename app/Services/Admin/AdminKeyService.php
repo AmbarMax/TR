@@ -15,11 +15,7 @@ use App\Services\AbstractServices\AbstractTrophyService;
 use App\Services\Api\BalanceService;
 use App\Services\Api\NotificationService;
 use App\Services\FileService;
-use App\Web3\KeyNFT;
-use App\Web3\Pinata;
-use App\Web3\TrophyNFT;
 use Faker\Core\File;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -27,14 +23,10 @@ use Illuminate\Support\Str;
 class AdminKeyService
 {
     protected FileService $fileService;
-    protected KeyNFT $keyNFT;
-    protected Pinata $pinata;
 
-    public function __construct(KeyNFT $keyNFT, Pinata $pinata)
+    public function __construct()
     {
         $this->fileService = new FileService();
-        $this->pinata = $pinata;
-        $this->keyNFT = $keyNFT;
     }
 
     public function getAll()
@@ -83,17 +75,12 @@ class AdminKeyService
         try {
             DB::beginTransaction();
 
-            $key = Key::create([
+            Key::create([
                 'name' => $data['name'],
                 'quantity' => $data['quantity'],
                 'image' => $this->fileService->saveKeyImage($data['image']),
                 'hash_code' => Str::random(24),
             ]);
-            if(isset($data['image']) && $data['image'])
-            $metadata = $key->jsonSerialize();
-            $metadata['image'] = $this->pinata->pinFileToIPFS(storage_path(Key::FILE_PATH . '/' . $key->image));
-            $url = $this->pinata->pinJSONToIPFS($metadata);
-            $this->keyNFT->create(pinataUrl: $url, categoryId: $key->id, maxSupply: $data['max_supply'] ?? 10);
 
             DB::commit();
 

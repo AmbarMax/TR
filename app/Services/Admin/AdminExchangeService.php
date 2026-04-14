@@ -10,8 +10,6 @@ use App\Repositories\Api\TrophyRepository;
 use App\Services\AbstractServices\AbstractTrophyService;
 use App\Services\Api\BalanceService;
 use App\Services\Api\NotificationService;
-use App\Web3\Pinata;
-use App\Web3\TrophyNFT;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;

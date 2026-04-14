@@ -6,8 +6,6 @@ use App\Models\Trophy;
 use App\Models\User;
 use App\Repositories\Api\TrophyRepository;
 use App\Services\AbstractServices\AbstractTrophyService;
-use App\Web3\Pinata;
-use App\Web3\TrophyNFT;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -15,36 +13,19 @@ class TrophyService extends AbstractTrophyService
 {
     protected BalanceService $balanceService;
 
-    public function __construct(TrophyNFT $trophyNFT, Pinata $pinata)
+    public function __construct()
     {
         parent::__construct(
             trophyRepository: new TrophyRepository(),
-            trophyNFT: $trophyNFT,
-            pinata: $pinata
         );
         $this->balanceService = new BalanceService();
     }
 
-    public function claimTrophy($id, ?string $tokenId, ?string $owner): array {
+    public function claimTrophy($id): array {
         /** @var User $user */
         $user = Auth::user();
         /** @var Trophy $trophy */
         $trophy = $this->trophyRepository->find($id);
-        if ($trophy->is_nft) {
-            if (!$tokenId || !$owner) {
-                return [
-                    'message' => 'Token id or owner is missing',
-                    'type' => 'error'
-                ];
-            }
-            if (!$this->trophyNFT->checkOwnership($tokenId, $owner)) {
-                return [
-                    'message' => 'You don\'t own this trophy',
-                    'type' => 'error'
-                ];
-            }
-            $trophy->increment('minted');
-        }
 
         if ($user->trophies->contains('id', $trophy->id)) {
             return [

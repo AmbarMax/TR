@@ -5,8 +5,6 @@ namespace App\Services\AbstractServices;
 use App\Models\Trophy;
 use App\Repositories\RepositoryInterface;
 use App\Services\FileService;
-use App\Web3\Pinata;
-use App\Web3\TrophyNFT;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -14,15 +12,11 @@ abstract class AbstractTrophyService
 {
     protected FileService $fileService;
     protected RepositoryInterface $trophyRepository;
-    protected TrophyNFT $trophyNFT;
-    protected Pinata $pinata;
 
-    public function __construct(RepositoryInterface $trophyRepository, TrophyNFT $trophyNFT, Pinata $pinata)
+    public function __construct(RepositoryInterface $trophyRepository)
     {
         $this->fileService = new FileService();
         $this->trophyRepository = $trophyRepository;
-        $this->pinata = $pinata;
-        $this->trophyNFT = $trophyNFT;
     }
 
     public function remove($id)
@@ -52,12 +46,6 @@ abstract class AbstractTrophyService
                 if ($data['image']){
                     $trophy = $this->trophyRepository->create($data);
                     $trophy->badges()->attach($data['badges']);
-                    if ($data['is_nft']) {
-                        $metadata = $trophy->jsonSerialize();
-                        $metadata['image'] = $this->pinata->pinFileToIPFS(storage_path(Trophy::FILE_PATH . '/' . $data['image']));
-                        $url = $this->pinata->pinJSONToIPFS($metadata);
-                        $this->trophyNFT->create(pinataUrl: $url, categoryId: $trophy->id, maxSupply: $data['max_supply'] ?? 10);
-                    }
                 }else{
                     return null;
                 }

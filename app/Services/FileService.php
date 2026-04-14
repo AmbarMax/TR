@@ -9,7 +9,6 @@ use App\Models\Chest;
 use App\Models\Key;
 use App\Models\Trophy;
 use App\Models\User;
-use App\Web3\Pinata;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -118,14 +117,6 @@ class FileService
         }
         return $filename;
     }
-
-    public function saveTrophyFileToPinata(string $path): string
-    {
-        $pinata = new Pinata();
-        $file = File::get(storage_path($path));
-        $hash = app('pinata')->pinFileToIPFS($file);
-        return $hash['IpfsHash'];
-}
 
     public function saveAchievementImage($image){
         $path = 'app/public/achievements';

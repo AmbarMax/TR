@@ -4,17 +4,13 @@ namespace App\Services\Admin;
 
 use App\Repositories\Api\TrophyRepository;
 use App\Services\AbstractServices\AbstractTrophyService;
-use App\Web3\Pinata;
-use App\Web3\TrophyNFT;
 
 class AdminTrophyService extends AbstractTrophyService
 {
-    public function __construct(TrophyNFT $trophyNFT, Pinata $pinata)
+    public function __construct()
     {
         parent::__construct(
             trophyRepository: new TrophyRepository(),
-            trophyNFT: $trophyNFT,
-            pinata: $pinata
         );
     }
 

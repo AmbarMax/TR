@@ -62,11 +62,7 @@ class ForgeController
     public function claim($id, Request $request)
     {
         return response()->json(
-            $this->trophyService->claimTrophy(
-                id: $id,
-                tokenId: $request->input('token_id'),
-                owner: $request->input('owner')
-            )
+            $this->trophyService->claimTrophy(id: $id)
         );
     }
 

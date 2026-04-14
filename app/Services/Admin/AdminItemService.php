@@ -12,10 +12,6 @@ use App\Services\AbstractServices\AbstractTrophyService;
 use App\Services\Api\BalanceService;
 use App\Services\Api\NotificationService;
 use App\Services\FileService;
-use App\Web3\Pinata;
-use App\Web3\TrophyNFT;
-use Faker\Core\File;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
