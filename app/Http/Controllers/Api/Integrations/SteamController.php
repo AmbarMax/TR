@@ -47,6 +47,16 @@ class SteamController
         $channel = 'sync-platform';
         $client->publish($channel, $data);
 
+        // Dispatch async achievement sync
+        // auth()->id() is null here (unprotected web route, auth stub does not log user in),
+        // so resolve the TrophyRoom user via the AuthIntegration record keyed by steamid64.
+        $steamId = $steamUser->getId();
+        $authIntegration = \App\Models\AuthIntegration::where('integration_id', $steamId)->first();
+
+        if ($authIntegration && $authIntegration->user_id) {
+            \App\Jobs\SyncSteamAchievementsJob::dispatch($authIntegration->user_id, $steamId);
+        }
+
         return redirect()->route('ambar', ['any' => '/trophy-room']);
     }
 

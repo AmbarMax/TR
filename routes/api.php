@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\Feed\FeedController;
 use App\Http\Controllers\Api\Integrations\BadgeController;
 use App\Http\Controllers\Api\Integrations\DiscordController;
 use App\Http\Controllers\Api\Integrations\SteamController;
+use App\Http\Controllers\Api\SteamAchievementController;
 use App\Http\Controllers\Api\Integrations\StorageController;
 use App\Http\Controllers\Api\ExchangeController;
 use App\Http\Controllers\Api\Forge\ChestController;
@@ -89,6 +90,10 @@ Route::middleware([JwtMiddleware::class])->group(function () {
             Route::get('/authorize', [SteamController::class, 'redirectToSteam'])->name('authorize');
             Route::get('/callback', [SteamController::class, 'handleSteamCallback'])->name('callback');
             Route::get('/sync', [SteamController::class, 'sync'])->name('sync');
+            // Steam Achievements
+            Route::post('/achievements/sync', [SteamAchievementController::class, 'sync'])->name('achievements.sync');
+            Route::get('/achievements/games', [SteamAchievementController::class, 'games'])->name('achievements.games');
+            Route::get('/achievements/games/{gameId}', [SteamAchievementController::class, 'gameAchievements'])->name('achievements.game');
         });
 
     Route::prefix('discord')
