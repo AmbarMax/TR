@@ -253,4 +253,18 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsToMany(Chest::class, 'chest_user', 'user_id', 'chest_id')
             ->withPivot('is_open')->withPivot('id');
     }
+
+    public function steamGames()
+    {
+        return $this->belongsToMany(SteamGame::class, 'steam_user_games')
+            ->withPivot('playtime_minutes')
+            ->withTimestamps();
+    }
+
+    public function steamAchievements()
+    {
+        return $this->belongsToMany(SteamAchievement::class, 'steam_user_achievements')
+            ->withPivot('unlocked_at')
+            ->withTimestamps();
+    }
 }
