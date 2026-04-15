@@ -7,7 +7,6 @@ use App\Models\Key;
 use App\Models\Trophy;
 use App\Models\User;
 use App\Services\Admin\AdminTrophyService;
-use App\Web3\Vouchers;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Auth;

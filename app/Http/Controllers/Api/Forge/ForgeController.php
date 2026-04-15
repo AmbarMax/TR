@@ -9,8 +9,6 @@ use App\Models\User;
 use App\Services\Admin\AdminTrophyService;
 use App\Services\Api\BalanceService;
 use App\Services\Api\TrophyService;
-use App\Web3\Address;
-use App\Web3\Vouchers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -23,7 +21,6 @@ class ForgeController
     public function __construct(
         private readonly AdminTrophyService $adminTrophyService,
         private readonly TrophyService      $trophyService,
-        private readonly Vouchers           $vouchers,
         private readonly BalanceService     $balanceService,
     )
     {
@@ -94,24 +91,10 @@ class ForgeController
 
     public function voucherSign(Request $request): JsonResponse
     {
-        /** @var User $user */
-        $user = Auth::user();
-        $nftType = (string)$request->string('nft_type');
-        if ($nftType === 'trophy') {
-            if (!$this->trophyService->checkEligibility($user, $request->string('category_id'))) {
-                return response()->json([
-                    'message' => 'You are not eligible for this voucher',
-                    'type' => 'error'
-                ], ResponseAlias::HTTP_BAD_REQUEST);
-            }
-        }
-        // TODO add some checking for available balance
-
+        // NFT voucher signing was removed in TrophyRoom 2.0 — trophies are DB objects, not NFTs.
         return response()->json(
-            $this->vouchers->createVoucher(
-                categoryId: $request->string('category_id'),
-                senderAddress: Address::from($request->string('user_address'))
-            )
+            ['message' => 'NFT voucher signing is no longer supported.'],
+            ResponseAlias::HTTP_GONE
         );
     }
 
