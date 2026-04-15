@@ -11,6 +11,7 @@ class RiotApi
 {
     private string $gameName;
     private string $tagLine;
+    private string $platformRegion = 'la1';
     private ?string $puuid = null;
 
     // Cluster used for account lookups (region-agnostic)
@@ -31,11 +32,16 @@ class RiotApi
     // -------------------------------------------------------------------------
 
     /**
-     * Called by RiotAdapter::setAuthData(). Expects "GameName#TagLine".
+     * Called by RiotAdapter::setAuthData().
+     * Accepts "GameName#TagLine|region" (region optional; falls back to config).
      */
     public function setAuthData(string $riotId): void
     {
-        [$this->gameName, $this->tagLine] = explode('#', $riotId, 2) + ['', ''];
+        // Split off optional region suffix: "Name#Tag|la2" → ["Name#Tag", "la2"]
+        [$riotPart, $regionPart] = explode('|', $riotId, 2) + [null, null];
+
+        [$this->gameName, $this->tagLine] = explode('#', $riotPart, 2) + ['', ''];
+        $this->platformRegion = $regionPart ?? config('services.riot.region', 'la1');
         $this->puuid = null; // reset on new identity
     }
 
@@ -333,7 +339,7 @@ class RiotApi
 
     private function region(): string
     {
-        return config('services.riot.region', 'la1');
+        return $this->platformRegion;
     }
 
     private function get(string $url): Response
