@@ -5,17 +5,12 @@ namespace App\Http\Apis\Integrations\Steam;
 use App\Enums\BadgeType;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Weidner\Goutte\GoutteFacade;
 
 class SteamApi
 {
     private $id;
     private $key;
-    private $urlMain = 'https://steamcommunity.com/';
-    private $urlAchievement = '/profiles/%s/badges/%s';
-    private $urlGameCards = '/profiles/%s/gamecards/%s/';
 
-    private $urlApiBadge = 'https://api.steampowered.com/IPlayerService/GetBadges/v1?key=%s&steamid=%s';
     private $urlApiOwnedGames = 'https://api.steampowered.com/IPlayerService/GetOwnedGames/v1?key=%s&steamid=%s&include_appinfo=1&include_played_free_games=1&format=json';
     private $urlApiPlayerAchievements = 'https://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v1?key=%s&steamid=%s&appid=%s&l=english';
     private $urlApiGameSchema = 'https://api.steampowered.com/ISteamUserStats/GetSchemaForGame/v2?key=%s&appid=%s&l=english';
@@ -24,7 +19,7 @@ class SteamApi
     public function setUserId($id)
     {
         $this->id = $id;
-        $this->key = env('STEAM_SECRET');
+        $this->key = config('services.steam.client_secret');
     }
 
     public function getBadges()
@@ -32,76 +27,73 @@ class SteamApi
         return $this->getListOfAchievements();
     }
 
-    private function getListOfAchievements()
+    /**
+     * Fetch all unlocked per-game achievements for the user.
+     *
+     * Queries the top 20 most-played games (playtime > 0), retrieves the
+     * user's unlocked achievements for each, then enriches with display
+     * names, descriptions, and icons from the game schema.
+     *
+     * @return array  Each entry: ['name', 'image', 'description', 'type']
+     */
+    private function getListOfAchievements(): array
     {
-        $response = Http::get($this->getApiUserBadgesUrl());
-        $badges = $response->json()['response']['badges'];
-        $data = [];
-        foreach ($badges as $badge){
-            if (isset($badge['appid'])){
-                $data[]= $this->scrapGameCards($badge['appid']);
-            } else {
-                $data[]= $this->scrapBadge($badge['badgeid']);
+        $games = $this->getOwnedGames();
+        if (empty($games)) {
+            return [];
+        }
+
+        // Only consider games that have actually been played
+        $games = array_filter($games, fn($g) => ($g['playtime_forever'] ?? 0) > 0);
+
+        // Sort by most-played first and cap at 20 to stay rate-limit safe
+        usort($games, fn($a, $b) => ($b['playtime_forever'] ?? 0) <=> ($a['playtime_forever'] ?? 0));
+        $games = array_slice($games, 0, 20);
+
+        $achievements = [];
+
+        foreach ($games as $game) {
+            $appid = (int) $game['appid'];
+
+            $playerAchievements = $this->getPlayerAchievements($appid);
+            if (empty($playerAchievements)) {
+                continue;
+            }
+
+            // Only unlocked achievements
+            $unlocked = array_filter($playerAchievements, fn($a) => ($a['achieved'] ?? 0) === 1);
+            if (empty($unlocked)) {
+                continue;
+            }
+
+            $schema = $this->getGameSchema($appid);
+            if (empty($schema)) {
+                continue;
+            }
+
+            // Index schema definitions by their api name for O(1) lookup
+            $schemaByName = [];
+            foreach ($schema as $def) {
+                $schemaByName[$def['name']] = $def;
+            }
+
+            foreach ($unlocked as $achievement) {
+                $apiname = $achievement['apiname'];
+                $def = $schemaByName[$apiname] ?? null;
+                if ($def === null) {
+                    continue;
+                }
+
+                $achievements[] = [
+                    'name'        => $def['displayName'] ?: $apiname,
+                    'image'       => $def['icon'] ?? '',
+                    'description' => $def['description'] ?? '',
+                    'type'        => BadgeType::Common,
+                ];
             }
         }
-        return $data;
-    }
 
-    private function scrapBadge($id){
-        $crawler = GoutteFacade::request('GET', $this->getAchievementUrl($id));
-        $data = [];
-
-        $crawler->filter('.badge_row_inner')->each(function ($node) use (&$data) {
-            $title = $node->filter('.badge_title')->text();
-
-            $filename= $node->filter('.badge_info_image img')->attr('src');
-
-            $description = $node->filter('.badge_description')->text();
-
-            $data = [
-                'name' => $title,
-                'image' => $filename,
-                'description' => $description,
-                'type' => BadgeType::Common
-            ];
-        });
-        return $data;
-    }
-
-    private function scrapGameCards($id){
-        $crawler = GoutteFacade::request('GET', $this->getGameCardsUrl($id));
-        $data = [];
-
-        $crawler->filter('.badge_row_inner')->each(function ($node) use (&$data) {
-            $title = $node->filter('.badge_title')->text();
-
-            $filename= $node->filter('.badge_info_image img')->attr('src');
-
-            $description = "";
-
-            $data = [
-                'name' => $title,
-                'image' => $filename,
-                'description' => $description,
-                'type' => BadgeType::Common
-            ];
-        });
-        return $data;
-    }
-
-    private function getAchievementUrl($badgeId)
-    {
-        return $this->urlMain . sprintf($this->urlAchievement, $this->id, $badgeId);
-    }
-
-    private function getGameCardsUrl($badgeId)
-    {
-        return $this->urlMain . sprintf($this->urlGameCards, $this->id, $badgeId);
-    }
-
-    private function getApiUserBadgesUrl()
-    {
-        return sprintf($this->urlApiBadge, $this->key, $this->id);
+        return $achievements;
     }
 
     private function getApiOwnedGamesUrl(): string
