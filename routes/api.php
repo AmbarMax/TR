@@ -37,6 +37,12 @@ use App\Http\Controllers\Api\Key\KeyController;
 |
 */
 
+// OAuth callbacks — must be outside JWT middleware so Strava/Steam can redirect back freely
+Route::get('steam/authorize', [SteamController::class, 'redirectToSteam'])->name('steam.authorize');
+Route::get('steam/callback', [SteamController::class, 'handleSteamCallback'])->name('steam.callback');
+Route::get('strava/authorize', [StravaController::class, 'redirectToStrava'])->name('strava.authorize');
+Route::get('strava/callback', [StravaController::class, 'handleStravaCallback'])->name('strava.callback');
+
 Route::post('startLogin', [UserAuthenticateController::class, 'startLogin']);
 Route::post('login', [UserAuthenticateController::class, 'store']);
 Route::post('register', [UserAuthenticateController::class, 'register']);
@@ -89,8 +95,6 @@ Route::middleware([JwtMiddleware::class])->group(function () {
     Route::prefix('steam')
         ->name('steam.')
         ->group( function(){
-            Route::get('/authorize', [SteamController::class, 'redirectToSteam'])->name('authorize');
-            Route::get('/callback', [SteamController::class, 'handleSteamCallback'])->name('callback');
             Route::get('/sync', [SteamController::class, 'sync'])->name('sync');
             // Steam Achievements
             Route::post('/achievements/sync', [SteamAchievementController::class, 'sync'])->name('achievements.sync');
@@ -107,8 +111,6 @@ Route::middleware([JwtMiddleware::class])->group(function () {
     Route::prefix('strava')
         ->name('strava.')
         ->group(function () {
-            Route::get('/authorize', [StravaController::class, 'redirectToStrava'])->name('authorize');
-            Route::get('/callback', [StravaController::class, 'handleStravaCallback'])->name('callback');
             Route::get('/sync', [StravaController::class, 'sync'])->name('sync');
         });
 
