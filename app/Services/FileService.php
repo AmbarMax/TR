@@ -149,6 +149,7 @@ class FileService
             switch ($integration) {
                 case IntegrationType::Steam:
                 case IntegrationType::Riot:
+                case IntegrationType::Strava:
                     $url = $image;
                     $image = Str::random(10) . '.png';
                     break;

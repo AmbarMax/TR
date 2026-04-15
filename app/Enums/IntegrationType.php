@@ -9,5 +9,6 @@ class IntegrationType extends Enum
     const Steam = 'steam';
     const Discord = 'discord';
     const Riot = 'riot';
+    const Strava = 'strava';
 
 }

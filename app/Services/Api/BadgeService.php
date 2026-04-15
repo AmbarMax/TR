@@ -7,6 +7,7 @@ use App\Http\Apis\Integrations\ApiIntegrationInterface;
 use App\Http\Apis\Integrations\Discord\DiscordAdapter;
 use App\Http\Apis\Integrations\Github\GithubAdapter;
 use App\Http\Apis\Integrations\Riot\RiotAdapter;
+use App\Http\Apis\Integrations\Strava\StravaAdapter;
 use App\Http\Apis\Integrations\Steam\SteamAdapter;
 use App\Models\AuthIntegration;
 use App\Models\Badge;
@@ -58,6 +59,9 @@ class BadgeService
                 break;
             case $apiIntegration instanceof RiotAdapter:
                 $this->integrationType = IntegrationType::Riot;
+                break;
+            case $apiIntegration instanceof StravaAdapter:
+                $this->integrationType = IntegrationType::Strava;
                 break;
             default:
                 $this->integrationType = IntegrationType::Github;

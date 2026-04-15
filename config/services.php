@@ -43,6 +43,12 @@ return [
         'redirect' => env('STEAM_REDIRECT_URI'),
     ],
 
+    'strava' => [
+        'client_id'     => env('STRAVA_CLIENT_ID'),
+        'client_secret' => env('STRAVA_CLIENT_SECRET'),
+        'redirect'      => env('STRAVA_REDIRECT_URI'),
+    ],
+
     'riot' => [
         'api_key' => env('RIOT_API_KEY'),
         'region'  => env('RIOT_REGION', 'la1'),

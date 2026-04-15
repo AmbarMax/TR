@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\Feed\FeedController;
 use App\Http\Controllers\Api\Integrations\BadgeController;
 use App\Http\Controllers\Api\Integrations\DiscordController;
 use App\Http\Controllers\Api\Integrations\RiotController;
+use App\Http\Controllers\Api\Integrations\StravaController;
 use App\Http\Controllers\Api\Integrations\SteamController;
 use App\Http\Controllers\Api\SteamAchievementController;
 use App\Http\Controllers\Api\Integrations\StorageController;
@@ -101,6 +102,14 @@ Route::middleware([JwtMiddleware::class])->group(function () {
         ->name('riot.')
         ->group(function () {
             Route::post('/sync', [RiotController::class, 'sync'])->name('sync');
+        });
+
+    Route::prefix('strava')
+        ->name('strava.')
+        ->group(function () {
+            Route::get('/authorize', [StravaController::class, 'redirectToStrava'])->name('authorize');
+            Route::get('/callback', [StravaController::class, 'handleStravaCallback'])->name('callback');
+            Route::get('/sync', [StravaController::class, 'sync'])->name('sync');
         });
 
     Route::prefix('discord')

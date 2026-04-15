@@ -8,12 +8,14 @@ return [
         IntegrationType::Discord,
         IntegrationType::Steam,
         IntegrationType::Riot,
+        IntegrationType::Strava,
     ],
     'image' => [
         IntegrationType::Github  => 'https://github.githubassets.com/images/modules/profile/achievements/',
         IntegrationType::Discord => 'discord.png',
         IntegrationType::Steam   => 'https://community.akamai.steamstatic.com/public/images/badges/generic/',
         IntegrationType::Riot    => '',  // full URLs provided per-badge; no base prefix needed
+        IntegrationType::Strava  => '',  // full URLs provided per-badge; no base prefix needed
     ],
     'discord' => [
         'badge_titles' => [
