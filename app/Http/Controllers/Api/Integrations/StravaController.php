@@ -31,12 +31,13 @@ class StravaController
      */
     public function redirectToStrava(Request $request)
     {
+        $userId = null;
         $token = $request->query('token');
         if ($token) {
             try {
                 $user = JWTAuth::setToken($token)->authenticate();
                 if ($user) {
-                    session(['strava_connect_user_id' => $user->id]);
+                    $userId = $user->id;
                 }
             } catch (\Exception $e) {
                 Log::debug('StravaController@redirectToStrava: JWT decode failed', [
@@ -46,11 +47,12 @@ class StravaController
         }
 
         $query = http_build_query([
-            'client_id'      => config('services.strava.client_id'),
-            'redirect_uri'   => config('services.strava.redirect'),
-            'response_type'  => 'code',
+            'client_id'       => config('services.strava.client_id'),
+            'redirect_uri'    => config('services.strava.redirect'),
+            'response_type'   => 'code',
             'approval_prompt' => 'auto',
-            'scope'          => 'read,activity:read',
+            'scope'           => 'read,activity:read',
+            'state'           => $userId ?? '',
         ]);
 
         return redirect('https://www.strava.com/oauth/authorize?' . $query);
@@ -95,8 +97,7 @@ class StravaController
             return redirect()->route('ambar', ['any' => '/trophy-room']);
         }
 
-        $userId = session('strava_connect_user_id');
-        session()->forget('strava_connect_user_id');
+        $userId = $request->query('state') ?: null;
 
         $stored = json_encode([
             'at' => $accessToken,
