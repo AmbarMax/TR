@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\Auth\ResetPasswordController;
 use App\Http\Controllers\Api\Feed\FeedController;
 use App\Http\Controllers\Api\Integrations\BadgeController;
 use App\Http\Controllers\Api\Integrations\DiscordController;
+use App\Http\Controllers\Api\Integrations\RiotController;
 use App\Http\Controllers\Api\Integrations\SteamController;
 use App\Http\Controllers\Api\SteamAchievementController;
 use App\Http\Controllers\Api\Integrations\StorageController;
@@ -94,6 +95,12 @@ Route::middleware([JwtMiddleware::class])->group(function () {
             Route::post('/achievements/sync', [SteamAchievementController::class, 'sync'])->name('achievements.sync');
             Route::get('/achievements/games', [SteamAchievementController::class, 'games'])->name('achievements.games');
             Route::get('/achievements/games/{gameId}', [SteamAchievementController::class, 'gameAchievements'])->name('achievements.game');
+        });
+
+    Route::prefix('riot')
+        ->name('riot.')
+        ->group(function () {
+            Route::post('/sync', [RiotController::class, 'sync'])->name('sync');
         });
 
     Route::prefix('discord')

@@ -43,6 +43,11 @@ return [
         'redirect' => env('STEAM_REDIRECT_URI'),
     ],
 
+    'riot' => [
+        'api_key' => env('RIOT_API_KEY'),
+        'region'  => env('RIOT_REGION', 'la1'),
+    ],
+
     'discord' => [
         'client_id' => env('DISCORD_CLIENT_ID'),
         'client_secret' => env('DISCORD_CLIENT_SECRET'),

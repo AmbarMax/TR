@@ -6,6 +6,7 @@ use App\Enums\IntegrationType;
 use App\Http\Apis\Integrations\ApiIntegrationInterface;
 use App\Http\Apis\Integrations\Discord\DiscordAdapter;
 use App\Http\Apis\Integrations\Github\GithubAdapter;
+use App\Http\Apis\Integrations\Riot\RiotAdapter;
 use App\Http\Apis\Integrations\Steam\SteamAdapter;
 use App\Models\AuthIntegration;
 use App\Models\Badge;
@@ -54,6 +55,9 @@ class BadgeService
                 break;
             case $apiIntegration instanceof DiscordAdapter:
                 $this->integrationType = IntegrationType::Discord;
+                break;
+            case $apiIntegration instanceof RiotAdapter:
+                $this->integrationType = IntegrationType::Riot;
                 break;
             default:
                 $this->integrationType = IntegrationType::Github;
