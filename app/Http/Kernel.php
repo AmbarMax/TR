@@ -66,6 +66,7 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         '2fa' => \PragmaRX\Google2FALaravel\Middleware::class,
         'auth.superAdmin' => \App\Http\Middleware\AuthSuperAdminCheck::class,
+        'bot.api'         => \App\Http\Middleware\BotApiMiddleware::class,
 
     ];
 }

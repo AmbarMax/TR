@@ -37,6 +37,37 @@ use App\Http\Controllers\Api\Key\KeyController;
 |
 */
 
+// Bot API routes — authenticated via bot_api_key, no JWT required
+Route::prefix('bot')->middleware('bot.api')->group(function () {
+    // Badge granting
+    Route::post('/badges/grant', [App\Http\Controllers\Api\Bot\BotBadgeController::class, 'grant']);
+
+    // Rules
+    Route::get('/rules', [App\Http\Controllers\Api\Bot\BotRuleController::class, 'index']);
+
+    // Channels
+    Route::post('/channels/sync', [App\Http\Controllers\Api\Bot\BotChannelController::class, 'sync']);
+    Route::get('/channels', [App\Http\Controllers\Api\Bot\BotChannelController::class, 'index']);
+
+    // User linking
+    Route::post('/users/link', [App\Http\Controllers\Api\Bot\BotUserController::class, 'link']);
+    Route::get('/users/lookup/{discord_user_id}', [App\Http\Controllers\Api\Bot\BotUserController::class, 'lookup']);
+
+    // Polls
+    Route::get('/polls/pending', [App\Http\Controllers\Api\Bot\BotPollController::class, 'pending']);
+    Route::post('/polls/{id}/published', [App\Http\Controllers\Api\Bot\BotPollController::class, 'markPublished']);
+    Route::post('/polls/{id}/close', [App\Http\Controllers\Api\Bot\BotPollController::class, 'close']);
+
+    // Events
+    Route::get('/events/pending', [App\Http\Controllers\Api\Bot\BotEventController::class, 'pending']);
+    Route::post('/events/{id}/scheduled', [App\Http\Controllers\Api\Bot\BotEventController::class, 'markScheduled']);
+    Route::post('/events/{id}/complete', [App\Http\Controllers\Api\Bot\BotEventController::class, 'complete']);
+});
+
+// Guild setup OAuth — outside JWT middleware so Discord can redirect back freely
+Route::get('bot/setup/authorize', [App\Http\Controllers\Api\Bot\GuildSetupController::class, 'redirectToDiscord'])->name('bot.setup.authorize');
+Route::get('bot/setup/callback', [App\Http\Controllers\Api\Bot\GuildSetupController::class, 'handleCallback'])->name('bot.setup.callback');
+
 // OAuth callbacks — must be outside JWT middleware so Strava/Steam can redirect back freely
 Route::get('steam/authorize', [SteamController::class, 'redirectToSteam'])->name('steam.authorize');
 Route::get('steam/callback', [SteamController::class, 'handleSteamCallback'])->name('steam.callback');
