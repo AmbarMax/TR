@@ -36,12 +36,12 @@ class BrandPollsController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'title'            => 'required|string|max:255',
-            'options'          => 'required|array|min:2',
-            'options.*'        => 'required|string',
-            'channel_id'       => 'required|string',
-            'duration_minutes' => 'required|integer|min:1',
-            'badge_id'         => 'nullable|string|exists:badges,id',
+            'title'          => 'required|string|max:255',
+            'options'        => 'required|array|min:2',
+            'options.*'      => 'required|string',
+            'channel_id'     => 'required|string',
+            'duration_hours' => 'required|numeric|min:0.1',
+            'badge_id'       => 'nullable|string|exists:badges,id',
         ]);
 
         $guildConnection = $this->getGuildConnection();
@@ -55,7 +55,7 @@ class BrandPollsController extends Controller
             'title'          => $request->title,
             'options'        => $request->options,
             'channel_id'     => $request->channel_id,
-            'duration_hours' => round($request->duration_minutes / 60, 2),
+            'duration_hours' => $request->duration_hours,
             'status'         => 'draft',
         ]);
 

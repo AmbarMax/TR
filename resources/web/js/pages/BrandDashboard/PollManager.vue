@@ -92,13 +92,13 @@ export default {
             this.loading = true;
             try {
                 const [pollsRes, chRes, badgesRes] = await Promise.all([
-                    api.get('/api/bot/polls/pending'),
-                    api.get('/api/bot/channels'),
-                    api.get('/api/badges'),
+                    api.get('/api/brand/polls'),
+                    api.get('/api/brand/channels'),
+                    api.get('/api/brand/badges'),
                 ]);
-                this.polls    = pollsRes.data?.data   ?? [];
-                this.channels = chRes.data?.data      ?? [];
-                this.badges   = badgesRes.data?.data  ?? [];
+                this.polls    = pollsRes.data?.polls    ?? [];
+                this.channels = chRes.data?.channels   ?? [];
+                this.badges   = badgesRes.data?.badges  ?? [];
             } catch (e) {
                 // silently fail
             } finally {
@@ -110,7 +110,7 @@ export default {
         async createPoll() {
             this.submitting = true;
             try {
-                await api.post('/api/bot/polls', this.form);
+                await api.post('/api/brand/polls', this.form);
                 this.form = { title: '', options: ['', ''], channel_id: '', badge_id: '', duration_hours: 24 };
                 await this.load();
             } catch (e) {
@@ -121,7 +121,7 @@ export default {
         },
         async closePoll(id) {
             try {
-                await api.post(`/api/bot/polls/${id}/close`);
+                await api.post(`/api/brand/polls/${id}/close`);
                 this.polls = this.polls.filter(p => p.id !== id);
             } catch (e) {
                 console.error('closePoll error', e);

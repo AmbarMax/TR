@@ -65,17 +65,15 @@ export default {
         async load() {
             this.loading = true;
             try {
-                const [channels, rules] = await Promise.all([
-                    api.get('/api/bot/channels'),
-                    api.get('/api/bot/rules'),
-                ]);
-                this.stats.channels    = channels.data?.data?.length ?? 0;
-                this.stats.activeRules = rules.data?.data?.filter(r => r.active)?.length ?? 0;
-                if (channels.data?.guild) {
-                    this.guild = channels.data.guild;
-                }
+                const res = await api.get('/api/brand/stats');
+                const d = res.data;
+                this.stats.linkedUsers   = d.linked_users   ?? '—';
+                this.stats.activeRules   = d.active_rules   ?? '—';
+                this.stats.channels      = d.synced_channels ?? '—';
+                this.stats.badgesGranted = d.badges_granted  ?? '—';
+                this.activity            = d.recent_activity ?? [];
             } catch (e) {
-                // endpoints may not be accessible without bot auth — show dashes
+                // silently fail
             } finally {
                 this.loading = false;
             }

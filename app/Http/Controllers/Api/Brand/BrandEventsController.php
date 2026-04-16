@@ -39,8 +39,8 @@ class BrandEventsController extends Controller
             'title'       => 'required|string|max:255',
             'description' => 'nullable|string',
             'channel_id'  => 'required|string',
-            'start_date'  => 'required|date',
-            'end_date'    => 'required|date|after:start_date',
+            'starts_at'   => 'required|date',
+            'ends_at'     => 'required|date|after:starts_at',
             'badge_id'    => 'nullable|string|exists:badges,id',
         ]);
 
@@ -55,8 +55,8 @@ class BrandEventsController extends Controller
             'title'       => $request->title,
             'description' => $request->description ?? '',
             'channel_id'  => $request->channel_id,
-            'starts_at'   => $request->start_date,
-            'ends_at'     => $request->end_date,
+            'starts_at'   => $request->starts_at,
+            'ends_at'     => $request->ends_at,
             'status'      => 'draft',
         ]);
 

@@ -36,6 +36,7 @@ class BrandRulesController extends Controller
                     'platform'       => $rule->platform,
                     'trigger_type'   => $rule->trigger_type,
                     'trigger_config' => $rule->trigger_config,
+                    'threshold'      => $rule->trigger_config['threshold'] ?? null,
                     'active'         => $rule->active,
                     'badge'          => $rule->badge ? [
                         'id'    => $rule->badge->id,

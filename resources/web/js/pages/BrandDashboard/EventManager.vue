@@ -96,13 +96,13 @@ export default {
             this.loading = true;
             try {
                 const [eventsRes, chRes, badgesRes] = await Promise.all([
-                    api.get('/api/bot/events/pending'),
-                    api.get('/api/bot/channels'),
-                    api.get('/api/badges'),
+                    api.get('/api/brand/events'),
+                    api.get('/api/brand/channels'),
+                    api.get('/api/brand/badges'),
                 ]);
-                this.events   = eventsRes.data?.data  ?? [];
-                this.channels = chRes.data?.data      ?? [];
-                this.badges   = badgesRes.data?.data  ?? [];
+                this.events   = eventsRes.data?.events  ?? [];
+                this.channels = chRes.data?.channels    ?? [];
+                this.badges   = badgesRes.data?.badges  ?? [];
             } catch (e) {
                 // silently fail
             } finally {
@@ -112,7 +112,7 @@ export default {
         async createEvent() {
             this.submitting = true;
             try {
-                await api.post('/api/bot/events', this.form);
+                await api.post('/api/brand/events', this.form);
                 this.form = { title: '', description: '', channel_id: '', badge_id: '', starts_at: '', ends_at: '' };
                 await this.load();
             } catch (e) {
@@ -123,7 +123,7 @@ export default {
         },
         async completeEvent(id) {
             try {
-                await api.post(`/api/bot/events/${id}/complete`);
+                await api.post(`/api/brand/events/${id}/complete`);
                 this.events = this.events.filter(e => e.id !== id);
             } catch (e) {
                 console.error('completeEvent error', e);

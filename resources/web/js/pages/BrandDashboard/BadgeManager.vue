@@ -101,15 +101,15 @@ export default {
         async load() {
             try {
                 const [rulesRes, badgesRes, chRes] = await Promise.all([
-                    api.get('/api/bot/rules'),
-                    api.get('/api/badges'),
-                    api.get('/api/bot/channels'),
+                    api.get('/api/brand/rules'),
+                    api.get('/api/brand/badges'),
+                    api.get('/api/brand/channels'),
                 ]);
-                this.rules    = rulesRes.data?.data  ?? [];
-                this.badges   = badgesRes.data?.data ?? [];
-                this.channels = chRes.data?.data     ?? [];
+                this.rules    = rulesRes.data?.rules    ?? [];
+                this.badges   = badgesRes.data?.badges  ?? [];
+                this.channels = chRes.data?.channels    ?? [];
             } catch (e) {
-                // silently fail — endpoints need bot auth
+                // silently fail
             } finally {
                 this.loadingRules  = false;
                 this.loadingBadges = false;
@@ -118,7 +118,7 @@ export default {
         async createRule() {
             this.submittingRule = true;
             try {
-                await api.post('/api/bot/rules', this.ruleForm);
+                await api.post('/api/brand/rules', this.ruleForm);
                 this.ruleForm = { trigger_type: '', channel_id: '', threshold: null, badge_id: '' };
                 await this.load();
             } catch (e) {
@@ -129,7 +129,7 @@ export default {
         },
         async toggleRule(rule) {
             try {
-                await api.patch(`/api/bot/rules/${rule.id}`, { active: !rule.active });
+                await api.put(`/api/brand/rules/${rule.id}`, { active: !rule.active });
                 rule.active = !rule.active;
             } catch (e) {
                 console.error('toggleRule error', e);
