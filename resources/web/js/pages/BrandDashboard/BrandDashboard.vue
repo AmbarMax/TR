@@ -20,6 +20,7 @@
 
         <div class="bd-content">
             <dashboard-overview v-if="activeTab === 'overview'" />
+            <trophy-manager    v-if="activeTab === 'trophies'" />
             <badge-manager     v-if="activeTab === 'badges'" />
             <poll-manager      v-if="activeTab === 'polls'" />
             <event-manager     v-if="activeTab === 'events'" />
@@ -29,20 +30,22 @@
 
 <script>
 import DashboardOverview from './DashboardOverview.vue';
+import TrophyManager     from './TrophyManager.vue';
 import BadgeManager      from './BadgeManager.vue';
 import PollManager       from './PollManager.vue';
 import EventManager      from './EventManager.vue';
 
 export default {
-    components: { DashboardOverview, BadgeManager, PollManager, EventManager },
+    components: { DashboardOverview, TrophyManager, BadgeManager, PollManager, EventManager },
     data() {
         return {
             activeTab: 'overview',
             tabs: [
-                { id: 'overview', label: 'Overview'      },
-                { id: 'badges',   label: 'Badges'        },
-                { id: 'polls',    label: 'Polls'         },
-                { id: 'events',   label: 'Events'        },
+                { id: 'overview',  label: 'Overview'  },
+                { id: 'trophies',  label: 'Trophies'  },
+                { id: 'badges',    label: 'Badges'    },
+                { id: 'polls',     label: 'Polls'     },
+                { id: 'events',    label: 'Events'    },
             ],
         };
     },
