@@ -2,7 +2,7 @@
     <div class="auth_wrapper">
         <div class="auth_welcome_block">
             <div class="header_logo">
-                <img src="../../../web/images/web/img/logo.svg" alt="logo">
+                <img src="../../../web/images/web/img/tr-isologo.svg" alt="logo">
             </div>
         </div>
         <div v-if="!status" class="auth_form_block">

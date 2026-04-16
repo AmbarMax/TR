@@ -1,7 +1,7 @@
 <template>
     <div class="header">
         <div class="logo">
-            <img src="../../../web/images/web/img/logo.svg" alt="logo">
+            <img src="../../../web/images/web/img/tr-isologo.svg" alt="logo">
         </div>
         <div class="header_right_block">
             <router-link to="/login">
