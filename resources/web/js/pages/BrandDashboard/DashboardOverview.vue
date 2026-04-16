@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import api from '../../api/api.js';
+import api from './botApi.js';
 
 export default {
     data() {
