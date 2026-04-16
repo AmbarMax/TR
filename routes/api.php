@@ -238,6 +238,8 @@ Route::middleware([JwtMiddleware::class])->group(function () {
             Route::get('/index', [NotificationController::class, 'index'])->name('index');
         });
 
+    Route::post('/bot/link/confirm', [App\Http\Controllers\Api\Bot\BotLinkController::class, 'confirmLink']);
+
     Route::get('/getAllCountries', [ProfileController::class, 'allCountries'])->name('all-countries');
 
     Route::post('2fa-get', [UserAuthenticateController::class, 'twoFaGet']);

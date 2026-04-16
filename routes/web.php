@@ -32,6 +32,8 @@ Route::get('/badges/sync/{id}/{achievements}', [BadgeController::class, 'sync'])
 //Route::get('/test', [DiscordController::class, 'sync']);
 
 
+Route::get('/bot/link', [App\Http\Controllers\Api\Bot\BotLinkController::class, 'link']);
+
 Route::get('/{any}', function () {
     return view('layouts.web');
 })->where('any', '.*')->name('ambar');
