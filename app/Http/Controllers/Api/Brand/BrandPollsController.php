@@ -47,7 +47,7 @@ class BrandPollsController extends Controller
         $guildConnection = $this->getGuildConnection();
 
         if (!$guildConnection) {
-            return response()->json(['error' => 'No guild connected.'], 404);
+            return response()->json(['poll' => null, 'error' => 'No guild connected.'], 200);
         }
 
         $poll = BotPoll::create([
@@ -67,7 +67,7 @@ class BrandPollsController extends Controller
         $guildConnection = $this->getGuildConnection();
 
         if (!$guildConnection) {
-            return response()->json(['error' => 'No guild connected.'], 404);
+            return response()->json(['poll' => null, 'error' => 'No guild connected.'], 200);
         }
 
         $poll = BotPoll::where('id', $id)

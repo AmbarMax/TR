@@ -62,7 +62,7 @@ class BrandRulesController extends Controller
         $guildConnection = $this->getGuildConnection();
 
         if (!$guildConnection) {
-            return response()->json(['error' => 'No guild connected.'], 404);
+            return response()->json(['rule' => null, 'error' => 'No guild connected.'], 200);
         }
 
         $rule = BadgeRule::create([
@@ -93,7 +93,7 @@ class BrandRulesController extends Controller
         $guildConnection = $this->getGuildConnection();
 
         if (!$guildConnection) {
-            return response()->json(['error' => 'No guild connected.'], 404);
+            return response()->json(['rule' => null, 'error' => 'No guild connected.'], 200);
         }
 
         $rule = BadgeRule::where('id', $id)
