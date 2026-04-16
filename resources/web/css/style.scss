@@ -9,14 +9,11 @@
 @import "./parts/components/feed-comment";
 
 body {
-    background-color: $background-global;
-    background-image: url('/resources/web/images/web/img/backgrounds/bg_1.png'), url('/resources/web/images/web/img/backgrounds/bg_2.png');
-    background-repeat: no-repeat;
-    background-position: right top, left -300px top 800px;
+    background-color: $bg;
 }
 
 h3 {
-    font-family: Orbitron;
+    font-family: $mono;
 }
 
 #web-app {
@@ -36,13 +33,14 @@ h3 {
 }
 
 .web-header {
-    background-color: #18181B;
-    padding: 50px 40px 30px;
+    background-color: $surface;
+    padding: 20px 40px;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: flex-end;
     position: relative;
+    border-bottom: 1px solid $border;
 }
 
 .front-sidebar_logo {
@@ -88,7 +86,7 @@ h3 {
 }
 
 .front-sidebar {
-    background-color: $background-global;
+    background-color: $surface;
     display: flex;
     width: 270px;
     min-width: 270px;
@@ -98,10 +96,10 @@ h3 {
     padding: 45px 0;
     flex-direction: column;
     align-items: flex-start;
-    position: sticky;
     top: 0;
     left: 0;
     gap: 60px;
+    border-right: 1px solid $border;
 }
 
 .sidebar_menu {
@@ -119,6 +117,12 @@ h3 {
     gap: 12px;
     align-items: center;
     justify-content: left;
+    color: $text-muted;
+    transition: color 0.15s;
+}
+
+.sidebar_menu a:hover {
+    color: $text;
 }
 
 .sidebar_menu svg {
@@ -129,21 +133,23 @@ h3 {
 }
 
 .sidebar_menu span {
-    color: $main-text;
+    color: $text-muted;
     font-family: $mono;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 400;
     line-height: 24px;
+    letter-spacing: 0.02em;
 }
 
 .active_item {
-    border-left: 3px solid $accent-green;
-    background-color: $background-elements !important;
+    border-left: 3px solid $accent;
+    background-color: rgba($accent, 0.05) !important;
     padding: 8px 40px 8px 37px !important;
+    color: $accent !important;
 }
 
 .active_item span {
-    color: $accent-green !important;
+    color: $accent !important;
 }
 
 .sidebar_footer_links {
@@ -1255,21 +1261,20 @@ h3 {
 
 .header_achievement {
     display: flex;
-    flex-direction: row;
     align-items: center;
+    gap: 8px;
 }
 
 .header_achievement > img {
-    width: 32px;
-    height: 32px;
+    width: 20px;
+    height: 20px;
 }
 
 .header_achievement > span {
-    margin-left: 6px;
-    color: #FFF;
-    font-size: 14px;
-    font-weight: 600;
-    line-height: 24px;
+    color: $text;
+    font-family: $mono;
+    font-size: 13px;
+    line-height: 20px;
 }
 
 .header_achievement > div {
@@ -1328,28 +1333,29 @@ h3 {
 .separator_vertical {
     width: 1px;
     height: 24px;
-    background-color: rgba(255, 255, 255, 0.40);
+    background-color: $border;
+    margin: 0 12px;
 }
 
 .header_user_info {
     display: flex;
     flex-direction: row;
     align-items: center;
+    gap: 8px;
     cursor: pointer;
 }
 
 .header_user_info > span {
-    margin-left: 12px;
-    color: #FFF;
+    color: $text;
+    font-family: $mono;
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 400;
     line-height: 24px;
     text-align: left;
     white-space: nowrap;
     max-width: 120px;
     overflow: hidden;
     text-overflow: ellipsis;
-
 }
 
 .header_user_info > img {
@@ -1383,59 +1389,63 @@ h3 {
     z-index: 100;
     position: absolute;
     right: 40px;
-    top: 90px;
-    padding: 12px 0;
-    border-radius: 4px;
-    background: $background-elements;
-    width: 186px;
+    top: 100%;
+    padding: 8px 0;
+    border-radius: 6px;
+    background: $surface-2;
+    border: 1px solid $border;
+    min-width: 200px;
 }
 
 .header_dropdown ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
 }
 
 .header_dropdown ul li {
-    padding: 0 12px;
-    height: 40px;
+    padding: 0;
     width: 100%;
 }
 
 .header_dropdown_link {
     display: flex;
     flex-direction: row;
-    gap: 8px;
+    gap: 10px;
     align-items: center;
     justify-content: flex-start;
-    height: 40px;
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: background-color 0.15s;
 }
 
 .header_dropdown_link span {
     font-size: 14px;
     font-weight: 400;
-    line-height: 130%;
     cursor: pointer;
     font-family: $mono;
-    color: $dropdown-menu;
+    color: $text-muted;
 }
 
 .header_dropdown_link svg {
-    width: 20px;
-    height: 20px;
-    stroke: $dropdown-menu;
+    width: 18px;
+    height: 18px;
+    stroke: $text-muted;
 }
 
 .header_dropdown ul li:hover {
-    background-color: $dropdown-menu-bg;
+    background-color: $surface-3;
 }
 
 .header_dropdown ul li:hover svg {
-    stroke: $accent-green;
+    stroke: $text;
 }
 
 .header_dropdown ul li:hover span {
-    color: $accent-green;
+    color: $text;
 }
 
 .my-nfts-tab {

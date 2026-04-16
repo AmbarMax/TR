@@ -97,20 +97,6 @@
                     </router-link>
                 </li>
                 <li>
-                    <div v-if="!store.state.userAddress" @click="checkAuth" class="header_dropdown_link">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                            <path d="M17.2004 12.4665V14.1666C17.2004 15.2712 16.305 16.1666 15.2004 16.1666H4.00032C2.89578 16.1666 2.00036 15.2712 2.00033 14.1667L2.00007 6.16669C2.00003 5.0621 2.89547 4.16663 4.00007 4.16663H15.2004C16.305 4.16663 17.2004 5.06206 17.2004 6.16663V7.80906M18.0004 12.4665H15.4004C14.1854 12.4665 13.2004 11.4816 13.2004 10.2665C13.2004 9.0515 14.1854 8.06653 15.4004 8.06653H18.0004V12.4665Z" stroke-width="2" stroke-linejoin="round"/>
-                        </svg>
-                        <span>Connect Wallet</span>
-                    </div>
-                    <div v-else class="header_dropdown_link">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                            <path d="M17.2004 12.4665V14.1666C17.2004 15.2712 16.305 16.1666 15.2004 16.1666H4.00032C2.89578 16.1666 2.00036 15.2712 2.00033 14.1667L2.00007 6.16669C2.00003 5.0621 2.89547 4.16663 4.00007 4.16663H15.2004C16.305 4.16663 17.2004 5.06206 17.2004 6.16663V7.80906M18.0004 12.4665H15.4004C14.1854 12.4665 13.2004 11.4816 13.2004 10.2665C13.2004 9.0515 14.1854 8.06653 15.4004 8.06653H18.0004V12.4665Z" stroke-width="2" stroke-linejoin="round"/>
-                        </svg>
-                        <span>0x...{{ this.store.state.userAddress.toString().substring(this.store.state.userAddress.toString().length - 4) }} Connected</span>
-                    </div>
-                </li>
-                <li>
                     <a class="header_dropdown_link" @click="logout">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
                             <path d="M7.31681 3.33331H4.22857C3.76054 3.33331 3.31168 3.51769 2.98074 3.84588C2.64979 4.17406 2.46387 4.61918 2.46387 5.08331V15.5833C2.46387 16.0474 2.64979 16.4926 2.98074 16.8207C3.31168 17.1489 3.76054 17.3333 4.22857 17.3333H7.31681M7.53613 10.3333H17.5361M17.5361 10.3333L13.7152 6.33331M17.5361 10.3333L13.7152 14.3333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -142,15 +128,11 @@ import router from "../router/router.js";
 import { Centrifuge } from 'centrifuge';
 import ambarNotification from "./modals/ambar-notification.vue";
 import AmbarMessagesNotification from "./modals/ambar-messages-notification.vue";
-import { Web3 } from 'web3';
-
-
 export default {
     components: {
         AmbarMessagesNotification,
         ambarNotification,
         buttonWhite,
-        Web3,
     },
     data() {
         return {
@@ -232,30 +214,6 @@ export default {
               console.log('api profile error: ', error)
             })
         },
-
-        checkAuth(){
-            api.get('/api/2fa-status').then( resp => {
-                if (resp && resp.status === 200) {
-                    if (resp.data.twoFAStatus === 0){
-                        store.state.notification = {
-                            message: 'This action requires two-factor authentication!',
-                            type: 'error',
-                            show: true
-                        }
-                        this.closeHeaderDropdown();
-                    } else {
-                        this.initMetaMaskConnection();
-                    }
-                }
-            }).catch(error => {
-                console.log('api profile error: ', error)
-            })
-        },
-
-        async initMetaMaskConnection() {
-            await this.$store.dispatch('initMetaMaskConnection');
-        },
-
 
       // async mountUserBalances(){
         //     let user = JSON.parse(localStorage.getItem('user'));
@@ -407,13 +365,6 @@ export default {
             this.getUserBalances();
         }
 
-      if (window.ethereum) {
-        window.ethereum.on('accountsChanged', function (accounts) {
-          store.state.userAddress = accounts[0];
-        });
-      } else {
-        console.error('window.ethereum is not defined');
-      }
     },
     updated() {
         this.setUserDataToHeader();
@@ -450,10 +401,10 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #CAFB01; height: 36px; width: 130px;
-    color: #18181B;
+    background-color: #c1f527; height: 36px; width: 130px;
+    color: #000003;
     font-size: 16px;
-    font-family: JetBrains Mono;
+    font-family: 'Share Tech Mono', monospace;
     font-weight: 700;
     line-height: 20px;
     word-wrap: break-word;
