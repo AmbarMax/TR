@@ -104,7 +104,7 @@ export default {
                 this.channels = chRes.data?.channels    ?? [];
                 this.badges   = badgesRes.data?.badges  ?? [];
             } catch (e) {
-                // silently fail
+                console.error('[EventManager] load failed', e);
             } finally {
                 this.loading = false;
             }

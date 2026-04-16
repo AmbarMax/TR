@@ -19,7 +19,13 @@ class BrandStatsController extends Controller
             ->first();
 
         if (!$guildConnection) {
-            return response()->json(['error' => 'No guild connected.'], 404);
+            return response()->json([
+                'linked_users'    => 0,
+                'active_rules'    => 0,
+                'synced_channels' => 0,
+                'badges_granted'  => 0,
+                'recent_activity' => [],
+            ], 200);
         }
 
         $linkedUsers   = $guildConnection->userLinks()->count();

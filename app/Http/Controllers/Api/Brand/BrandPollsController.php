@@ -22,7 +22,7 @@ class BrandPollsController extends Controller
         $guildConnection = $this->getGuildConnection();
 
         if (!$guildConnection) {
-            return response()->json(['error' => 'No guild connected.'], 404);
+            return response()->json(['polls' => []], 200);
         }
 
         $polls = BotPoll::where('guild_id', $guildConnection->guild_id)

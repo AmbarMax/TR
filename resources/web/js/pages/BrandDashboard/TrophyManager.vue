@@ -213,7 +213,7 @@ export default {
                 this.trophies        = tRes.data?.trophies ?? [];
                 this.availableBadges = bRes.data?.badges   ?? [];
             } catch (e) {
-                // silently fail
+                console.error('[TrophyManager] load failed', e);
             } finally {
                 this.loading = false;
             }

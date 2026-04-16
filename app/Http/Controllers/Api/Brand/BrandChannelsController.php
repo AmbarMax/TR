@@ -18,7 +18,7 @@ class BrandChannelsController extends Controller
             ->first();
 
         if (!$guildConnection) {
-            return response()->json(['error' => 'No guild connected.'], 404);
+            return response()->json(['channels' => []], 200);
         }
 
         $channels = $guildConnection->channels()->get();

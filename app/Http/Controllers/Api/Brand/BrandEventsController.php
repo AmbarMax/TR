@@ -22,7 +22,7 @@ class BrandEventsController extends Controller
         $guildConnection = $this->getGuildConnection();
 
         if (!$guildConnection) {
-            return response()->json(['error' => 'No guild connected.'], 404);
+            return response()->json(['events' => []], 200);
         }
 
         $events = BotEvent::where('guild_id', $guildConnection->guild_id)

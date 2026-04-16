@@ -27,7 +27,7 @@ class BrandBadgesController extends Controller
         $guildConnection = $this->getGuildConnection();
 
         if (!$guildConnection) {
-            return response()->json(['error' => 'No guild connected.'], 404);
+            return response()->json(['badges' => []], 200);
         }
 
         $badgeIds = BadgeRule::where('guild_id', $guildConnection->guild_id)

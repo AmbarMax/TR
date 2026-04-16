@@ -22,7 +22,7 @@ class BrandRulesController extends Controller
         $guildConnection = $this->getGuildConnection();
 
         if (!$guildConnection) {
-            return response()->json(['error' => 'No guild connected.'], 404);
+            return response()->json(['rules' => []], 200);
         }
 
         $rules = $guildConnection->badgeRules()

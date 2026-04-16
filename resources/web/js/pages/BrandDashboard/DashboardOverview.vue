@@ -73,7 +73,7 @@ export default {
                 this.stats.badgesGranted = d.badges_granted  ?? '—';
                 this.activity            = d.recent_activity ?? [];
             } catch (e) {
-                // silently fail
+                console.error('[BrandDashboard] stats load failed', e);
             } finally {
                 this.loading = false;
             }

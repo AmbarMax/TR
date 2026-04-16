@@ -154,7 +154,7 @@ export default {
                 this.badges   = badgesRes.data?.badges  ?? [];
                 this.channels = chRes.data?.channels    ?? [];
             } catch (e) {
-                // silently fail
+                console.error('[BadgeManager] load failed', e);
             } finally {
                 this.loadingRules  = false;
                 this.loadingBadges = false;
