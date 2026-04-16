@@ -1,46 +1,48 @@
-// Colors
-$background-global: #18181B;
-$background-elements: #212124;
-$main-text: rgba(255, 255, 255, 0.69);
-$dropdown-menu: rgba(186, 186, 186, 0.60);
-$dropdown-menu-bg: rgba(186, 186, 186, 0.10);
-$accent-green: #CAFB01;
-$auth-bg: #1E1E21;
-$auth-form-bg: rgba(24, 24, 27, 0.85);
-$auth-text: rgba(255, 255, 255, 0.90);
-$auth-input-border: rgba(186, 186, 186, 0.60);
-$auth-input-bg: rgba(186, 186, 186, 0.15);
-$auth-form-links: #BABABA;
+// ============================================
+// TrophyRoom 2.0 — Design Tokens
+// ============================================
 
+// Backgrounds
+$bg:                  #000003;
+$surface:             #0e0f11;
+$surface-2:           #1a1c1f;
+$surface-3:           #252729;
 
+// Brand
+$primary:             #ff6100;
+$accent:              #c1f527;
 
-$background-local: #323232;
-$background-modal: rgba(55, 55, 55, 0.85);
-$input-bg: #2F2F2F;
-$button-bg: #CAFB01;
-$button-bg-disabled: #C8C8C8;
-$button-text: black;
+// Text
+$text:                #feeddf;
+$text-muted:          #9a9590;
+$text-dim:            #5a5550;
 
-$white: #fff;
-// Fonts
-//$mono-100: 'JetBrains-Mono-100', monospace;
-//$mono-200: 'JetBrains-Mono-200', monospace;
-//$mono-300: 'JetBrains-Mono-300', monospace;
-//$mono-400: 'JetBrains-Mono-400', monospace;
-//$mono-500: 'JetBrains-Mono-500', monospace;
-//$mono-600: 'JetBrains-Mono-600', monospace;
-//$mono-700: 'JetBrains-Mono-700', monospace;
-//$mono-800: 'JetBrains-Mono-800', monospace;
+// Borders
+$border:              #2a2c2e;
 
-$mono:  'JetBrains Mono', monospace;
+// ============================================
+// Legacy aliases (keep until full migration)
+// These map old variable names to new tokens
+// so existing SCSS doesn't break immediately
+// ============================================
+$background-global:   $bg;
+$background-elements: $surface;
+$main-text:           $text-muted;
+$accent-green:        $accent;
+$auth-bg:             $surface;
+$auth-form-bg:        rgba($surface, 0.85);
+$auth-text:           $text;
+$auth-input-border:   $border;
+$auth-input-bg:       rgba($surface-2, 0.5);
+$auth-form-links:     $text-muted;
+$background-local:    $surface-2;
+$background-modal:    rgba($surface-2, 0.85);
+$input-bg:            $surface-2;
+$button-bg:           $accent;
+$button-bg-disabled:  $text-dim;
+$button-text:         $bg;
+$white:               #fff;
 
-//$Orbitron-400: 'Orbitron-400', sans-serif;
-//$Orbitron-500: 'Orbitron-500', sans-serif;
-//$Orbitron-600: 'Orbitron-600', sans-serif;
-//$Orbitron-700: 'Orbitron-700', sans-serif;
-//$Orbitron-800: 'Orbitron-800', sans-serif;
-//$Orbitron-900: 'Orbitron-900', sans-serif;
-
-$orbitron: 'Orbitron', sans-serif;
-
-
+// Typography
+$mono:                'Share Tech Mono', monospace;
+$orbitron:            'Share Tech Mono', monospace;
