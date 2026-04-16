@@ -66,12 +66,54 @@
             <!-- Badges -->
             <section class="bm-section">
                 <span class="bd-section-label">Badges</span>
+
+                <form class="bm-form" @submit.prevent="createBadge">
+                    <div class="bm-form-row">
+                        <div class="bm-field">
+                            <label>Name</label>
+                            <input type="text" v-model="badgeForm.name" placeholder="Badge name" required />
+                        </div>
+                        <div class="bm-field">
+                            <label>Type</label>
+                            <select v-model.number="badgeForm.type">
+                                <option :value="3">Custom (Bot)</option>
+                                <option :value="0">Common</option>
+                                <option :value="2">Discord Badge</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="bm-field">
+                        <label>Description</label>
+                        <input type="text" v-model="badgeForm.description" placeholder="Short description (optional)" />
+                    </div>
+                    <div class="bm-field">
+                        <label>Image</label>
+                        <div class="bm-upload" @click="$refs.imageInput.click()">
+                            <img v-if="imagePreview" :src="imagePreview" class="bm-upload-preview" alt="preview" />
+                            <span v-else class="bm-upload-placeholder">Click to select image</span>
+                        </div>
+                        <input
+                            ref="imageInput"
+                            type="file"
+                            accept="image/*"
+                            style="display:none"
+                            @change="onImageChange"
+                        />
+                    </div>
+                    <button type="submit" class="bm-btn bm-btn--primary" :disabled="submittingBadge || !badgeForm.image">
+                        {{ submittingBadge ? 'Creating…' : '+ Create Badge' }}
+                    </button>
+                </form>
+
                 <div v-if="loadingBadges" class="bm-empty">Loading badges…</div>
                 <div v-else-if="badges.length === 0" class="bm-empty">No badges found.</div>
                 <ul v-else class="bm-list">
                     <li v-for="badge in badges" :key="badge.id" class="bm-list-item">
-                        <img v-if="badge.image" :src="badge.image" class="bm-badge-img" alt="">
-                        <span class="bm-list-item__name">{{ badge.name }}</span>
+                        <img v-if="badge.image" :src="'/storage/' + badge.image" class="bm-badge-img" alt="">
+                        <div class="bm-list-item__info">
+                            <span class="bm-list-item__name">{{ badge.name }}</span>
+                            <span v-if="badge.description" class="bm-list-item__meta">{{ badge.description }}</span>
+                        </div>
                     </li>
                 </ul>
             </section>
@@ -91,7 +133,10 @@ export default {
             loadingRules: true,
             loadingBadges: true,
             submittingRule: false,
+            submittingBadge: false,
             ruleForm: { trigger_type: '', channel_id: '', threshold: null, badge_id: '' },
+            badgeForm: { name: '', description: '', type: 3, image: null },
+            imagePreview: null,
         };
     },
     mounted() {
@@ -133,6 +178,34 @@ export default {
                 rule.active = !rule.active;
             } catch (e) {
                 console.error('toggleRule error', e);
+            }
+        },
+        onImageChange(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            this.badgeForm.image = file;
+            this.imagePreview = URL.createObjectURL(file);
+        },
+        async createBadge() {
+            this.submittingBadge = true;
+            try {
+                const fd = new FormData();
+                fd.append('name', this.badgeForm.name);
+                fd.append('description', this.badgeForm.description);
+                fd.append('type', this.badgeForm.type);
+                fd.append('image', this.badgeForm.image);
+                await api.post('/api/brand/badges', fd, {
+                    headers: { 'Content-Type': 'multipart/form-data' },
+                });
+                this.badgeForm = { name: '', description: '', type: 3, image: null };
+                this.imagePreview = null;
+                this.$refs.imageInput.value = '';
+                const badgesRes = await api.get('/api/brand/badges');
+                this.badges = badgesRes.data?.badges ?? [];
+            } catch (e) {
+                console.error('createBadge error', e);
+            } finally {
+                this.submittingBadge = false;
             }
         },
     },
@@ -253,7 +326,34 @@ export default {
 .bm-status--on  { background: rgba(193, 245, 39, 0.1); color: #c1f527; }
 .bm-status--off { background: rgba(90, 85, 80, 0.2);   color: #5a5550; }
 
-.bm-badge-img { width: 32px; height: 32px; border-radius: 4px; object-fit: cover; }
+.bm-badge-img { width: 32px; height: 32px; border-radius: 4px; object-fit: cover; flex-shrink: 0; }
+
+.bm-upload {
+    background: #1a1c1f;
+    border: 1px dashed #2a2c2e;
+    border-radius: 4px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    overflow: hidden;
+    transition: border-color 0.15s;
+}
+
+.bm-upload:hover { border-color: #ff6100; }
+
+.bm-upload-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.bm-upload-placeholder {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: #5a5550;
+}
 
 .bm-empty { font-family: 'Share Tech Mono', monospace; font-size: 13px; color: #5a5550; padding: 16px 0; }
 
