@@ -67,6 +67,7 @@ class Kernel extends HttpKernel
         '2fa' => \PragmaRX\Google2FALaravel\Middleware::class,
         'auth.superAdmin' => \App\Http\Middleware\AuthSuperAdminCheck::class,
         'bot.api'         => \App\Http\Middleware\BotApiMiddleware::class,
+        'brand.admin'     => \App\Http\Middleware\AdminMiddleware::class,
 
     ];
 }

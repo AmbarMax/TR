@@ -25,6 +25,12 @@ use App\Http\Controllers\Api\Integrations\StorageController;
 use App\Http\Controllers\Api\ExchangeController;
 use App\Http\Controllers\Api\Forge\ChestController;
 use App\Http\Controllers\Api\Key\KeyController;
+use App\Http\Controllers\Api\Brand\BrandStatsController;
+use App\Http\Controllers\Api\Brand\BrandChannelsController;
+use App\Http\Controllers\Api\Brand\BrandRulesController;
+use App\Http\Controllers\Api\Brand\BrandPollsController;
+use App\Http\Controllers\Api\Brand\BrandEventsController;
+use App\Http\Controllers\Api\Brand\BrandBadgesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,6 +42,23 @@ use App\Http\Controllers\Api\Key\KeyController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+
+// Brand Dashboard API — JWT + admin role required
+Route::prefix('brand')->middleware([JwtMiddleware::class, 'brand.admin'])->group(function () {
+    Route::get('/stats', [BrandStatsController::class, 'index']);
+    Route::get('/channels', [BrandChannelsController::class, 'index']);
+    Route::get('/rules', [BrandRulesController::class, 'index']);
+    Route::post('/rules', [BrandRulesController::class, 'store']);
+    Route::put('/rules/{id}', [BrandRulesController::class, 'update']);
+    Route::get('/badges', [BrandBadgesController::class, 'index']);
+    Route::post('/badges', [BrandBadgesController::class, 'store']);
+    Route::get('/polls', [BrandPollsController::class, 'index']);
+    Route::post('/polls', [BrandPollsController::class, 'store']);
+    Route::post('/polls/{id}/close', [BrandPollsController::class, 'close']);
+    Route::get('/events', [BrandEventsController::class, 'index']);
+    Route::post('/events', [BrandEventsController::class, 'store']);
+    Route::post('/events/{id}/complete', [BrandEventsController::class, 'complete']);
+});
 
 // Bot API routes — authenticated via bot_api_key, no JWT required
 Route::prefix('bot')->middleware('bot.api')->group(function () {
