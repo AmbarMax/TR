@@ -140,7 +140,7 @@ img {
 .email-title,
 .name-title,
 .green-bordered-block {
-  font-family: "JetBrains Mono", monospace;
+  font-family: 'Share Tech Mono', monospace;
 }
 
 .email-title,

@@ -493,7 +493,7 @@ export default {
 }
 
 .dp__input {
-    font-family: JetBrains Mono;
+    font-family: 'Share Tech Mono', monospace;
     background: rgba(186, 186, 186, 0.15);
     border-radius: 4px;
     padding: 10px 12px;

@@ -108,7 +108,7 @@ export default {
   margin-bottom: 12px;
   color: rgba(255, 255, 255, 0.90);
   font-size: 20px;
-  font-family: Orbitron;
+  font-family: 'Share Tech Mono', monospace;
   font-weight: 700;
   line-height: 28px;
 }
@@ -124,7 +124,7 @@ export default {
   gap: 8px;
   color: #FF0088;
   font-size: 16px;
-  font-family: Orbitron;
+  font-family: 'Share Tech Mono', monospace;
   font-weight: 700;
   line-height: 22px;
   word-wrap: break-word

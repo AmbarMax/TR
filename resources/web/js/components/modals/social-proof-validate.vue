@@ -217,7 +217,7 @@ img {
 
 .email-title,
 .name-title{
-  font-family: "JetBrains Mono", monospace;
+  font-family: 'Share Tech Mono', monospace;
 }
 
 .email-title,
@@ -255,7 +255,7 @@ img {
     margin-bottom: 12px;
     color: rgba(255, 255, 255, 0.90);
     font-size: 20px;
-    font-family: Orbitron;
+    font-family: 'Share Tech Mono', monospace;
     font-weight: 700;
     line-height: 28px;
 }
@@ -271,7 +271,7 @@ img {
     gap: 8px;
     color: #cafb01;
     font-size: 16px;
-    font-family: Orbitron;
+    font-family: 'Share Tech Mono', monospace;
     font-weight: 700;
     line-height: 22px;
     word-wrap: break-word

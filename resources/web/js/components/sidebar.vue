@@ -3,7 +3,7 @@
         <div class="front-sidebar_logo">
             <router-link to="/trophy-room" >
                 <div>
-                    <img src="../../../web/images/web/img/logo.svg" alt="logo">
+                    <img src="../../../web/images/web/img/tr-logo.svg" alt="logo">
                 </div>
             </router-link>
             <div>

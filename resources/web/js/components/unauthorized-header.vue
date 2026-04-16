@@ -63,7 +63,7 @@ export default {
         background-color: #CAFB01; height: 36px; width: 130px;
         color: #18181B;
         font-size: 16px;
-        font-family: JetBrains Mono;
+        font-family: 'Share Tech Mono', monospace;
         font-weight: 700;
         line-height: 20px;
         word-wrap: break-word;

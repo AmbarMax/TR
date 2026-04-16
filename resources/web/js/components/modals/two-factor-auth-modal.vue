@@ -122,7 +122,7 @@ export default {
     margin-top: 0;
     color: #BE2020;
     font-size: 14px;
-    font-family: JetBrains Mono;
+    font-family: 'Share Tech Mono', monospace;
     font-weight: 400;
     line-height: 20px;
     word-wrap: break-word;

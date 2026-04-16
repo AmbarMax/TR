@@ -31,7 +31,7 @@ export default {
 .loader_text {
     color: rgba(255, 255, 255, 0.90);
     font-size: 20px;
-    font-family: JetBrains Mono;
+    font-family: 'Share Tech Mono', monospace;
     font-weight: 400;
     line-height: 28px;
     word-wrap: break-word;

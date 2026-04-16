@@ -20,7 +20,7 @@ export default {
 .subscription_prices_wrapper {
   display: flex;
   flex-direction: column;
-  font-family: JetBrains Mono;
+  font-family: 'Share Tech Mono', monospace;
   border-radius: 2px;
   color: white;
   font-weight: 400;
@@ -41,7 +41,7 @@ export default {
 
 .sub_price {
   font-size: 17px;
-  font-family: Orbitron;
+  font-family: 'Share Tech Mono', monospace;
   font-weight: 600;
 }
 

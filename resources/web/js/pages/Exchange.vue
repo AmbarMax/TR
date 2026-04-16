@@ -257,7 +257,7 @@ export default defineComponent({
     max-width: 300px;
     width: 100%;
     color: #FFF;
-    font-family: "JetBrains Mono";
+    font-family: 'Share Tech Mono', monospace;
     font-size: 16px;
     font-style: normal;
     font-weight: 400;
@@ -279,7 +279,7 @@ export default defineComponent({
 
     .text {
         color: #FFF;
-        font-family: Orbitron;
+        font-family: 'Share Tech Mono', monospace;
         font-size: 20px;
         font-style: normal;
         font-weight: 700;
@@ -324,7 +324,7 @@ export default defineComponent({
             gap: 12px;
             .title {
                 color: #FFF;
-                font-family: Orbitron;
+                font-family: 'Share Tech Mono', monospace;
                 font-size: 20px;
                 font-style: normal;
                 font-weight: 700;
@@ -333,7 +333,7 @@ export default defineComponent({
 
             .description {
                 color: var(--text, #BABABA);
-                font-family: "JetBrains Mono";
+                font-family: 'Share Tech Mono', monospace;
                 font-size: 14px;
                 font-style: normal;
                 font-weight: 700;
@@ -367,7 +367,7 @@ export default defineComponent({
     display: flex;
     width: 100%;
     color: rgba(255, 255, 255, 0.9);
-    font-family: JetBrains Mono;
+    font-family: 'Share Tech Mono', monospace;
     justify-content: space-between;
     align-items: center;
     padding: 12px 0;

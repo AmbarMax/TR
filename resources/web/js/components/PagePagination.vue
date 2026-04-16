@@ -255,7 +255,7 @@ export default {
 }
 
 .page, .dots{
-  font-family: JetBrains Mono;
+  font-family: 'Share Tech Mono', monospace;
   color: #BABABA;
   border-radius: 2px;
   padding: 10px 18px;
@@ -274,7 +274,7 @@ export default {
   border: 1px #BABABA solid;
   color: #BABABA;
   font-size: 16px;
-  font-family: JetBrains Mono;
+  font-family: 'Share Tech Mono', monospace;
   font-weight: 400;
   line-height: 20.48px;
   word-wrap: break-word;

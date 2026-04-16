@@ -177,7 +177,7 @@ export default {
     position: absolute;
     color: #BABABA;
     font-size: 14px;
-    font-family: JetBrains Mono;
+    font-family: 'Share Tech Mono', monospace;
     font-weight: 400;
     line-height: 18.20px;
     word-wrap: break-word

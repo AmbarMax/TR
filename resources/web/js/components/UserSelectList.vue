@@ -94,7 +94,7 @@ img {
 
 .email-title,
 .name-title{
-    font-family: "JetBrains Mono", monospace;
+    font-family: 'Share Tech Mono', monospace;
 }
 
 .email-title,

@@ -119,7 +119,7 @@ export default {
     display: flex;
     justify-content: space-between;
     .text {
-        font-family: Orbitron;
+        font-family: 'Share Tech Mono', monospace;
         color: var(--H, rgba(255, 255, 255, 0.90));
         font-size: 20px;
         font-style: normal;
@@ -152,7 +152,7 @@ export default {
     margin-bottom: 12px;
     border-radius: 2px;
     font-size: 18px;
-    font-family: JetBrains Mono;
+    font-family: 'Share Tech Mono', monospace;
     font-weight: 700;
     line-height: 20px;
 }
@@ -165,7 +165,7 @@ export default {
     margin-bottom: 12px;
     color: rgba(255, 255, 255, 0.90);
     font-size: 20px;
-    font-family: Orbitron;
+    font-family: 'Share Tech Mono', monospace;
     font-weight: 700;
     line-height: 28px;
 }

@@ -65,7 +65,7 @@ export default {
 .main-button {
     border-radius: 2px;
     font-size: 18px;
-    font-family: JetBrains Mono;
+    font-family: 'Share Tech Mono', monospace;
     font-weight: 700;
     line-height: 20px;
 }

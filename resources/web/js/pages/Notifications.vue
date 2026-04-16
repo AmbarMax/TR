@@ -162,7 +162,7 @@ export default defineComponent({
   padding: 6px 10px;
   overflow: hidden;
   background: #1F1C20;
-  font-family: JetBrains Mono;
+  font-family: 'Share Tech Mono', monospace;
   border-radius: 2px;
   font-weight: 400;
   line-height: 12px;

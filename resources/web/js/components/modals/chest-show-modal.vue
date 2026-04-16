@@ -104,7 +104,7 @@ export default {
         }
         .title {
             color: var(--H, rgba(255, 255, 255, 0.90));
-            font-family: "JetBrains Mono";
+            font-family: 'Share Tech Mono', monospace;
             font-size: 16px;
             font-style: normal;
             font-weight: 400;
