@@ -16,6 +16,7 @@ import Feed from "../pages/Feed/Feed.vue";
 import ResetTwoFactorAuth from "../pages/ResetTwoFactorAuth.vue";
 import Exchange from "../pages/Exchange.vue";
 import MyChests from "../pages/MyChests.vue";
+import LinkDiscord from "../pages/LinkDiscord.vue";
 
 const routes = [
     {
@@ -108,6 +109,11 @@ const routes = [
                 path: `/virtual-hall/:username`,
                 component: VirtualHall,
                 name: 'virtual-hall'
+            },
+            {
+                path: '/link-discord',
+                component: LinkDiscord,
+                name: 'link-discord'
             },
         ]
     },
