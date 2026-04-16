@@ -4,7 +4,6 @@
       <div class="left-part">
         <img v-if="!item.avatar" src="../../../../images/web/img/user.svg" alt="user" @click="navigateToVirtualHall(item.username)">
         <img v-else :src="item.avatar" alt="user" @click="navigateToVirtualHall(item.username)">
-        <img v-else :src="'storage/users/' + item.id + '/avatar/'+item.avatar+'.jpg'" alt="user" @click="navigateToVirtualHall(item.username)">
         <span>
            <span @click="navigateToVirtualHall(item.username)" class="email-title">{{ item.email }}</span>
            <span @click="navigateToVirtualHall(item.username)" class="name-title">{{ item.name }}</span>
