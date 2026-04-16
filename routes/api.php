@@ -31,6 +31,7 @@ use App\Http\Controllers\Api\Brand\BrandRulesController;
 use App\Http\Controllers\Api\Brand\BrandPollsController;
 use App\Http\Controllers\Api\Brand\BrandEventsController;
 use App\Http\Controllers\Api\Brand\BrandBadgesController;
+use App\Http\Controllers\Api\Brand\BrandTrophiesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -58,6 +59,13 @@ Route::prefix('brand')->middleware([JwtMiddleware::class, 'brand.admin'])->group
     Route::get('/events', [BrandEventsController::class, 'index']);
     Route::post('/events', [BrandEventsController::class, 'store']);
     Route::post('/events/{id}/complete', [BrandEventsController::class, 'complete']);
+
+    // Trophies
+    Route::get('/trophies', [BrandTrophiesController::class, 'index']);
+    Route::post('/trophies', [BrandTrophiesController::class, 'store']);
+    Route::put('/trophies/{id}', [BrandTrophiesController::class, 'update']);
+    Route::delete('/trophies/{id}', [BrandTrophiesController::class, 'destroy']);
+    Route::get('/trophies/{id}/stats', [BrandTrophiesController::class, 'stats']);
 });
 
 // Bot API routes — authenticated via bot_api_key, no JWT required

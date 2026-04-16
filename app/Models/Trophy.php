@@ -22,13 +22,16 @@ class Trophy extends Model
     public const FILE_PATH = 'app/public/trophies';
 
     protected $fillable = [
+        'user_id',
         'name',
         'image',
         'price',
         'receive',
         'description',
-        'is_nft',
+        'type',
+        'weight',
         'max_supply',
+        'is_nft',
         'minted',
         'key_id',
     ];
