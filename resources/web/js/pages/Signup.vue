@@ -2,7 +2,7 @@
     <div class="auth_wrapper">
         <div class="auth_welcome_block">
             <div class="header_logo">
-                <img src="../../../web/images/web/img/tr-isologo.svg" alt="logo">
+                <img src="../../../web/images/web/img/tr-isologo.png" alt="logo">
             </div>
             <div class="greeting_block">
                 <h1>

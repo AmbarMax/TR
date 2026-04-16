@@ -56,8 +56,16 @@ h3 {
 }
 
 .front-sidebar_logo img {
-    width: 160px;
+    width: 64px;
     height: auto;
+}
+
+.header_logo img {
+    max-width: 200px;
+    width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
 }
 
 .main-button {

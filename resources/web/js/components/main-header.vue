@@ -3,14 +3,14 @@
 
         <router-link to="/trophy-room" class="virtual-hall-logo" v-if="$route.name === 'virtual-hall'">
             <div class="logo">
-                <img src="../../../web/images/web/img/tr-isologo.svg" alt="logo">
+                <img src="../../../web/images/web/img/tr-isologo.png" alt="logo">
             </div>
         </router-link>
         <div v-if="store.state.authorized" class="header_right_block">
             <div v-if="isMobile">
                 <router-link to="/trophy-room" >
                     <div @click="openMainPage" class="front-sidebar_logo">
-                        <img src="../../../web/images/web/img/tr-isologo.svg" alt="logo">
+                        <img src="../../../web/images/web/img/tr-isologo.png" alt="logo">
                     </div>
                 </router-link>
             </div>

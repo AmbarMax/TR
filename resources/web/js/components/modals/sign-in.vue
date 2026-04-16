@@ -2,7 +2,7 @@
     <div class="modal_background">
         <div class="modal_window">
             <div class="modal_header_block">
-                <img src="../../../../web/images/web/img/tr-isologo.svg" alt="logo" class="modal_logo">
+                <img src="../../../../web/images/web/img/tr-isologo.png" alt="logo" class="modal_logo">
                 <img src="../../../../web/images/web/img/icons/close.svg" alt="close" @click="closeSignIn" class="modal_close_button">
             </div>
             <h2 class="modal_header">

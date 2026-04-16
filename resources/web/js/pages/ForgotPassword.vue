@@ -2,7 +2,7 @@
     <div class="auth_wrapper forgot_password">
         <div class="auth_welcome_block">
             <div class="header_logo">
-                <img src="../../../web/images/web/img/tr-isologo.svg" alt="logo">
+                <img src="../../../web/images/web/img/tr-isologo.png" alt="logo">
             </div>
         </div>
         <div v-if="!status_success" class="auth_form_block no-bg">
