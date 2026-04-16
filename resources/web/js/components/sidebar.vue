@@ -177,10 +177,8 @@ export default {
         },
         isAdmin() {
             const roles = store.state.user?.roles;
-            if (!roles) return false;
-            return Array.isArray(roles)
-                ? roles.some(r => r === 'admin' || r?.name === 'admin')
-                : false;
+            if (!Array.isArray(roles) || roles.length === 0) return false;
+            return roles.some(r => r?.name === 'Master user');
         },
     },
     methods: {
