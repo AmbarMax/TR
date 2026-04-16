@@ -67,6 +67,12 @@ const routes = [
                 path: '/my-chests',
                 component: MyChests,
                 name: 'my-chests'
+            },
+            {
+                path: '/brand-dashboard',
+                component: () => import('../pages/BrandDashboard/BrandDashboard.vue'),
+                name: 'brand-dashboard',
+                meta: { requiresAuth: true }
             }
         ]
     },

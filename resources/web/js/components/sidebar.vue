@@ -134,6 +134,17 @@
                     </span>
               </router-link>
             </li>
+            <li v-if="isAdmin">
+                <router-link to="/brand-dashboard" :class="{ active_item: $route.path === '/brand-dashboard' }">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.3"/>
+                        <rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.3"/>
+                        <rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.3"/>
+                        <rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.3"/>
+                    </svg>
+                    <span>Brand Dashboard</span>
+                </router-link>
+            </li>
         </ul>
         <ul class="sidebar_footer_links">
             <li @click="redirectToTwitter" class="cursor-pointer">
@@ -162,9 +173,15 @@ export default {
             return store.state.activeSideBar;
         },
         isMobile() {
-            // return window.innerWidth <= 768;
             return this.windowWidth <= 968;
-        }
+        },
+        isAdmin() {
+            const roles = store.state.user?.roles;
+            if (!roles) return false;
+            return Array.isArray(roles)
+                ? roles.some(r => r === 'admin' || r?.name === 'admin')
+                : false;
+        },
     },
     methods: {
         closeSideBar() {
