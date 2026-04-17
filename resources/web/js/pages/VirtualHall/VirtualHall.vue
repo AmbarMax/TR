@@ -67,7 +67,7 @@
           {{ followStatus === follow ? 'Following' : 'Follow' }}
         </button>
       </template>
-      <button class="vh-btn vh-btn--secondary" @click="copyLink">
+      <button class="vh-btn vh-btn--secondary vh-btn--copy" @click="copyLink">
         Copy Link
       </button>
     </div>
@@ -146,7 +146,7 @@
         </div>
 
         <!-- Discord Badges -->
-        <div class="vh-platform-group" v-if="discord_badges.length && (badgeFilter === 'all' || badgeFilter === 'discord')">
+        <div class="vh-platform-group" v-show="discord_badges.length && (badgeFilter === 'all' || badgeFilter === 'discord')">
           <div class="vh-platform-header">
             <img src="../../../images/web/img/icons/discord.svg" alt="Discord" class="vh-platform-icon" />
             <span class="vh-platform-name">Discord</span>
@@ -163,7 +163,7 @@
         </div>
 
         <!-- Steam Badges -->
-        <div class="vh-platform-group" v-if="steam_badges.length && (badgeFilter === 'all' || badgeFilter === 'steam')">
+        <div class="vh-platform-group" v-show="steam_badges.length && (badgeFilter === 'all' || badgeFilter === 'steam')">
           <div class="vh-platform-header">
             <img src="../../../images/web/img/icons/steam.svg" alt="Steam" class="vh-platform-icon" />
             <span class="vh-platform-name">Steam</span>
@@ -180,7 +180,7 @@
         </div>
 
         <!-- GitHub Badges -->
-        <div class="vh-platform-group" v-if="github_badges.length && (badgeFilter === 'all' || badgeFilter === 'github')">
+        <div class="vh-platform-group" v-show="github_badges.length && (badgeFilter === 'all' || badgeFilter === 'github')">
           <div class="vh-platform-header">
             <img src="../../../images/web/img/icons/github.svg" alt="GitHub" class="vh-platform-icon" />
             <span class="vh-platform-name">GitHub</span>
@@ -627,6 +627,10 @@ export default defineComponent({
 .vh-btn--secondary:hover {
   border-color: #9a9590;
   color: #feeddf;
+}
+
+.vh-btn--copy {
+  margin-left: auto;
 }
 
 .vh-btn:disabled {
