@@ -152,14 +152,14 @@ h3 {
 }
 
 .active_item {
-    border-left: 3px solid $accent;
-    background-color: rgba($accent, 0.05) !important;
+    border-left: 3px solid $primary;
+    background-color: rgba($primary, 0.08) !important;
     padding: 8px 40px 8px 37px !important;
-    color: $accent !important;
+    color: $primary !important;
 }
 
 .active_item span {
-    color: $accent !important;
+    color: $primary !important;
 }
 
 .sidebar_footer_links {
