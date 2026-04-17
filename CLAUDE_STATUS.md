@@ -10,7 +10,7 @@
 
 ## Completed Phases
 
-### Phase 1–6 — Core Platform (pre-2.0 work, all deployed)
+### Pre-2.0 — Core Platform (legacy, all deployed)
 - User auth: JWT login/register/logout, 2FA, password reset
 - Profile: avatar, background, country, social links
 - Integrations: GitHub badges, Steam profile badges (broken — see bugs), Discord role/badge sync
@@ -18,6 +18,36 @@
 - Forge: trophy claim flow (Ambar cost → Uru reward), chest/key system
 - Virtual hall (`/virtual-hall/:username`) — public profile, no auth required
 - Bot user linking (`/bot/link`) — Discord → TrophyRoom account association
+
+---
+
+## UI Renovation Phases (from CLAUDE_FRONTEND_OPS.md)
+
+### Phase 1 — Shell & Global Styles ✓ Complete
+- Design tokens (`_variables.scss`): new palette (`$bg #000003`, `$primary #ff6100`, `$accent #c1f527`, `$text #feeddf`)
+- `sidebar.vue`: TrophyRoom SVG icons, orange active state, TrophyRoom social links, Brand Dashboard nav item
+- `main-header.vue`: removed MetaMask/Connect Wallet, updated font, cleaned up Web3 import
+- `style.scss`: body background, sidebar/header base styles rewritten for new identity
+- `web.blade.php`: title changed from "Ambar" to "TrophyRoom", Google Fonts updated
+- Logo: replaced Ambar logo with `tr-isologo.png` across all components
+- Favicon: regenerated from `tr-isologo.png` with transparency
+
+### Phase 2 — Public Pages ✗ Pending
+Renovation of unauthenticated pages: landing/home, login, register, forgot-password, reset-password, virtual hall. Apply new design tokens, typography, and layout to all pages a non-logged-in user sees.
+
+### Phase 3 — User Profile ✗ Pending
+Redesign of `/#/profile` and `/#/trophy-room` (own profile view) and `/virtual-hall/:username` (public view). Badge grid, trophy showcase, achievement timeline, integration connection cards.
+
+### Phase 4 — Social & Feed ✗ Pending
+Redesign of `/#/feed`, followers/following pages, achievement sharing modals. Apply new card styles, typography, and interaction patterns.
+
+### Phase 5 — Settings & Integrations ✗ Pending
+Redesign of settings page (password, 2FA, avatar/background upload) and integration connection flow (Steam, GitHub, Discord, Riot, Strava connect/disconnect cards).
+
+### Phase 6 — Admin Polish ✗ Pending
+Light cleanup of the legacy Blade admin at `/admin/`: fix broken trophy creation (blocked by Web3 coupling), update language (NFT → Trophy, mint → forge), minimal visual alignment. Does NOT require full redesign.
+
+---
 
 ### Phase 7A — Brand Dashboard Backend + Frontend
 - Route group `GET|POST|PUT|DELETE /api/brand/*` behind `JwtMiddleware` + `brand.admin` middleware
