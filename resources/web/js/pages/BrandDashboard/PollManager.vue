@@ -91,7 +91,12 @@
                             >
                                 CSV
                             </button>
-                            <button class="pm-btn pm-btn--ghost pm-btn--sm" @click="closePoll(poll.id)" v-if="poll.status !== 'closed'">Close</button>
+                            <button
+                                v-if="poll.status === 'active'"
+                                class="pm-btn pm-btn--ghost pm-btn--sm"
+                                @click="closePoll(poll.id)"
+                            >Close</button>
+                            <button class="pm-btn pm-btn--danger pm-btn--sm" @click="deletePoll(poll.id)">Delete</button>
                         </div>
                     </li>
                 </ul>
@@ -168,6 +173,16 @@ export default {
                 if (poll) poll.status = 'closed';
             } catch (e) {
                 console.error('closePoll error', e);
+            }
+        },
+
+        async deletePoll(id) {
+            if (!confirm('Delete this poll and all its votes?')) return;
+            try {
+                await api.delete(`/api/brand/polls/${id}`);
+                this.polls = this.polls.filter(p => p.id !== id);
+            } catch (e) {
+                console.error('deletePoll error', e);
             }
         },
 
@@ -300,6 +315,7 @@ export default {
 .pm-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 .pm-btn--primary { background: #c1f527; color: #000003; align-self: flex-start; }
 .pm-btn--ghost   { background: transparent; border: 1px solid #2a2c2e; color: #9a9590; }
+.pm-btn--danger  { background: transparent; border: 1px solid rgba(255,80,80,0.3); color: #ff5050; }
 .pm-btn--sm      { padding: 4px 10px; font-size: 11px; }
 
 .pm-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }

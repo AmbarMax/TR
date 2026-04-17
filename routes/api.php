@@ -62,6 +62,7 @@ Route::prefix('brand')->middleware([JwtMiddleware::class, 'brand.admin'])->group
     Route::get('/polls', [BrandPollsController::class, 'index']);
     Route::post('/polls', [BrandPollsController::class, 'store']);
     Route::post('/polls/{id}/close', [BrandPollsController::class, 'close']);
+    Route::delete('/polls/{id}', [BrandPollsController::class, 'destroy']);
     Route::get('/polls/{id}/results', [BrandPollsController::class, 'results']);
     Route::get('/events', [BrandEventsController::class, 'index']);
     Route::post('/events', [BrandEventsController::class, 'store']);

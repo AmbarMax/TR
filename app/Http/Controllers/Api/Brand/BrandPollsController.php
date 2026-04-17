@@ -99,6 +99,23 @@ class BrandPollsController extends Controller
         ], 200);
     }
 
+    public function destroy(Request $request, $id)
+    {
+        $guildConnection = $this->getGuildConnection();
+
+        if (!$guildConnection) {
+            return response()->json(['error' => 'No guild connected.'], 200);
+        }
+
+        $poll = BotPoll::where('id', $id)
+            ->where('guild_id', $guildConnection->guild_id)
+            ->firstOrFail();
+
+        $poll->delete();
+
+        return response()->json(['message' => 'Poll deleted.'], 200);
+    }
+
     public function close(Request $request, $id)
     {
         $guildConnection = $this->getGuildConnection();
