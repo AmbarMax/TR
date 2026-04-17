@@ -22,7 +22,7 @@
                             <label>Channel</label>
                             <select v-model="form.channel_id" required>
                                 <option value="">Select channel</option>
-                                <option v-for="ch in channels" :key="ch.id" :value="ch.id">{{ ch.name }}</option>
+                                <option v-for="ch in channels" :key="ch.id" :value="ch.channel_id">{{ ch.name }}</option>
                             </select>
                         </div>
                         <div class="pm-field">
