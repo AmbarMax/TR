@@ -2345,7 +2345,8 @@ h3 {
 }
 
 .auth-card {
-  background: $surface;
+  background: rgba($surface, 0.85);
+  backdrop-filter: blur(8px);
   border: 1px solid $border;
   border-radius: 6px;
   padding: 28px 24px;
