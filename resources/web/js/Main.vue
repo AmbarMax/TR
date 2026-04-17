@@ -1,7 +1,7 @@
 <template>
-    <sideBar></sideBar>
+    <sideBar v-if="$route.name !== 'virtual-hall'"></sideBar>
     <div class="page">
-        <mainHeader></mainHeader>
+        <mainHeader v-if="$route.name !== 'virtual-hall'"></mainHeader>
         <Loader v-if="StatusLoading" />
         <router-view v-else></router-view>
     </div>

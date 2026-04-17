@@ -9,7 +9,12 @@
       <div class="vh-banner__bg">
         <img v-if="user.background" :src="user.background" alt="" class="vh-banner__img" />
       </div>
-      <div class="vh-banner__url">trophyroom.gg/{{ user.username }}</div>
+      <button v-if="isLoggedIn" class="vh-banner__back" @click="$router.push('/trophy-room')">
+        ← Trophy Room
+      </button>
+      <div class="vh-banner__url" @click="copyLink" title="Copy link">
+        trophyroom.gg/{{ user.username }}
+      </div>
     </div>
 
     <div class="vh-profile">
@@ -259,7 +264,8 @@ export default defineComponent({
         rune: 0,
       },
       userNFTs: 0,
-      badgeFilter: 'all'
+      badgeFilter: 'all',
+      isLoggedIn: false
     }
   },
   methods: {
@@ -384,6 +390,7 @@ export default defineComponent({
     },
   },
   mounted() {
+    this.isLoggedIn = !!localStorage.getItem('access_token');
     this.getUserData(this.$route.params.username);
   },
   computed: {
@@ -439,6 +446,27 @@ export default defineComponent({
   object-fit: cover;
 }
 
+.vh-banner__back {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  background: rgba(0, 0, 3, 0.7);
+  border: 1px solid #2a2c2e;
+  color: #feeddf;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  padding: 6px 14px;
+  border-radius: 4px;
+  backdrop-filter: blur(4px);
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.vh-banner__back:hover {
+  border-color: #9a9590;
+  color: #feeddf;
+}
+
 .vh-banner__url {
   position: absolute;
   top: 16px;
@@ -449,6 +477,14 @@ export default defineComponent({
   padding: 6px 12px;
   border-radius: 4px;
   backdrop-filter: blur(4px);
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+.vh-banner__url:hover {
+  color: #feeddf;
+  background: rgba(0, 0, 3, 0.9);
 }
 
 /* Profile */
