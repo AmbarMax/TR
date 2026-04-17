@@ -53,6 +53,8 @@ Route::prefix('brand')->middleware([JwtMiddleware::class, 'brand.admin'])->group
     Route::put('/rules/{id}', [BrandRulesController::class, 'update']);
     Route::get('/badges', [BrandBadgesController::class, 'index']);
     Route::post('/badges', [BrandBadgesController::class, 'store']);
+    Route::put('/badges/{id}', [BrandBadgesController::class, 'update']);
+    Route::delete('/badges/{id}', [BrandBadgesController::class, 'destroy']);
     Route::get('/polls', [BrandPollsController::class, 'index']);
     Route::post('/polls', [BrandPollsController::class, 'store']);
     Route::post('/polls/{id}/close', [BrandPollsController::class, 'close']);

@@ -106,15 +106,43 @@
                     <span v-if="badgeSuccess" class="bm-success">{{ badgeSuccess }}</span>
                 </form>
 
+                <div v-if="editingBadge" class="bm-form bm-edit-form">
+                    <span class="bd-section-label" style="margin-bottom:8px">Edit Badge</span>
+                    <div class="bm-field">
+                        <label>Name</label>
+                        <input type="text" v-model="editForm.name" required />
+                    </div>
+                    <div class="bm-field">
+                        <label>Description</label>
+                        <input type="text" v-model="editForm.description" />
+                    </div>
+                    <div class="bm-field">
+                        <label>Type</label>
+                        <select v-model.number="editForm.type">
+                            <option :value="3">Custom (Bot)</option>
+                            <option :value="0">Common</option>
+                            <option :value="2">Discord Badge</option>
+                        </select>
+                    </div>
+                    <div class="bm-form-row" style="margin-top:4px">
+                        <button type="button" class="bm-btn bm-btn--primary" :disabled="savingEdit" @click="saveEdit">
+                            {{ savingEdit ? 'Saving…' : 'Save' }}
+                        </button>
+                        <button type="button" class="bm-btn bm-btn--ghost" @click="cancelEdit">Cancel</button>
+                    </div>
+                </div>
+
                 <div v-if="loadingBadges" class="bm-empty">Loading badges…</div>
                 <div v-else-if="badges.length === 0" class="bm-empty">No badges found.</div>
-                <ul v-else class="bm-list">
+                <ul v-else class="bm-list bm-list--scroll">
                     <li v-for="badge in badges" :key="badge.id" class="bm-list-item">
-                        <img v-if="badge.image" :src="'/storage/' + badge.image" class="bm-badge-img" alt="">
+                        <img v-if="badge.image" :src="'/storage/' + badge.image.replace(/^public\//, '')" class="bm-badge-img" alt="">
                         <div class="bm-list-item__info">
                             <span class="bm-list-item__name">{{ badge.name }}</span>
                             <span v-if="badge.description" class="bm-list-item__meta">{{ badge.description }}</span>
                         </div>
+                        <button class="bm-btn bm-btn--ghost bm-btn--sm" @click="startEdit(badge)">Edit</button>
+                        <button class="bm-btn bm-btn--danger bm-btn--sm" @click="deleteBadge(badge)">Delete</button>
                     </li>
                 </ul>
             </section>
@@ -139,6 +167,9 @@ export default {
             ruleForm: { trigger_type: '', channel_id: '', threshold: null, badge_id: '' },
             badgeForm: { name: '', description: '', type: 3, image: null },
             imagePreview: null,
+            editingBadge: null,
+            editForm: { name: '', description: '', type: 3 },
+            savingEdit: false,
         };
     },
     mounted() {
@@ -187,6 +218,35 @@ export default {
             if (!file) return;
             this.badgeForm.image = file;
             this.imagePreview = URL.createObjectURL(file);
+        },
+        startEdit(badge) {
+            this.editingBadge = badge;
+            this.editForm = { name: badge.name, description: badge.description ?? '', type: badge.type };
+        },
+        cancelEdit() {
+            this.editingBadge = null;
+        },
+        async saveEdit() {
+            this.savingEdit = true;
+            try {
+                await api.put(`/api/brand/badges/${this.editingBadge.id}`, this.editForm);
+                this.editingBadge = null;
+                const badgesRes = await api.get('/api/brand/badges');
+                this.badges = badgesRes.data?.badges ?? [];
+            } catch (e) {
+                console.error('[BadgeManager] saveEdit error', e?.response?.data ?? e);
+            } finally {
+                this.savingEdit = false;
+            }
+        },
+        async deleteBadge(badge) {
+            if (!confirm(`Delete badge "${badge.name}"?`)) return;
+            try {
+                await api.delete(`/api/brand/badges/${badge.id}`);
+                this.badges = this.badges.filter(b => b.id !== badge.id);
+            } catch (e) {
+                console.error('[BadgeManager] deleteBadge error', e?.response?.data ?? e);
+            }
         },
         async createBadge() {
             this.submittingBadge = true;
@@ -301,6 +361,7 @@ export default {
 
 .bm-btn--primary { background: #c1f527; color: #000003; align-self: flex-start; }
 .bm-btn--ghost   { background: transparent; border: 1px solid #2a2c2e; color: #9a9590; }
+.bm-btn--danger  { background: transparent; border: 1px solid rgba(255,80,80,0.3); color: #ff5050; }
 .bm-btn--sm      { padding: 4px 10px; font-size: 11px; }
 
 .bm-list {
@@ -366,6 +427,10 @@ export default {
 }
 
 .bm-empty { font-family: 'Share Tech Mono', monospace; font-size: 13px; color: #5a5550; padding: 16px 0; }
+
+.bm-list--scroll { max-height: 320px; overflow-y: auto; }
+
+.bm-edit-form { margin-bottom: 0; }
 
 @media (max-width: 900px) {
     .bm-cols { grid-template-columns: 1fr; }

@@ -70,11 +70,49 @@ class BrandBadgesController extends Controller
         $badge = Badge::create([
             'integration_id' => $integration->id,
             'name'           => $request->name,
-            'image'          => 'public/integrations/brand/' . $filename,
+            'image'          => 'integrations/brand/' . $filename,
             'description'    => $request->description ?? '',
             'type'           => $request->input('type', 3),
         ]);
 
         return response()->json(['badge' => $badge], 201);
+    }
+
+    public function update(Request $request, string $id)
+    {
+        $request->validate([
+            'name'        => 'sometimes|string|max:255',
+            'description' => 'nullable|string',
+            'type'        => 'nullable|integer',
+        ]);
+
+        $integration = Integration::where('name', 'brand')->first();
+        if (!$integration) {
+            return response()->json(['error' => 'Not found.'], 404);
+        }
+
+        $badge = Badge::where('id', $id)
+            ->where('integration_id', $integration->id)
+            ->firstOrFail();
+
+        $badge->update($request->only(['name', 'description', 'type']));
+
+        return response()->json(['badge' => $badge], 200);
+    }
+
+    public function destroy(string $id)
+    {
+        $integration = Integration::where('name', 'brand')->first();
+        if (!$integration) {
+            return response()->json(['error' => 'Not found.'], 404);
+        }
+
+        $badge = Badge::where('id', $id)
+            ->where('integration_id', $integration->id)
+            ->firstOrFail();
+
+        $badge->delete();
+
+        return response()->json(['message' => 'Deleted.'], 200);
     }
 }
