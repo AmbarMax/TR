@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Badge;
 use App\Models\BadgeRule;
 use App\Models\GuildConnection;
+use App\Models\Integration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
@@ -62,8 +63,13 @@ class BrandBadgesController extends Controller
             return response()->json(['error' => 'Image upload failed.'], 500);
         }
 
+        $integration = Integration::firstOrCreate(
+            ['name' => 'brand'],
+            ['active' => true]
+        );
+
         $badge = Badge::create([
-            'integration_id' => Auth::id(),
+            'integration_id' => $integration->id,
             'name'           => $request->name,
             'image'          => 'public/integrations/brand/' . $filename,
             'description'    => $request->description ?? '',
