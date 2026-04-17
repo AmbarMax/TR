@@ -419,6 +419,7 @@ export default defineComponent({
 
 <style scoped>
 .vh {
+  width: 100%;
   max-width: 860px;
   margin: 0 auto;
   padding: 0 20px 60px;
