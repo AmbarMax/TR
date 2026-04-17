@@ -421,6 +421,7 @@ export default defineComponent({
 .vh {
   width: 100%;
   max-width: 860px;
+  min-width: min(860px, 100vw - 40px);
   margin: 0 auto;
   padding: 0 20px 60px;
   font-family: 'Share Tech Mono', monospace;
