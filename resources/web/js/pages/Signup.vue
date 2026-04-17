@@ -1,56 +1,81 @@
 <template>
-    <div class="auth_wrapper">
-        <div class="auth_welcome_block">
-            <div class="header_logo">
-                <img src="../../../web/images/web/img/tr-isologo.png" alt="logo">
-            </div>
-            <div class="greeting_block">
-                <h1>
-                    Welcome to Ambar
-                </h1>
-                <p>
-                    A realm where users validate, compete, and immortalize achievements, crafting a legacy of growth in a rewarding ecosystem
-                </p>
-            </div>
-        </div>
-        <div class="auth_form_block">
-            <h2 class="modal_header">
-                Sign up to Ambar
-            </h2>
-            <h4 class="auth_label">Name</h4>
-            <input type="text" class="modal_input" v-model="name" v-bind:class="{ 'has-error': getError('name') }">
-            <span class="validation_error" v-if="getError('name')">{{ getError('name') }}</span>
-            <h4 class="auth_label">Username</h4>
-            <input type="text" @input="filterUsername" class="modal_input" v-model="username" v-bind:class="{ 'has-error': getError('username') }">
-            <span class="validation_error" v-if="getError('username')">{{ getError('username') }}</span>
-            <h4 class="auth_label">Email</h4>
-            <input type="email" class="modal_input" v-model="email" v-bind:class="{ 'has-error': getError('email') }">
-            <span class="validation_error" v-if="getError('email')">{{ getError('email') }}</span>
-            <h4 class="auth_label">Password</h4>
-            <div class="password_input_block">
-                <input type="password" class="modal_input" v-model="password" ref="passwordInput" v-bind:class="{ 'has-error': getError('password') }">
-                <img v-if="passEyes.pass" src="../../../web/images/web/img/icons/eye-open.svg" alt="eye_open" @click="togglePassView">
-                <img v-else src="../../../web/images/web/img/icons/eye-close.svg" alt="eye_close" @click="togglePassView">
-            </div>
-            <span class="validation_error" v-if="getError('password')">{{ getError('password') }}</span>
-            <h4 class="auth_label">Confirm your password</h4>
-            <div class="password_input_block">
-                <input type="password" class="modal_input" v-model="confirm_password" ref="passwordInputConfirm" v-bind:class="{ 'has-error': getError('confirm_password') }">
-                <img v-if="passEyes.confirm" src="../../../web/images/web/img/icons/eye-open.svg" alt="eye_open" @click="togglePassConfirmView">
-                <img v-else src="../../../web/images/web/img/icons/eye-close.svg" alt="eye_close" @click="togglePassConfirmView">
-            </div>
-            <span class="validation_error" v-if="getError('confirm_password')">{{ getError('confirm_password') }}</span>
-            <button-white :text="create_account_button_text" class="sign_in_button" @click="signUp"></button-white>
-            <div class="modal_dont_have_account">
-                <span>
-                    Already have an account?
-                </span>
-                <router-link to="/login" class="login-signup_link btn-yellow">
-                    Sign in
-                </router-link>
-            </div>
-        </div>
+  <div>
+    <!-- Logo + Title -->
+    <div class="auth-logo-block">
+      <div class="auth-logo-icon">
+        <img src="../../../web/images/web/img/tr-isologo.png" alt="TrophyRoom" />
+      </div>
+      <h1 class="auth-title">Create your account</h1>
+      <p class="auth-tagline">Start building your trophy case.</p>
     </div>
+
+    <!-- Signup Form -->
+    <div class="auth-card">
+      <div class="auth-field">
+        <label class="auth-label">Name</label>
+        <input type="text" class="auth-input" v-model="name" :class="{ 'has-error': getError('name') }" placeholder="Your name">
+        <span class="auth-error" v-if="getError('name')">{{ getError('name') }}</span>
+      </div>
+
+      <div class="auth-field">
+        <label class="auth-label">Username</label>
+        <input type="text" class="auth-input" v-model="username" @input="filterUsername" :class="{ 'has-error': getError('username') }" placeholder="Choose a username">
+        <span class="auth-error" v-if="getError('username')">{{ getError('username') }}</span>
+      </div>
+
+      <div class="auth-field">
+        <label class="auth-label">Email</label>
+        <input type="email" class="auth-input" v-model="email" :class="{ 'has-error': getError('email') }" placeholder="player@example.com">
+        <span class="auth-error" v-if="getError('email')">{{ getError('email') }}</span>
+      </div>
+
+      <div class="auth-field">
+        <label class="auth-label">Password</label>
+        <div class="auth-password-wrap">
+          <input type="password" class="auth-input" v-model="password" ref="passwordInput" :class="{ 'has-error': getError('password') }">
+          <span class="auth-password-toggle" @click="togglePassView">
+            <img v-if="passEyes.pass" src="../../../web/images/web/img/icons/eye-open.svg" alt="show">
+            <img v-else src="../../../web/images/web/img/icons/eye-close.svg" alt="hide">
+          </span>
+        </div>
+        <span class="auth-error" v-if="getError('password')">{{ getError('password') }}</span>
+      </div>
+
+      <div class="auth-field">
+        <label class="auth-label">Confirm password</label>
+        <div class="auth-password-wrap">
+          <input type="password" class="auth-input" v-model="confirm_password" ref="passwordInputConfirm" :class="{ 'has-error': getError('confirm_password') }">
+          <span class="auth-password-toggle" @click="togglePassConfirmView">
+            <img v-if="passEyes.confirm" src="../../../web/images/web/img/icons/eye-open.svg" alt="show">
+            <img v-else src="../../../web/images/web/img/icons/eye-close.svg" alt="hide">
+          </span>
+        </div>
+        <span class="auth-error" v-if="getError('confirm_password')">{{ getError('confirm_password') }}</span>
+      </div>
+
+      <div class="auth-submit">
+        <button-white :text="create_account_button_text" @click="signUp"></button-white>
+      </div>
+
+      <div class="auth-footer">
+        <span>Already have an account? </span>
+        <router-link to="/login" class="auth-link">Sign in</router-link>
+      </div>
+    </div>
+
+    <!-- Social Signup -->
+    <div class="auth-social">
+      <div class="auth-social-divider">
+        <div class="auth-social-divider-line"></div>
+        <span class="auth-social-divider-text">or sign up with</span>
+        <div class="auth-social-divider-line"></div>
+      </div>
+      <div class="auth-social-buttons">
+        <div class="auth-social-btn">Discord</div>
+        <div class="auth-social-btn">Steam</div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>

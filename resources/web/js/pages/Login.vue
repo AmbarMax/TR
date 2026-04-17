@@ -1,79 +1,86 @@
 <template>
-    <div class="auth_wrapper">
-        <div class="auth_welcome_block">
-            <div class="header_logo">
-                <img src="../../../web/images/web/img/tr-isologo.png" alt="logo">
-            </div>
-            <div class="greeting_block">
-                <h1 >
-                    Welcome to Ambar
-                </h1>
-                <p>
-                    A realm where users validate, compete, and immortalize achievements, crafting a legacy of growth in a rewarding ecosystem.
-                </p>
-            </div>
-        </div>
-        <div class="auth_form_block" v-if="!twoFactorAuth && !twoFactorReset">
-            <h2 class="modal_header">
-                Sign in to Ambar
-            </h2>
-            <h4 class="modal_label">Username or Email</h4>
-            <input type="email" class="modal_input" v-model="email">
-            <span class="validation_error" v-if="errorLogin">Invalid credentials</span>
-            <div class="modal_password">
-                <h4>Password</h4>
-                <a href="/forgot-password">Forgot?</a>
-            </div>
-            <div class="password_input_block">
-                <input type="password" class="modal_input" v-model="password" ref="passwordInput">
-                <img v-if="eyeIsOpen" src="../../../web/images/web/img/icons/eye-open.svg" alt="eye_open" @click="togglePassView">
-                <img v-if="!eyeIsOpen" src="../../../web/images/web/img/icons/eye-close.svg" alt="eye_close" @click="togglePassView">
-            </div>
-            <button-white :text="sign_in_button_text" class="sign_in_button" @click="signIn"></button-white>
-            <div class="modal_dont_have_account">
-                <span>
-                    Don't have an account?
-                </span>
-                <router-link to="/sign-up" class="login-signup_link">
-                    Sign up
-                </router-link>
-            </div>
-<!--            <div class="separator">
-                <div class="separator_text">
-                    or sign in with
-                </div>
-            </div>
-            <div class="modal_sign_up_with_buttons">
-                <button-white @click="loginGithub" :text="git_hub_button_text" :img_link="git_hub_button_image" class="modal_sign_up_with_button"></button-white>
-                <button-white :text="discord_button_text" :img_link="discord_button_image" class="modal_sign_up_with_button"></button-white>
-                <button-white @click="loginSteam" :text="steam_button_text" :img_link="steam_button_image" class="modal_sign_up_with_button"></button-white>
-            </div>-->
-        </div>
-        <div class="auth_form_block" v-else-if="twoFactorAuth && !twoFactorReset">
-            <h2 class="modal_header">
-                Two factor authentication
-            </h2>
-            <h4 class="modal_label">Please fill your single use code:</h4>
-            <input type="text" class="modal_input" v-model="twoFactorCode" @input="formatInput">
-            <span class="validation_error" v-if="twoFactorErrorStatus">{{twoFactorErrorMessage}}</span>
-            <a style="font-size: 14px; margin-top:6px;" class="modal_label">Dont have access? <a @click="disable2FA" style="color: white;font-size: 14px; margin-top:6px;" class="modal_label" href="#">Use one-time code</a></a>
-
-            <button-white :text="'Continue'" class="sign_in_button" @click="signInContinue"></button-white>
-        </div>
-        <div class="auth_form_block" v-else-if="twoFactorReset">
-            <h2 class="modal_header">
-                Reset link sent to your email!
-            </h2>
-            <h3 style="font-size: 14px" class="modal_header">
-                Follow the link sent in the email to reset your password.
-            </h3>
-            <div class="modal_dont_have_account">
-                <router-link @click="goToLoginPage" to="/login" class="login-signup_link">
-                    Back to login
-                </router-link>
-            </div>
-        </div>
+  <div>
+    <!-- Logo + Title -->
+    <div class="auth-logo-block">
+      <div class="auth-logo-icon">
+        <img src="../../../web/images/web/img/tr-isologo.png" alt="TrophyRoom" />
+      </div>
+      <h1 class="auth-title">Sign in to TrophyRoom</h1>
+      <p class="auth-tagline">Your achievements. One place.</p>
     </div>
+
+    <!-- Login Form -->
+    <div class="auth-card" v-if="!twoFactorAuth && !twoFactorReset">
+      <div class="auth-field">
+        <label class="auth-label">Username or email</label>
+        <input type="email" class="auth-input" v-model="email" placeholder="player@example.com">
+        <span class="auth-error" v-if="errorLogin">Invalid credentials</span>
+      </div>
+
+      <div class="auth-field">
+        <div class="auth-label-row">
+          <label class="auth-label" style="margin-bottom: 0;">Password</label>
+          <a href="/forgot-password" class="auth-forgot-link">Forgot?</a>
+        </div>
+        <div class="auth-password-wrap">
+          <input type="password" class="auth-input" v-model="password" ref="passwordInput">
+          <span class="auth-password-toggle" @click="togglePassView">
+            <img v-if="eyeIsOpen" src="../../../web/images/web/img/icons/eye-open.svg" alt="show">
+            <img v-else src="../../../web/images/web/img/icons/eye-close.svg" alt="hide">
+          </span>
+        </div>
+      </div>
+
+      <div class="auth-submit">
+        <button-white :text="sign_in_button_text" @click="signIn"></button-white>
+      </div>
+
+      <div class="auth-footer">
+        <span>Don't have an account? </span>
+        <router-link to="/sign-up" class="auth-link">Sign up</router-link>
+      </div>
+    </div>
+
+    <!-- 2FA Form -->
+    <div class="auth-card" v-else-if="twoFactorAuth && !twoFactorReset">
+      <div class="auth-field">
+        <label class="auth-label">One-time code</label>
+        <input type="text" class="auth-input auth-2fa-input" v-model="twoFactorCode" @input="formatInput" placeholder="000000">
+        <span class="auth-error" v-if="twoFactorErrorStatus">{{ twoFactorErrorMessage }}</span>
+      </div>
+      <p class="auth-2fa-help">
+        Don't have access? <a @click="disable2FA" href="#">Use recovery code</a>
+      </p>
+      <div class="auth-submit">
+        <button-white :text="'Continue'" @click="signInContinue"></button-white>
+      </div>
+    </div>
+
+    <!-- 2FA Reset Confirmation -->
+    <div class="auth-card" v-else-if="twoFactorReset" style="text-align: center;">
+      <div class="auth-success-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c1f527" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      </div>
+      <h2 class="auth-title" style="font-size: 18px;">Reset link sent!</h2>
+      <p class="auth-success-message">Check your email and follow the link to reset your password.</p>
+      <div class="auth-footer" style="margin-top: 24px;">
+        <router-link to="/login" class="auth-link" @click="goToLoginPage">Back to login</router-link>
+      </div>
+    </div>
+
+    <!-- Social Login -->
+    <div class="auth-social" v-if="!twoFactorAuth && !twoFactorReset">
+      <div class="auth-social-divider">
+        <div class="auth-social-divider-line"></div>
+        <span class="auth-social-divider-text">or continue with</span>
+        <div class="auth-social-divider-line"></div>
+      </div>
+      <div class="auth-social-buttons">
+        <div class="auth-social-btn">Discord</div>
+        <div class="auth-social-btn" @click="loginSteam">Steam</div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>

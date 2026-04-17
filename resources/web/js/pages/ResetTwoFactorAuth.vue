@@ -1,35 +1,44 @@
 <template>
-    <div class="auth_wrapper">
-        <div class="auth_welcome_block">
-            <div class="header_logo">
-                <img src="../../../web/images/web/img/tr-isologo.png" alt="logo">
-            </div>
-        </div>
-        <div v-if="!status" class="auth_form_block">
-            <h2 class="modal_header">
-                Reset two-factor authentication 🔒
-            </h2>
-            <h3 class="modal_label">
-                To reset two-factor authentication, enter the code you received after enabling two-factor authentication.
-            </h3>
-            <input style="margin-top: 24px" type="text" class="modal_input" v-model="secret_key">
-            <span class="validation_error" v-if="twoFactorErrorStatus">{{twoFactorErrorStatus}}</span>
-            <button-white :text="'Confirm'" class="sign_in_button" @click="reset2fa"></button-white>
-            <h3 style="font-size: 12px" class="modal_label">
-                If you have any problems, contact support <strong>{{ support_email }}</strong>.
-            </h3>
-        </div>
-        <div v-if="status" class="auth_form_block">
-            <h2 class="modal_header">
-                Two-factor authentication 🔒
-            </h2>
-            <h3 class="modal_label">
-                Two-factor authentication has been successfully disabled. You can return to the login page.
-            </h3>
-            <button-white :text="'Back to login'" class="sign_in_button" @click="redirectToLogin"></button-white>
-
-        </div>
+  <div>
+    <!-- Logo + Title -->
+    <div class="auth-logo-block">
+      <div class="auth-logo-icon">
+        <img src="../../../web/images/web/img/tr-isologo.png" alt="TrophyRoom" />
+      </div>
+      <h1 class="auth-title">Reset two-factor auth</h1>
+      <p class="auth-tagline">Enter your recovery code to disable 2FA.</p>
     </div>
+
+    <!-- Reset 2FA Form -->
+    <div class="auth-card" v-if="!status">
+      <div class="auth-field">
+        <label class="auth-label">Recovery code</label>
+        <input type="text" class="auth-input auth-2fa-input" v-model="secret_key">
+        <span class="auth-error" v-if="twoFactorErrorStatus">{{ twoFactorErrorStatus }}</span>
+      </div>
+      <p class="auth-2fa-help">
+        Having trouble? Contact support at <strong>{{ support_email }}</strong>
+      </p>
+      <div class="auth-submit">
+        <button-white :text="'Confirm'" @click="reset2fa"></button-white>
+      </div>
+      <div class="auth-footer">
+        <router-link to="/login" class="auth-link">Back to login</router-link>
+      </div>
+    </div>
+
+    <!-- Success State -->
+    <div class="auth-card" v-if="status" style="text-align: center;">
+      <div class="auth-success-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c1f527" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      </div>
+      <h2 class="auth-title" style="font-size: 18px;">2FA disabled</h2>
+      <p class="auth-success-message">Two-factor authentication has been successfully disabled.</p>
+      <div class="auth-submit" style="margin-top: 20px;">
+        <button-white :text="'Back to login'" @click="redirectToLogin"></button-white>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -86,12 +95,3 @@ export default {
 }
 </script>
 
-<style scoped>
-.forgot_password_text {
-    margin-top: 12px;
-    color: white;
-    font-size: 18px;
-    font-weight: 400;
-    line-height: 150%;
-}
-</style>

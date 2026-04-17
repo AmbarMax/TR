@@ -1,40 +1,42 @@
 <template>
-    <div class="auth_wrapper forgot_password">
-        <div class="auth_welcome_block">
-            <div class="header_logo">
-                <img src="../../../web/images/web/img/tr-isologo.png" alt="logo">
-            </div>
-        </div>
-        <div v-if="!status_success" class="auth_form_block no-bg">
-            <h2 class="modal_header">
-                Forgot Password? 🔒
-            </h2>
-            <h3 class="forgot_password_text">
-                Enter your email and we'll send you instructions to reset your password
-            </h3>
-            <h4 class="auth_label">Email</h4>
-            <input type="email" class="modal_input" v-model="email" placeholder="john@example.com">
-            <button-white :text="send_reset_button" class="sign_in_button" @click="sendLink"></button-white>
-            <div class="modal_dont_have_account">
-                <router-link to="/login" class="login-signup_link">
-                    Back to login
-                </router-link>
-            </div>
-        </div>
-        <div v-else class="auth_form_block">
-            <h2 class="modal_header">
-                Reset link sent to your email!
-            </h2>
-            <h3 class="forgot_password_text">
-                Follow the link sent in the email to reset your password.
-            </h3>
-            <div class="modal_dont_have_account">
-                <router-link to="/login" class="login-signup_link">
-                    Back to login
-                </router-link>
-            </div>
-        </div>
+  <div>
+    <!-- Logo + Title -->
+    <div class="auth-logo-block">
+      <div class="auth-logo-icon">
+        <img src="../../../web/images/web/img/tr-isologo.png" alt="TrophyRoom" />
+      </div>
+      <h1 class="auth-title">Forgot password?</h1>
+      <p class="auth-tagline">We'll send you a reset link.</p>
     </div>
+
+    <!-- Email Form -->
+    <div class="auth-card" v-if="!status_success">
+      <div class="auth-field">
+        <label class="auth-label">Email</label>
+        <input type="email" class="auth-input" v-model="email" placeholder="player@example.com">
+      </div>
+
+      <div class="auth-submit">
+        <button-white :text="send_reset_button" @click="sendLink"></button-white>
+      </div>
+
+      <div class="auth-footer">
+        <router-link to="/login" class="auth-link">Back to login</router-link>
+      </div>
+    </div>
+
+    <!-- Success State -->
+    <div class="auth-card" v-else style="text-align: center;">
+      <div class="auth-success-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c1f527" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      </div>
+      <h2 class="auth-title" style="font-size: 18px;">Reset link sent!</h2>
+      <p class="auth-success-message">Check your email and follow the link to reset your password.</p>
+      <div class="auth-footer" style="margin-top: 24px;">
+        <router-link to="/login" class="auth-link">Back to login</router-link>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -68,12 +70,3 @@ export default {
 }
 </script>
 
-<style scoped>
-.forgot_password_text {
-    margin-top: 12px;
-    color: white;
-    font-size: 18px;
-    font-weight: 400;
-    line-height: 150%;
-}
-</style>
