@@ -65,6 +65,7 @@ Route::prefix('brand')->middleware([JwtMiddleware::class, 'brand.admin'])->group
     Route::get('/events', [BrandEventsController::class, 'index']);
     Route::post('/events', [BrandEventsController::class, 'store']);
     Route::post('/events/{id}/complete', [BrandEventsController::class, 'complete']);
+    Route::delete('/events/{id}', [BrandEventsController::class, 'destroy']);
 
     // Trophies
     Route::get('/trophies', [BrandTrophiesController::class, 'index']);
@@ -94,6 +95,7 @@ Route::prefix('bot')->middleware('bot.api')->group(function () {
     Route::get('/polls/pending', [App\Http\Controllers\Api\Bot\BotPollController::class, 'pending']);
     Route::post('/polls/{id}/published', [App\Http\Controllers\Api\Bot\BotPollController::class, 'markPublished']);
     Route::post('/polls/{id}/close', [App\Http\Controllers\Api\Bot\BotPollController::class, 'close']);
+    Route::post('/polls/{id}/vote', [App\Http\Controllers\Api\Bot\BotPollController::class, 'recordVote']);
 
     // Events
     Route::get('/events/pending', [App\Http\Controllers\Api\Bot\BotEventController::class, 'pending']);

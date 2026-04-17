@@ -13,21 +13,12 @@
                         <label>Description</label>
                         <textarea v-model="form.description" placeholder="What's this event about?" rows="3"></textarea>
                     </div>
-                    <div class="em-form-row">
-                        <div class="em-field">
-                            <label>Channel</label>
-                            <select v-model="form.channel_id" required>
-                                <option value="">Select channel</option>
-                                <option v-for="ch in channels" :key="ch.id" :value="ch.channel_id">{{ ch.name }}</option>
-                            </select>
-                        </div>
-                        <div class="em-field">
-                            <label>Badge (optional)</label>
-                            <select v-model="form.badge_id">
-                                <option value="">None</option>
-                                <option v-for="b in badges" :key="b.id" :value="b.id">{{ b.name }}</option>
-                            </select>
-                        </div>
+                    <div class="em-field">
+                        <label>Badge (optional)</label>
+                        <select v-model="form.badge_id">
+                            <option value="">None</option>
+                            <option v-for="b in badges" :key="b.id" :value="b.id">{{ b.name }}</option>
+                        </select>
                     </div>
                     <div class="em-form-row">
                         <div class="em-field">
@@ -54,11 +45,12 @@
                     <li v-for="event in events" :key="event.id" class="em-card">
                         <div class="em-card__header">
                             <span class="em-card__title">{{ event.title }}</span>
-                            <span class="em-status em-status--pending">Pending</span>
+                            <span class="em-status" :class="statusClass(event.status)">{{ event.status }}</span>
                         </div>
                         <p v-if="event.description" class="em-card__desc">{{ event.description }}</p>
                         <div class="em-card__actions">
                             <button class="em-btn em-btn--ghost em-btn--sm" @click="completeEvent(event.id)">Mark Complete</button>
+                            <button class="em-btn em-btn--danger em-btn--sm" @click="deleteEvent(event.id)">Delete</button>
                         </div>
                     </li>
                 </ul>
@@ -74,14 +66,12 @@ export default {
     data() {
         return {
             events: [],
-            channels: [],
             badges: [],
             loading: true,
             submitting: false,
             form: {
                 title: '',
                 description: '',
-                channel_id: '',
                 badge_id: '',
                 starts_at: '',
                 ends_at: '',
@@ -95,14 +85,12 @@ export default {
         async load() {
             this.loading = true;
             try {
-                const [eventsRes, chRes, badgesRes] = await Promise.all([
+                const [eventsRes, badgesRes] = await Promise.all([
                     api.get('/api/brand/events'),
-                    api.get('/api/brand/channels'),
                     api.get('/api/brand/badges'),
                 ]);
-                this.events   = eventsRes.data?.events  ?? [];
-                this.channels = chRes.data?.channels    ?? [];
-                this.badges   = badgesRes.data?.badges  ?? [];
+                this.events = eventsRes.data?.events ?? [];
+                this.badges = badgesRes.data?.badges ?? [];
             } catch (e) {
                 console.error('[EventManager] load failed', e);
             } finally {
@@ -113,7 +101,7 @@ export default {
             this.submitting = true;
             try {
                 await api.post('/api/brand/events', this.form);
-                this.form = { title: '', description: '', channel_id: '', badge_id: '', starts_at: '', ends_at: '' };
+                this.form = { title: '', description: '', badge_id: '', starts_at: '', ends_at: '' };
                 await this.load();
             } catch (e) {
                 console.error('createEvent error', e);
@@ -128,6 +116,22 @@ export default {
             } catch (e) {
                 console.error('completeEvent error', e);
             }
+        },
+        async deleteEvent(id) {
+            if (!confirm('Delete this event?')) return;
+            try {
+                await api.delete(`/api/brand/events/${id}`);
+                this.events = this.events.filter(e => e.id !== id);
+            } catch (e) {
+                console.error('deleteEvent error', e);
+            }
+        },
+        statusClass(status) {
+            return {
+                draft:     'em-status--draft',
+                scheduled: 'em-status--scheduled',
+                active:    'em-status--active',
+            }[status] ?? 'em-status--draft';
         },
     },
 }
@@ -208,6 +212,7 @@ export default {
 .em-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 .em-btn--primary { background: #c1f527; color: #000003; align-self: flex-start; }
 .em-btn--ghost   { background: transparent; border: 1px solid #2a2c2e; color: #9a9590; }
+.em-btn--danger  { background: transparent; border: 1px solid rgba(255,80,80,0.3); color: #ff5050; }
 .em-btn--sm      { padding: 4px 10px; font-size: 11px; }
 
 .em-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
@@ -234,7 +239,9 @@ export default {
     border-radius: 4px;
 }
 
-.em-status--pending { background: rgba(255, 97, 0, 0.1); color: #ff6100; }
+.em-status--draft     { background: rgba(90, 85, 80, 0.2);   color: #5a5550; }
+.em-status--scheduled { background: rgba(255, 97, 0, 0.1);  color: #ff6100; }
+.em-status--active    { background: rgba(193, 245, 39, 0.1); color: #c1f527; }
 
 .em-empty { font-family: 'Share Tech Mono', monospace; font-size: 13px; color: #5a5550; padding: 16px 0; }
 

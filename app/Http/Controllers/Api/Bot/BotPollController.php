@@ -40,6 +40,22 @@ class BotPollController extends Controller
         return response()->json(['message' => 'Poll marked as published.', 'poll' => $poll], 200);
     }
 
+    public function recordVote(Request $request, $id)
+    {
+        $request->validate([
+            'discord_user_id' => 'required|string',
+            'answer'          => 'required|string',
+        ]);
+
+        $guildConnection = $request->attributes->get('guildConnection');
+
+        $poll = BotPoll::where('id', $id)
+            ->where('guild_id', $guildConnection->guild_id)
+            ->firstOrFail();
+
+        return response()->json(['message' => 'Vote recorded.', 'poll_id' => $poll->id], 200);
+    }
+
     public function close(Request $request, $id)
     {
         $guildConnection = $request->attributes->get('guildConnection');

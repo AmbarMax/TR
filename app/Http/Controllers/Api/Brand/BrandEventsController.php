@@ -26,6 +26,7 @@ class BrandEventsController extends Controller
         }
 
         $events = BotEvent::where('guild_id', $guildConnection->guild_id)
+            ->whereNotIn('status', ['completed'])
             ->with('badgeRule:id,name,trigger_type,trigger_config')
             ->latest()
             ->get();
@@ -38,7 +39,7 @@ class BrandEventsController extends Controller
         $request->validate([
             'title'       => 'required|string|max:255',
             'description' => 'nullable|string',
-            'channel_id'  => 'required|string',
+            'channel_id'  => 'nullable|string',
             'starts_at'   => 'required|date',
             'ends_at'     => 'required|date|after:starts_at',
             'badge_id'    => 'nullable|string|exists:badges,id',
@@ -54,13 +55,30 @@ class BrandEventsController extends Controller
             'guild_id'    => $guildConnection->guild_id,
             'title'       => $request->title,
             'description' => $request->description ?? '',
-            'channel_id'  => $request->channel_id,
+            'channel_id'  => $request->channel_id ?? null,
             'starts_at'   => $request->starts_at,
             'ends_at'     => $request->ends_at,
             'status'      => 'draft',
         ]);
 
         return response()->json(['event' => $event], 201);
+    }
+
+    public function destroy(Request $request, $id)
+    {
+        $guildConnection = $this->getGuildConnection();
+
+        if (!$guildConnection) {
+            return response()->json(['error' => 'No guild connected.'], 200);
+        }
+
+        $event = BotEvent::where('id', $id)
+            ->where('guild_id', $guildConnection->guild_id)
+            ->firstOrFail();
+
+        $event->delete();
+
+        return response()->json(['message' => 'Event deleted.'], 200);
     }
 
     public function complete(Request $request, $id)
