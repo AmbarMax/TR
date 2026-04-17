@@ -22,6 +22,7 @@ export default {}
 <style scoped>
 .auth-layout {
   min-height: 100vh;
+  width: 100%;
   background-color: #000003;
   display: flex;
   align-items: center;
