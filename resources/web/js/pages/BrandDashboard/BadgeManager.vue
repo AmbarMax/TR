@@ -103,6 +103,7 @@
                     <button type="submit" class="bm-btn bm-btn--primary" :disabled="submittingBadge || !badgeForm.image">
                         {{ submittingBadge ? 'Creating…' : '+ Create Badge' }}
                     </button>
+                    <span v-if="badgeSuccess" class="bm-success">{{ badgeSuccess }}</span>
                 </form>
 
                 <div v-if="loadingBadges" class="bm-empty">Loading badges…</div>
@@ -134,6 +135,7 @@ export default {
             loadingBadges: true,
             submittingRule: false,
             submittingBadge: false,
+            badgeSuccess: '',
             ruleForm: { trigger_type: '', channel_id: '', threshold: null, badge_id: '' },
             badgeForm: { name: '', description: '', type: 3, image: null },
             imagePreview: null,
@@ -188,22 +190,23 @@ export default {
         },
         async createBadge() {
             this.submittingBadge = true;
+            this.badgeSuccess = '';
             try {
                 const fd = new FormData();
                 fd.append('name', this.badgeForm.name);
-                fd.append('description', this.badgeForm.description);
+                fd.append('description', this.badgeForm.description ?? '');
                 fd.append('type', this.badgeForm.type);
                 fd.append('image', this.badgeForm.image);
-                await api.post('/api/brand/badges', fd, {
-                    headers: { 'Content-Type': 'multipart/form-data' },
-                });
+                // Do NOT set Content-Type manually — axios must auto-set it with the multipart boundary
+                await api.post('/api/brand/badges', fd);
                 this.badgeForm = { name: '', description: '', type: 3, image: null };
                 this.imagePreview = null;
                 this.$refs.imageInput.value = '';
+                this.badgeSuccess = 'Badge created successfully.';
                 const badgesRes = await api.get('/api/brand/badges');
                 this.badges = badgesRes.data?.badges ?? [];
             } catch (e) {
-                console.error('createBadge error', e);
+                console.error('[BadgeManager] createBadge error', e?.response?.data ?? e);
             } finally {
                 this.submittingBadge = false;
             }
@@ -213,6 +216,13 @@ export default {
 </script>
 
 <style scoped>
+.bm-success {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: #c1f527;
+    margin-top: 4px;
+}
+
 .bm { display: flex; flex-direction: column; gap: 32px; }
 
 .bm-cols {

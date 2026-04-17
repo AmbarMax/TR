@@ -25,16 +25,15 @@ class BrandBadgesController extends Controller
 
     public function index(Request $request)
     {
-        $guildConnection = $this->getGuildConnection();
+        $integration = Integration::where('name', 'brand')->first();
 
-        if (!$guildConnection) {
+        if (!$integration) {
             return response()->json(['badges' => []], 200);
         }
 
-        $badgeIds = BadgeRule::where('guild_id', $guildConnection->guild_id)
-            ->pluck('badge_id');
-
-        $badges = Badge::whereIn('id', $badgeIds)->get();
+        $badges = Badge::where('integration_id', $integration->id)
+            ->latest()
+            ->get();
 
         return response()->json(['badges' => $badges], 200);
     }
