@@ -63,10 +63,11 @@ class BrandBadgesController extends Controller
         }
 
         $badge = Badge::create([
-            'name'        => $request->name,
-            'image'       => 'public/integrations/brand/' . $filename,
-            'description' => $request->description ?? '',
-            'type'        => $request->input('type', 3),
+            'integration_id' => Auth::id(),
+            'name'           => $request->name,
+            'image'          => 'public/integrations/brand/' . $filename,
+            'description'    => $request->description ?? '',
+            'type'           => $request->input('type', 3),
         ]);
 
         return response()->json(['badge' => $badge], 201);
