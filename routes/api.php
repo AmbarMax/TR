@@ -32,6 +32,7 @@ use App\Http\Controllers\Api\Brand\BrandPollsController;
 use App\Http\Controllers\Api\Brand\BrandEventsController;
 use App\Http\Controllers\Api\Brand\BrandBadgesController;
 use App\Http\Controllers\Api\Brand\BrandTrophiesController;
+use App\Http\Controllers\Api\Brand\BrandGuildController;
 
 /*
 |--------------------------------------------------------------------------
@@ -46,6 +47,9 @@ use App\Http\Controllers\Api\Brand\BrandTrophiesController;
 
 // Brand Dashboard API — JWT + admin role required
 Route::prefix('brand')->middleware([JwtMiddleware::class, 'brand.admin'])->group(function () {
+    Route::get('/guild', [BrandGuildController::class, 'index']);
+    Route::post('/guild/select', [BrandGuildController::class, 'select']);
+    Route::delete('/guild', [BrandGuildController::class, 'disconnect']);
     Route::get('/stats', [BrandStatsController::class, 'index']);
     Route::get('/channels', [BrandChannelsController::class, 'index']);
     Route::get('/rules', [BrandRulesController::class, 'index']);

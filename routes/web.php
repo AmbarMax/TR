@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\Integrations\SteamController;
 use App\Http\Controllers\Api\Integrations\GithubController;
 use App\Http\Controllers\Api\Integrations\BadgeController;
 use App\Http\Controllers\Api\Integrations\DiscordController;
+use App\Http\Controllers\Api\Brand\BrandGuildController;
 
 
 /*
@@ -28,6 +29,8 @@ Route::get('/api/github/callback', [GithubController::class, 'handleGithubCallba
 Route::get('/api/discord/callback', [DiscordController::class, 'handleDiscordCallback']);
 
 Route::get('/badges/sync/{id}/{achievements}', [BadgeController::class, 'sync']);
+
+Route::get('/api/brand/guild/connect', [BrandGuildController::class, 'connect']);
 
 //Route::get('/test', [DiscordController::class, 'sync']);
 

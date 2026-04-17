@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Integrations;
 
 use App\Enums\IntegrationType;
 use App\Http\Apis\Integrations\Discord\DiscordAdapter;
+use App\Http\Controllers\Api\Brand\BrandGuildController;
 use App\Models\Badge;
 use App\Models\User;
 use App\Services\Api\BadgeService;
@@ -12,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 use phpcent\Client;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
@@ -34,6 +36,10 @@ class DiscordController
 
     public function handleDiscordCallback(Request $request)
     {
+        if (Str::startsWith($request->input('state', ''), 'brand_guild:')) {
+            return app(BrandGuildController::class)->handleCallback($request);
+        }
+
         $sync = false;
 
         $data = [
