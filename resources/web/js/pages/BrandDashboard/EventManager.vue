@@ -23,11 +23,11 @@
                     <div class="em-form-row">
                         <div class="em-field">
                             <label>Start</label>
-                            <input type="datetime-local" v-model="form.starts_at" required />
+                            <input ref="startsAtInput" type="text" readonly placeholder="Pick date & time" class="em-datepicker" required />
                         </div>
                         <div class="em-field">
                             <label>End</label>
-                            <input type="datetime-local" v-model="form.ends_at" required />
+                            <input ref="endsAtInput" type="text" readonly placeholder="Pick date & time" class="em-datepicker" required />
                         </div>
                     </div>
                     <button type="submit" class="em-btn em-btn--primary" :disabled="submitting">
@@ -61,6 +61,8 @@
 
 <script>
 import api from './botApi.js';
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
 
 export default {
     data() {
@@ -80,8 +82,43 @@ export default {
     },
     mounted() {
         this.load();
+        this._initPickers();
+    },
+    beforeUnmount() {
+        this._fpStart?.destroy();
+        this._fpEnd?.destroy();
     },
     methods: {
+        _initPickers() {
+            const opts = {
+                enableTime: true,
+                dateFormat: 'Y-m-d H:i',
+                time_24hr: true,
+                minDate: 'today',
+                theme: 'dark',
+            };
+            this._fpStart = flatpickr(this.$refs.startsAtInput, {
+                ...opts,
+                onChange: ([date]) => {
+                    this.form.starts_at = date
+                        ? flatpickr.formatDate(date, 'Y-m-d H:i:00')
+                        : '';
+                    if (this._fpEnd) this._fpEnd.set('minDate', date || 'today');
+                },
+            });
+            this._fpEnd = flatpickr(this.$refs.endsAtInput, {
+                ...opts,
+                onChange: ([date]) => {
+                    this.form.ends_at = date
+                        ? flatpickr.formatDate(date, 'Y-m-d H:i:00')
+                        : '';
+                },
+            });
+        },
+        _resetPickers() {
+            this._fpStart?.clear();
+            this._fpEnd?.clear();
+        },
         async load() {
             this.loading = true;
             try {
@@ -102,6 +139,7 @@ export default {
             try {
                 await api.post('/api/brand/events', this.form);
                 this.form = { title: '', description: '', badge_id: '', starts_at: '', ends_at: '' };
+                this._resetPickers();
                 await this.load();
             } catch (e) {
                 console.error('createEvent error', e);
@@ -249,4 +287,33 @@ export default {
     .em-cols { grid-template-columns: 1fr; }
     .em-form-row { grid-template-columns: 1fr; }
 }
+</style>
+
+<style>
+/* flatpickr overrides — scoped doesn't reach the portal */
+.flatpickr-calendar {
+    background: #0e0f11 !important;
+    border: 1px solid #2a2c2e !important;
+    border-radius: 6px !important;
+    font-family: 'Share Tech Mono', monospace !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.6) !important;
+}
+.flatpickr-day { color: #9a9590 !important; border-radius: 4px !important; }
+.flatpickr-day:hover,
+.flatpickr-day.prevMonthDay:hover,
+.flatpickr-day.nextMonthDay:hover { background: rgba(255,97,0,0.15) !important; border-color: transparent !important; }
+.flatpickr-day.selected,
+.flatpickr-day.selected:hover { background: #ff6100 !important; border-color: #ff6100 !important; color: #000003 !important; }
+.flatpickr-day.today { border-color: #ff6100 !important; }
+.flatpickr-months .flatpickr-month,
+.flatpickr-weekdays,
+.flatpickr-time { background: #0e0f11 !important; }
+.flatpickr-current-month,
+.flatpickr-monthDropdown-months,
+.numInput,
+span.flatpickr-weekday { color: #feeddf !important; }
+.flatpickr-time input { color: #feeddf !important; background: #1a1c1f !important; }
+.flatpickr-time .flatpickr-time-separator { color: #5a5550 !important; }
+.flatpickr-prev-month svg,
+.flatpickr-next-month svg { fill: #9a9590 !important; }
 </style>

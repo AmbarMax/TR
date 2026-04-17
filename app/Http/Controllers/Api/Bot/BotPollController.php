@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Bot;
 
 use App\Http\Controllers\Controller;
 use App\Models\BotPoll;
+use App\Models\BotPollVote;
 use Illuminate\Http\Request;
 
 class BotPollController extends Controller
@@ -52,6 +53,11 @@ class BotPollController extends Controller
         $poll = BotPoll::where('id', $id)
             ->where('guild_id', $guildConnection->guild_id)
             ->firstOrFail();
+
+        BotPollVote::updateOrCreate(
+            ['poll_id' => $poll->id, 'discord_user_id' => $request->discord_user_id],
+            ['guild_id' => $poll->guild_id, 'answer' => $request->answer]
+        );
 
         return response()->json(['message' => 'Vote recorded.', 'poll_id' => $poll->id], 200);
     }

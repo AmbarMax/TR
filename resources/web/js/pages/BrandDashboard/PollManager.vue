@@ -43,19 +43,55 @@
                 </form>
             </section>
 
-            <!-- Pending polls -->
+            <!-- Polls list -->
             <section class="pm-section">
-                <span class="bd-section-label">Pending Polls</span>
+                <span class="bd-section-label">Polls</span>
                 <div v-if="loading" class="pm-empty">Loading…</div>
-                <div v-else-if="polls.length === 0" class="pm-empty">No pending polls.</div>
+                <div v-else-if="polls.length === 0" class="pm-empty">No polls yet.</div>
                 <ul v-else class="pm-list">
                     <li v-for="poll in polls" :key="poll.id" class="pm-card">
                         <div class="pm-card__header">
                             <span class="pm-card__title">{{ poll.title }}</span>
-                            <span class="pm-status pm-status--pending">Pending</span>
+                            <span class="pm-status" :class="statusClass(poll.status)">{{ poll.status }}</span>
                         </div>
+
+                        <!-- Results panel -->
+                        <div v-if="expanded[poll.id]" class="pm-results">
+                            <div v-if="loadingResults[poll.id]" class="pm-results__loading">Loading…</div>
+                            <template v-else-if="results[poll.id]">
+                                <div v-if="results[poll.id].total === 0" class="pm-results__empty">No votes yet.</div>
+                                <div v-else class="pm-results__rows">
+                                    <div
+                                        v-for="row in results[poll.id].results"
+                                        :key="row.value"
+                                        class="pm-result-row"
+                                    >
+                                        <span class="pm-result-row__label">{{ row.label }}</span>
+                                        <div class="pm-result-row__bar-wrap">
+                                            <div
+                                                class="pm-result-row__bar"
+                                                :style="{ width: barWidth(row.count, results[poll.id].total) }"
+                                            ></div>
+                                        </div>
+                                        <span class="pm-result-row__count">{{ row.count }}</span>
+                                    </div>
+                                    <span class="pm-results__total">{{ results[poll.id].total }} total votes</span>
+                                </div>
+                            </template>
+                        </div>
+
                         <div class="pm-card__actions">
-                            <button class="pm-btn pm-btn--ghost pm-btn--sm" @click="closePoll(poll.id)">Close</button>
+                            <button class="pm-btn pm-btn--ghost pm-btn--sm" @click="toggleResults(poll)">
+                                {{ expanded[poll.id] ? 'Hide Results' : 'Results' }}
+                            </button>
+                            <button
+                                v-if="results[poll.id] && results[poll.id].total > 0"
+                                class="pm-btn pm-btn--ghost pm-btn--sm"
+                                @click="downloadCsv(poll)"
+                            >
+                                CSV
+                            </button>
+                            <button class="pm-btn pm-btn--ghost pm-btn--sm" @click="closePoll(poll.id)" v-if="poll.status !== 'closed'">Close</button>
                         </div>
                     </li>
                 </ul>
@@ -75,6 +111,9 @@ export default {
             badges: [],
             loading: true,
             submitting: false,
+            expanded: {},
+            results: {},
+            loadingResults: {},
             form: {
                 title: '',
                 options: ['', ''],
@@ -105,8 +144,10 @@ export default {
                 this.loading = false;
             }
         },
+
         addOption() { this.form.options.push(''); },
         removeOption(i) { this.form.options.splice(i, 1); },
+
         async createPoll() {
             this.submitting = true;
             try {
@@ -119,13 +160,66 @@ export default {
                 this.submitting = false;
             }
         },
+
         async closePoll(id) {
             try {
                 await api.post(`/api/brand/polls/${id}/close`);
-                this.polls = this.polls.filter(p => p.id !== id);
+                const poll = this.polls.find(p => p.id === id);
+                if (poll) poll.status = 'closed';
             } catch (e) {
                 console.error('closePoll error', e);
             }
+        },
+
+        async toggleResults(poll) {
+            const id = poll.id;
+            this.expanded = { ...this.expanded, [id]: !this.expanded[id] };
+            if (this.expanded[id] && !this.results[id]) {
+                await this.fetchResults(id);
+            }
+        },
+
+        async fetchResults(id) {
+            this.loadingResults = { ...this.loadingResults, [id]: true };
+            try {
+                const res = await api.get(`/api/brand/polls/${id}/results`);
+                this.results = { ...this.results, [id]: res.data };
+            } catch (e) {
+                console.error('fetchResults error', e);
+            } finally {
+                this.loadingResults = { ...this.loadingResults, [id]: false };
+            }
+        },
+
+        barWidth(count, total) {
+            if (!total) return '0%';
+            return Math.round((count / total) * 100) + '%';
+        },
+
+        statusClass(status) {
+            return {
+                draft:  'pm-status--draft',
+                active: 'pm-status--active',
+                closed: 'pm-status--closed',
+            }[status] ?? 'pm-status--draft';
+        },
+
+        downloadCsv(poll) {
+            const data = this.results[poll.id];
+            if (!data) return;
+            const rows = [['Poll', 'Option', 'Votes']];
+            for (const row of data.results) {
+                rows.push([poll.title, row.label, row.count]);
+            }
+            rows.push(['', 'TOTAL', data.total]);
+            const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `poll-results-${poll.id.slice(0, 8)}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
         },
     },
 }
@@ -221,19 +315,79 @@ export default {
 }
 
 .pm-card__header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-
-.pm-card__title { font-family: 'Share Tech Mono', monospace; font-size: 14px; color: #feeddf; flex: 1; }
-
-.pm-card__actions { display: flex; gap: 8px; }
+.pm-card__title  { font-family: 'Share Tech Mono', monospace; font-size: 14px; color: #feeddf; flex: 1; }
+.pm-card__actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
 .pm-status {
     font-family: 'Share Tech Mono', monospace;
     font-size: 11px;
     padding: 3px 8px;
     border-radius: 4px;
+    white-space: nowrap;
 }
 
-.pm-status--pending { background: rgba(255, 97, 0, 0.1); color: #ff6100; }
+.pm-status--draft  { background: rgba(90, 85, 80, 0.2);   color: #5a5550; }
+.pm-status--active { background: rgba(193, 245, 39, 0.1); color: #c1f527; }
+.pm-status--closed { background: rgba(255, 97, 0, 0.1);   color: #ff6100; }
+
+/* Results */
+.pm-results {
+    border-top: 1px solid #2a2c2e;
+    padding-top: 12px;
+}
+
+.pm-results__loading,
+.pm-results__empty {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: #5a5550;
+}
+
+.pm-results__rows { display: flex; flex-direction: column; gap: 8px; }
+
+.pm-result-row {
+    display: grid;
+    grid-template-columns: 120px 1fr 36px;
+    align-items: center;
+    gap: 10px;
+}
+
+.pm-result-row__label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: #9a9590;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.pm-result-row__bar-wrap {
+    background: #1a1c1f;
+    border-radius: 2px;
+    height: 8px;
+    overflow: hidden;
+}
+
+.pm-result-row__bar {
+    height: 100%;
+    background: #c1f527;
+    border-radius: 2px;
+    transition: width 0.4s ease;
+}
+
+.pm-result-row__count {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: #feeddf;
+    text-align: right;
+}
+
+.pm-results__total {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: #5a5550;
+    margin-top: 4px;
+}
 
 .pm-empty { font-family: 'Share Tech Mono', monospace; font-size: 13px; color: #5a5550; padding: 16px 0; }
 
