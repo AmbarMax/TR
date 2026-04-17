@@ -33,6 +33,9 @@
         </div>
         <p class="vh-profile__bio" v-if="user.description">{{ user.description }}</p>
       </div>
+      <button class="vh-btn vh-btn--secondary vh-profile__copy" @click="copyLink">
+        Copy Link
+      </button>
     </div>
 
     <!-- Stats Bar -->
@@ -56,19 +59,14 @@
     </div>
 
     <!-- Action Buttons -->
-    <div class="vh-actions">
-      <template v-if="followStatus !== null">
-        <button
-          class="vh-btn"
-          :class="followStatus === follow ? 'vh-btn--following' : 'vh-btn--follow'"
-          @click="followAction(user.id, user.username)"
-          :disabled="followBtnLoading"
-        >
-          {{ followStatus === follow ? 'Following' : 'Follow' }}
-        </button>
-      </template>
-      <button class="vh-btn vh-btn--secondary vh-btn--copy" @click="copyLink">
-        Copy Link
+    <div class="vh-actions" v-if="followStatus !== null">
+      <button
+        class="vh-btn"
+        :class="followStatus === follow ? 'vh-btn--following' : 'vh-btn--follow'"
+        @click="followAction(user.id, user.username)"
+        :disabled="followBtnLoading"
+      >
+        {{ followStatus === follow ? 'Following' : 'Follow' }}
       </button>
     </div>
 
@@ -145,54 +143,56 @@
           <button class="vh-pill" :class="{ 'vh-pill--active': badgeFilter === 'github' }" @click="setBadgeFilter('github')" v-if="github_badges.length">GitHub</button>
         </div>
 
-        <!-- Discord Badges -->
-        <div class="vh-platform-group" v-show="discord_badges.length && (badgeFilter === 'all' || badgeFilter === 'discord')">
-          <div class="vh-platform-header">
-            <img src="../../../images/web/img/icons/discord.svg" alt="Discord" class="vh-platform-icon" />
-            <span class="vh-platform-name">Discord</span>
-            <span class="vh-platform-count">{{ discord_badges.length }}</span>
+        <div class="vh-platform-groups">
+          <!-- Discord Badges -->
+          <div class="vh-platform-group" v-show="discord_badges.length && (badgeFilter === 'all' || badgeFilter === 'discord')">
+            <div class="vh-platform-header">
+              <img src="../../../images/web/img/icons/discord.svg" alt="Discord" class="vh-platform-icon" />
+              <span class="vh-platform-name">Discord</span>
+              <span class="vh-platform-count">{{ discord_badges.length }}</span>
+            </div>
+            <div class="vh-badge-grid">
+              <BadgeTile
+                v-for="badge in discord_badges"
+                :key="badge.id"
+                :badge="badge"
+                service="discord"
+              />
+            </div>
           </div>
-          <div class="vh-badge-grid">
-            <BadgeTile
-              v-for="badge in discord_badges"
-              :key="badge.id"
-              :badge="badge"
-              service="discord"
-            />
-          </div>
-        </div>
 
-        <!-- Steam Badges -->
-        <div class="vh-platform-group" v-show="steam_badges.length && (badgeFilter === 'all' || badgeFilter === 'steam')">
-          <div class="vh-platform-header">
-            <img src="../../../images/web/img/icons/steam.svg" alt="Steam" class="vh-platform-icon" />
-            <span class="vh-platform-name">Steam</span>
-            <span class="vh-platform-count">{{ steam_badges.length }}</span>
+          <!-- Steam Badges -->
+          <div class="vh-platform-group" v-show="steam_badges.length && (badgeFilter === 'all' || badgeFilter === 'steam')">
+            <div class="vh-platform-header">
+              <img src="../../../images/web/img/icons/steam.svg" alt="Steam" class="vh-platform-icon" />
+              <span class="vh-platform-name">Steam</span>
+              <span class="vh-platform-count">{{ steam_badges.length }}</span>
+            </div>
+            <div class="vh-badge-grid">
+              <BadgeTile
+                v-for="badge in steam_badges"
+                :key="badge.id"
+                :badge="badge"
+                service="steam"
+              />
+            </div>
           </div>
-          <div class="vh-badge-grid">
-            <BadgeTile
-              v-for="badge in steam_badges"
-              :key="badge.id"
-              :badge="badge"
-              service="steam"
-            />
-          </div>
-        </div>
 
-        <!-- GitHub Badges -->
-        <div class="vh-platform-group" v-show="github_badges.length && (badgeFilter === 'all' || badgeFilter === 'github')">
-          <div class="vh-platform-header">
-            <img src="../../../images/web/img/icons/github.svg" alt="GitHub" class="vh-platform-icon" />
-            <span class="vh-platform-name">GitHub</span>
-            <span class="vh-platform-count">{{ github_badges.length }}</span>
-          </div>
-          <div class="vh-badge-grid">
-            <BadgeTile
-              v-for="badge in github_badges"
-              :key="badge.id"
-              :badge="badge"
-              service="github"
-            />
+          <!-- GitHub Badges -->
+          <div class="vh-platform-group" v-show="github_badges.length && (badgeFilter === 'all' || badgeFilter === 'github')">
+            <div class="vh-platform-header">
+              <img src="../../../images/web/img/icons/github.svg" alt="GitHub" class="vh-platform-icon" />
+              <span class="vh-platform-name">GitHub</span>
+              <span class="vh-platform-count">{{ github_badges.length }}</span>
+            </div>
+            <div class="vh-badge-grid">
+              <BadgeTile
+                v-for="badge in github_badges"
+                :key="badge.id"
+                :badge="badge"
+                service="github"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -499,6 +499,12 @@ export default defineComponent({
   z-index: 1;
 }
 
+.vh-profile__copy {
+  margin-left: auto;
+  align-self: flex-end;
+  flex-shrink: 0;
+}
+
 .vh-avatar {
   width: 80px;
   height: 80px;
@@ -627,10 +633,6 @@ export default defineComponent({
 .vh-btn--secondary:hover {
   border-color: #9a9590;
   color: #feeddf;
-}
-
-.vh-btn--copy {
-  margin-left: auto;
 }
 
 .vh-btn:disabled {
@@ -824,6 +826,10 @@ export default defineComponent({
 }
 
 /* Platform Groups */
+.vh-platform-groups {
+  min-height: 200px;
+}
+
 .vh-platform-group {
   margin-bottom: 24px;
 }
