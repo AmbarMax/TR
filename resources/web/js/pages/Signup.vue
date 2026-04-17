@@ -44,7 +44,7 @@
       <div class="auth-field">
         <label class="auth-label">Confirm password</label>
         <div class="auth-password-wrap">
-          <input type="password" class="auth-input" v-model="confirm_password" ref="passwordInputConfirm" :class="{ 'has-error': getError('confirm_password') }">
+          <input type="password" class="auth-input" v-model="confirm_password" ref="passwordInputConfirm" :class="{ 'has-error': getError('confirm_password') }" @keyup.enter="signUp">
           <span class="auth-password-toggle" @click="togglePassConfirmView">
             <img v-if="passEyes.confirm" src="../../../web/images/web/img/icons/eye-open.svg" alt="show">
             <img v-else src="../../../web/images/web/img/icons/eye-close.svg" alt="hide">
@@ -127,8 +127,6 @@ export default {
                     getProfileData();
                     if (localStorage.getItem('access_token')) {
                         store.state.showTestData = false;
-                        //store.state.importBudgesModalOpen = true;
-                        store.state.modals.connect2faModalOpen.show = true;
                         router.push('/trophy-room');
                     }
                 }

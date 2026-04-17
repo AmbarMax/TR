@@ -23,7 +23,7 @@
           <a href="/forgot-password" class="auth-forgot-link">Forgot?</a>
         </div>
         <div class="auth-password-wrap">
-          <input type="password" class="auth-input" v-model="password" ref="passwordInput">
+          <input type="password" class="auth-input" v-model="password" ref="passwordInput" @keyup.enter="signIn">
           <span class="auth-password-toggle" @click="togglePassView">
             <img v-if="eyeIsOpen" src="../../../web/images/web/img/icons/eye-open.svg" alt="show">
             <img v-else src="../../../web/images/web/img/icons/eye-close.svg" alt="hide">
@@ -180,15 +180,7 @@ export default {
             });
         },
         checkAuth(){
-            api.get('/api/2fa-status').then( resp => {
-                if (resp && resp.status === 200) {
-                    if (resp.data.twoFAStatus === 0){
-                        store.state.modals.connect2faModalOpen.show = true;
-                    }
-                }
-            }).catch(error => {
-                console.log('api profile error: ', error)
-            })
+            // 2FA prompt removed — opt-in from Profile settings only
         },
         togglePassView() {
             this.eyeIsOpen = !this.eyeIsOpen;

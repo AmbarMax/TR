@@ -6,7 +6,7 @@
                 Two-factor authentication
             </h1>
             <h3 class="modal_label">
-                Before utilizing any non-fungible tokens (NFTs) on this platform, it is mandatory to set up two-factor authentication (2FA) for security purposes.
+                Secure your account with two-factor authentication.
             </h3>
             <div class="modal_sign_up_with_buttons" style="flex-direction: row; justify-content: space-between">
                 <button-white :text="'Connect'" @click="goTo2fa" class="modal_sign_up_with_button"></button-white>
