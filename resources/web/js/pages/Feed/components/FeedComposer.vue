@@ -284,7 +284,7 @@ export default defineComponent({
     async fetchForgedTrophies() {
       this.loadingTrophies = true;
       try {
-        const response = await api.get("/api/forge/available-trophies");
+        const response = await api.get("/api/forge/trophies");
         if (response && response.data) {
           this.forgedTrophies = response.data.trophies || response.data.data || response.data || [];
         }
