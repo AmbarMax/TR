@@ -31,7 +31,14 @@ class ProfileResource extends JsonResource
             'description' => $this->description,
             'unread_notifications_count' => Notification::getUnreadCount($this->id),
             'google2fa_status' => $this->google2fa_status,
-            'roles' => $this->roles
+            'roles' => $this->roles,
+            'social_twitter'     => $this->social_twitter,
+            'social_twitch'      => $this->social_twitch,
+            'social_youtube'     => $this->social_youtube,
+            'social_instagram'   => $this->social_instagram,
+            'social_discord_tag' => $this->social_discord_tag,
+            'social_website'     => $this->social_website,
+            'featured_slots'     => $this->featured_slots,
         ];
     }
 }

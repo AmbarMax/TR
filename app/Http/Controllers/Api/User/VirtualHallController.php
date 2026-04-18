@@ -31,9 +31,23 @@ class VirtualHallController
         $user['data']['trophies'] = array_values($filteredTrophies);
         $user['data']['achievements'] = array_values($filteredAchievements->toArray());
         $followStatus = Auth::user() ? FollowService::checkSubscriptionStatus(Auth::user(), $user['data']['id']) : null;
+
+        $userModel = $this->userService->findByUserName($username);
+        $socialLinks = [
+            'twitter'     => $userModel->social_twitter,
+            'twitch'      => $userModel->social_twitch,
+            'youtube'     => $userModel->social_youtube,
+            'instagram'   => $userModel->social_instagram,
+            'discord_tag' => $userModel->social_discord_tag,
+            'website'     => $userModel->social_website,
+        ];
+        $featuredSlots = $userModel->featured_slots ?? [];
+
         return $user ? response()->json([
-            'user' => $user,
-            'followStatus' => $followStatus
+            'user'          => $user,
+            'followStatus'  => $followStatus,
+            'socialLinks'   => $socialLinks,
+            'featuredSlots' => $featuredSlots,
         ], ResponseAlias::HTTP_OK) : response()->json([
             'message' => 'User not found'
         ], ResponseAlias::HTTP_NOT_FOUND);

@@ -59,8 +59,9 @@
     </div>
 
     <!-- Action Buttons -->
-    <div class="vh-actions" v-if="followStatus !== null">
+    <div class="vh-actions">
       <button
+        v-if="followStatus !== null"
         class="vh-btn"
         :class="followStatus === follow ? 'vh-btn--following' : 'vh-btn--follow'"
         @click="followAction(user.id, user.username)"
@@ -68,6 +69,19 @@
       >
         {{ followStatus === follow ? 'Following' : 'Follow' }}
       </button>
+      <router-link v-if="isOwnProfile" to="/profile">
+        <button class="vh-btn vh-btn--secondary">Edit Virtual Hall</button>
+      </router-link>
+    </div>
+
+    <!-- Social Links -->
+    <div class="vh-socials" v-if="hasSocialLinks">
+      <a v-if="socialLinks.twitter" :href="'https://twitter.com/' + socialLinks.twitter" target="_blank" class="vh-social-link" title="Twitter/X">Twitter</a>
+      <a v-if="socialLinks.twitch" :href="'https://twitch.tv/' + socialLinks.twitch" target="_blank" class="vh-social-link" title="Twitch">Twitch</a>
+      <a v-if="socialLinks.youtube" :href="socialLinks.youtube" target="_blank" class="vh-social-link" title="YouTube">YouTube</a>
+      <a v-if="socialLinks.instagram" :href="'https://instagram.com/' + socialLinks.instagram" target="_blank" class="vh-social-link" title="Instagram">Instagram</a>
+      <a v-if="socialLinks.discord_tag" class="vh-social-link vh-social-no-link" title="Discord">{{ socialLinks.discord_tag }}</a>
+      <a v-if="socialLinks.website" :href="socialLinks.website" target="_blank" class="vh-social-link" title="Website">Website</a>
     </div>
 
     <div class="vh-content">
@@ -265,7 +279,9 @@ export default defineComponent({
       },
       userNFTs: 0,
       badgeFilter: 'all',
-      isLoggedIn: false
+      isLoggedIn: false,
+      socialLinks: {},
+      featuredSlotsData: [],
     }
   },
   methods: {
@@ -299,6 +315,9 @@ export default defineComponent({
             this.github_badges = resp.data.user.data.badges.data.filter(item => item.integration === 'github');
             this.steam_badges = resp.data.user.data.badges.data.filter(item => item.integration === 'steam');
             this.discord_badges = resp.data.user.data.badges.data.filter(item => item.integration === 'discord');
+
+            this.socialLinks = resp.data.socialLinks || {};
+            this.featuredSlotsData = resp.data.featuredSlots || [];
 
             const allTrophies = resp.data.user.data.trophies;
             this.trophies = allTrophies.filter(item => item.is_nft === 0);
@@ -412,6 +431,13 @@ export default defineComponent({
       const trophyItems = this.trophies.filter(t => t.pivot && t.pivot.display);
       const achItems = this.achievements.filter(a => a.display);
       return [...trophyItems, ...achItems, ...badges].slice(0, 4);
+    },
+    isOwnProfile() {
+      const authUser = store.state.user;
+      return authUser && this.user && authUser.username === this.user.username;
+    },
+    hasSocialLinks() {
+      return Object.values(this.socialLinks).some(v => v);
     },
   }
 })
@@ -640,6 +666,39 @@ export default defineComponent({
 .vh-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+/* Social Links */
+.vh-socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.vh-social-link {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  padding: 4px 12px;
+  border: 1px solid #2a2c2e;
+  border-radius: 4px;
+  color: #9a9590;
+  text-decoration: none;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.vh-social-link:hover {
+  border-color: #ff6100;
+  color: #ff6100;
+}
+
+.vh-social-no-link {
+  cursor: default;
+}
+
+.vh-social-no-link:hover {
+  border-color: #2a2c2e;
+  color: #9a9590;
 }
 
 /* Content */

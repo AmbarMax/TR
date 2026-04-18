@@ -52,6 +52,13 @@ class User extends Authenticatable implements JWTSubject
         'google2fa_secret',
         'google2fa_status',
         'secret_key',
+        'social_twitter',
+        'social_twitch',
+        'social_youtube',
+        'social_instagram',
+        'social_discord_tag',
+        'social_website',
+        'featured_slots',
     ];
 
     /**
@@ -71,6 +78,7 @@ class User extends Authenticatable implements JWTSubject
      */
     protected $casts = [
         'password' => 'hashed',
+        'featured_slots' => 'array',
     ];
 
     /**
@@ -266,5 +274,16 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsToMany(SteamAchievement::class, 'steam_user_achievements')
             ->withPivot('unlocked_at')
             ->withTimestamps();
+    }
+
+    public function battlePassLevels()
+    {
+        return $this->belongsToMany(BattlePassLevel::class, 'battle_pass_user')
+            ->withTimestamps();
+    }
+
+    public function shopPurchases()
+    {
+        return $this->hasMany(ShopPurchase::class);
     }
 }

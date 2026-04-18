@@ -355,6 +355,15 @@ export default {
           if (user.country_id !== null) {
             this.country_id = user.country_id;
           }
+          this.socialLinks.twitter   = user.social_twitter   || "";
+          this.socialLinks.twitch    = user.social_twitch    || "";
+          this.socialLinks.youtube   = user.social_youtube   || "";
+          this.socialLinks.instagram = user.social_instagram || "";
+          this.socialLinks.discord   = user.social_discord_tag || "";
+          this.socialLinks.website   = user.social_website   || "";
+          if (Array.isArray(user.featured_slots)) {
+            this.featuredSlots = user.featured_slots.map((s) => ({ item: s || null }));
+          }
           refreshToken();
           this.$store.commit("updateHeaderData");
         })
@@ -473,12 +482,30 @@ export default {
       };
     },
     saveVirtualHall() {
-      console.log("Save Virtual Hall:", this.socialLinks, this.featuredSlots);
-      store.state.notification = {
-        message: "Virtual Hall saved! (mock — backend not connected yet)",
-        type: "success",
-        show: true,
-      };
+      api
+        .put("/api/profile/update-virtual-hall", {
+          social_twitter:     this.socialLinks.twitter,
+          social_twitch:      this.socialLinks.twitch,
+          social_youtube:     this.socialLinks.youtube,
+          social_instagram:   this.socialLinks.instagram,
+          social_discord_tag: this.socialLinks.discord,
+          social_website:     this.socialLinks.website,
+          featured_slots:     this.featuredSlots.map((s) => s.item),
+        })
+        .then((response) => {
+          store.state.notification = {
+            message: "Virtual Hall updated",
+            type: "success",
+            show: true,
+          };
+        })
+        .catch(() => {
+          store.state.notification = {
+            message: "Failed to save Virtual Hall",
+            type: "error",
+            show: true,
+          };
+        });
     },
   },
   mounted() {

@@ -23,6 +23,7 @@ use App\Http\Controllers\Api\Integrations\SteamController;
 use App\Http\Controllers\Api\SteamAchievementController;
 use App\Http\Controllers\Api\Integrations\StorageController;
 use App\Http\Controllers\Api\ExchangeController;
+use App\Http\Controllers\Api\RewardsController;
 use App\Http\Controllers\Api\Forge\ChestController;
 use App\Http\Controllers\Api\Key\KeyController;
 use App\Http\Controllers\Api\Brand\BrandStatsController;
@@ -153,6 +154,7 @@ Route::middleware([JwtMiddleware::class])->group(function () {
         Route::post('/update-background', [ProfileController::class, 'updateBackground'])->name('update-background');
         Route::put('/update', [ProfileController::class, 'update'])->name('update');
         Route::put('/update-password', [ProfileController::class, 'updatePassword'])->name('update-password');
+        Route::put('/update-virtual-hall', [ProfileController::class, 'updateVirtualHall'])->name('update-virtual-hall');
     });
 
     Route::prefix('github')
@@ -272,6 +274,17 @@ Route::middleware([JwtMiddleware::class])->group(function () {
         ->group( function(){
             Route::get('/index', [ExchangeController::class, 'index'])->name('index');
             Route::post('/store', [ExchangeController::class, 'store'])->name('store');
+        });
+
+    Route::prefix('rewards')
+        ->name('rewards.')
+        ->group(function () {
+            Route::get('/battle-pass', [RewardsController::class, 'battlePass'])->name('battle-pass');
+            Route::post('/buy-level', [RewardsController::class, 'buyLevel'])->name('buy-level');
+            Route::post('/convert', [RewardsController::class, 'convert'])->name('convert');
+            Route::get('/shop-items', [RewardsController::class, 'shopItems'])->name('shop-items');
+            Route::post('/buy-shop-item', [RewardsController::class, 'buyShopItem'])->name('buy-shop-item');
+            Route::get('/purchase-history', [RewardsController::class, 'purchaseHistory'])->name('purchase-history');
         });
 
     Route::prefix('notification')

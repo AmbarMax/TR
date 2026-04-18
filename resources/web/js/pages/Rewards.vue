@@ -36,6 +36,7 @@
 
 <script>
 import { defineComponent } from "vue";
+import api from "../api/api.js";
 import store from "../store/store.js";
 import BattlePass from "./RewardsComponents/BattlePass.vue";
 import RewardsChests from "./RewardsComponents/RewardsChests.vue";
@@ -72,22 +73,48 @@ export default defineComponent({
     },
   },
   methods: {
-    handleBuyLevel(level) {
-      console.log("Buy level:", level);
-      store.state.notification = {
-        message: "Level purchased! (mock — backend not connected yet)",
-        type: "success",
-        show: true,
-      };
+    async handleBuyLevel(level) {
+      try {
+        const resp = await api.post("/api/rewards/buy-level", { level_id: level.id });
+        if (resp.data.success) {
+          store.state.notification = { message: level.name + " unlocked!", type: "success", show: true };
+          this.refreshBalances();
+        } else {
+          store.state.notification = { message: resp.data.message || "Purchase failed", type: "error", show: true };
+        }
+      } catch (e) {
+        store.state.notification = { message: "Something went wrong", type: "error", show: true };
+      }
     },
-    handleConvert(amount) {
-      console.log("Convert Ambar to Uru:", amount);
+    async handleConvert(amount) {
       this.showConvertModal = false;
-      store.state.notification = {
-        message: "Conversion complete! (mock — backend not connected yet)",
-        type: "success",
-        show: true,
-      };
+      try {
+        const resp = await api.post("/api/rewards/convert", { ambar_amount: amount });
+        if (resp.data.success) {
+          store.state.notification = {
+            message: "Converted " + amount + " Ambar → " + resp.data.uru_received + " Uru",
+            type: "success",
+            show: true,
+          };
+          this.refreshBalances();
+        } else {
+          store.state.notification = { message: resp.data.message || "Conversion failed", type: "error", show: true };
+        }
+      } catch (e) {
+        store.state.notification = { message: "Something went wrong", type: "error", show: true };
+      }
+    },
+    async refreshBalances() {
+      try {
+        const resp = await api.get("/api/profile/balances");
+        if (resp.data.userBalances) {
+          for (const bal of resp.data.userBalances) {
+            if (store.state.user?.balances && bal.currency?.name) {
+              store.state.user.balances[bal.currency.name] = Math.floor(bal.amount);
+            }
+          }
+        }
+      } catch (e) {}
     },
   },
   mounted() {

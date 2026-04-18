@@ -57,6 +57,13 @@ class UserService extends AbstractUserService
         }
     }
 
-
-
+    public function updateVirtualHall($id, array $data)
+    {
+        $allowed = [
+            'social_twitter', 'social_twitch', 'social_youtube',
+            'social_instagram', 'social_discord_tag', 'social_website',
+            'featured_slots',
+        ];
+        return $this->update($id, array_intersect_key($data, array_flip($allowed)));
+    }
 }

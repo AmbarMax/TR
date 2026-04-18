@@ -11,6 +11,8 @@ use App\Http\Resources\UserResource;
 use App\Models\Country;
 use App\Services\Api\UserService;
 use http\Env\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
@@ -83,5 +85,18 @@ class ProfileController
         return response()->json([
             'countries' => Country::all(),
         ], ResponseAlias::HTTP_OK);
+    }
+
+    public function updateVirtualHall(HttpRequest $request): JsonResponse
+    {
+        $data = $request->only([
+            'social_twitter', 'social_twitch', 'social_youtube',
+            'social_instagram', 'social_discord_tag', 'social_website',
+            'featured_slots',
+        ]);
+
+        return $this->userService->updateVirtualHall(Auth::user()->id, $data)
+            ? response()->json(['message' => 'Virtual Hall updated'], ResponseAlias::HTTP_OK)
+            : response()->json(['message' => 'Update failed'], ResponseAlias::HTTP_BAD_REQUEST);
     }
 }

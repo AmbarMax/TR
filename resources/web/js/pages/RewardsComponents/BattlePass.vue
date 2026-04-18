@@ -37,6 +37,7 @@
 
 <script>
 import { defineComponent } from "vue";
+import api from "../../api/api.js";
 
 export default defineComponent({
   props: {
@@ -45,45 +46,48 @@ export default defineComponent({
   emits: ["buy-level"],
   data() {
     return {
-      levels: [
-        {
-          id: 1, number: 1, name: "Rookie", cost: 0, status: "owned",
-          rewards: [{ label: "+50 Ambar", type: "ambar" }],
-        },
-        {
-          id: 2, number: 2, name: "Scout", cost: 50, status: "owned",
-          rewards: [{ label: "Bronze Key x1", type: "key" }],
-        },
-        {
-          id: 3, number: 3, name: "Explorer", cost: 100, status: "current",
-          rewards: [{ label: "+200 Ambar", type: "ambar" }],
-        },
-        {
-          id: 4, number: 4, name: "Warrior", cost: 200, status: "next",
-          rewards: [{ label: "Silver Key x1", type: "key" }],
-        },
-        {
-          id: 5, number: 5, name: "Hero", cost: 400, status: "locked",
-          rewards: [
-            { label: "Gold Key x1", type: "key" },
-            { label: "+500 Ambar", type: "ambar" },
-          ],
-        },
-        {
-          id: 6, number: 6, name: "Legend", cost: 800, status: "locked",
-          rewards: [
-            { label: "Legendary Chest", type: "key" },
-            { label: "+1000 Ambar", type: "ambar" },
-          ],
-        },
-        {
-          id: 7, number: 7, name: "Master", cost: 1500, status: "locked",
-          rewards: [{ label: "Exclusive reward", type: "key" }],
-        },
-      ],
+      levels: [],
+      loading: true,
     };
   },
+  mounted() {
+    this.fetchLevels();
+  },
   methods: {
+    async fetchLevels() {
+      try {
+        const resp = await api.get("/api/rewards/battle-pass");
+        const raw = resp.data;
+        const firstUnowned = raw.findIndex((l) => !l.owned);
+        this.levels = raw.map((l, idx) => {
+          let status = "locked";
+          if (l.owned) {
+            status = "owned";
+          } else if (idx === firstUnowned) {
+            status = idx > 0 && raw[idx - 1]?.owned ? "next" : "current";
+          }
+          return {
+            id: l.id,
+            number: l.number,
+            name: l.name,
+            cost: l.cost_uru,
+            status,
+            rewards: this.formatRewards(l.rewards || []),
+          };
+        });
+      } catch (e) {
+        this.levels = [];
+      } finally {
+        this.loading = false;
+      }
+    },
+    formatRewards(rewards) {
+      return rewards.map((r) => {
+        if (r.type === "ambar") return { label: `+${r.amount} Ambar`, type: "ambar" };
+        if (r.type === "key") return { label: `Key x${r.quantity || 1}`, type: "key" };
+        return { label: r.type, type: "key" };
+      });
+    },
     tierOpacity(level) {
       if (level.status === "owned" || level.status === "current" || level.status === "next") return 1;
       const idx = this.levels.findIndex((l) => l.id === level.id);

@@ -36,33 +36,66 @@
 
 <script>
 import { defineComponent } from "vue";
+import api from "../../api/api.js";
 import store from "../../store/store.js";
 
 export default defineComponent({
   props: {
     userUru: { type: Number, default: 0 },
   },
+  emits: ["refresh-balances"],
   data() {
     return {
-      shopItems: [
-        { id: 1, name: "Steam $10 gift card", description: "Delivered via email within 24h", price: 500, icon: "GC" },
-        { id: 2, name: "TrophyRoom enamel pin", description: "Limited edition collector pin", price: 300, icon: "Pin" },
-        { id: 3, name: "Exclusive profile frame", description: "Gold animated border for your Virtual Hall", price: 150, icon: "Frame" },
-      ],
-      purchaseHistory: [
-        { id: 1, name: "TrophyRoom sticker pack", price: 100, status: "delivered" },
-        { id: 2, name: "Discord Nitro 1 month", price: 800, status: "pending" },
-      ],
+      shopItems: [],
+      purchaseHistory: [],
     };
   },
+  mounted() {
+    this.fetchItems();
+    this.fetchHistory();
+  },
   methods: {
-    buyItem(item) {
+    async fetchItems() {
+      try {
+        const resp = await api.get("/api/rewards/shop-items");
+        this.shopItems = (resp.data || []).map((i) => ({
+          id: i.id,
+          name: i.name,
+          description: i.description,
+          price: i.price_uru,
+          icon: i.name.slice(0, 3).toUpperCase(),
+        }));
+      } catch (e) {
+        this.shopItems = [];
+      }
+    },
+    async fetchHistory() {
+      try {
+        const resp = await api.get("/api/rewards/purchase-history");
+        this.purchaseHistory = (resp.data || []).map((p) => ({
+          id: p.id,
+          name: p.item_name,
+          price: p.price_paid,
+          status: p.status,
+        }));
+      } catch (e) {
+        this.purchaseHistory = [];
+      }
+    },
+    async buyItem(item) {
       if (this.userUru < item.price) return;
-      store.state.notification = {
-        message: item.name + " purchased! (mock)",
-        type: "success",
-        show: true,
-      };
+      try {
+        const resp = await api.post("/api/rewards/buy-shop-item", { item_id: item.id });
+        if (resp.data.success) {
+          store.state.notification = { message: item.name + " purchased!", type: "success", show: true };
+          this.fetchHistory();
+          this.$emit("refresh-balances");
+        } else {
+          store.state.notification = { message: resp.data.message || "Purchase failed", type: "error", show: true };
+        }
+      } catch (e) {
+        store.state.notification = { message: "Something went wrong", type: "error", show: true };
+      }
     },
   },
 });
