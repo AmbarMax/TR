@@ -1,27 +1,12 @@
 <template>
     <div class="modal_background" @click.self="closeModal">
-        <div class="modal_window_transparent popup_card_content">
+        <div class="trb-modal">
             <img src="../../../../web/images/web/img/icons/close.svg" alt="close" @click="closeModal" class="modal_close_button">
-            <div class="image-block">
-                <img :src="imageUrl" alt="achievement" class="achievement">
-                <img v-if="!description" src="../../../../web/images/web/img/achievements/borders/border.svg" alt="hexagon" class="hexagon-modal">
+            <div class="trb-image-block">
+                <img :src="imageUrl" alt="badge" class="trb-image">
             </div>
-            <div class="card_category_name_block">
-                <div class="card_category_name">
-                    <span>Name</span>
-                </div>
-                <h2>
-                    {{ name }}
-                </h2>
-            </div>
-            <div v-if="description" class="card_category_description_block">
-                <div class="card_category_name">
-                    <span>Description</span>
-                </div>
-                <p>
-                  {{ description }}
-                </p>
-            </div>
+            <h2 class="trb-name">{{ name }}</h2>
+            <p v-if="description" class="trb-description">{{ description }}</p>
         </div>
     </div>
 </template>
@@ -58,27 +43,47 @@ export default {
 </script>
 
 <style scoped>
-    .image-block {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-    }
-    .achievement {
-        width: 400px;
-        height: 400px;
-        margin-bottom: 1%;
-        object-fit: cover;
-    }
-    .hexagon-modal {
-        width: 300px;
-        height: 300px;
-        margin-top: -300px;
-    }
-    @media (max-width: 508px) {
-      .achievement{
-        width: 320px;
-        height: 400px;
-      }
-    }
+.trb-modal {
+    background: #0e0f11;
+    border: 1px solid #2a2c2e;
+    border-radius: 8px;
+    padding: 32px 28px 36px;
+    max-width: 380px;
+    width: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.trb-image-block {
+    display: flex;
+    justify-content: center;
+}
+
+.trb-image {
+    width: 100%;
+    max-width: 300px;
+    border-radius: 8px;
+    object-fit: contain;
+}
+
+.trb-name {
+    color: #feeddf;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 20px;
+    font-weight: 400;
+    margin: 0;
+    text-align: center;
+}
+
+.trb-description {
+    color: #9a9590;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 14px;
+    margin: 0;
+    text-align: center;
+    line-height: 1.5;
+}
 </style>

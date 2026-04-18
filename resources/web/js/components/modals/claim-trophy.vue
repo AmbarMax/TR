@@ -1,68 +1,29 @@
 <template>
     <div v-if="showModal && currentStep === 1" class="modal_background" @click.self="closeClaimTrophy">
         <Loader v-if="statusLoading"/>
-        <div v-else class="modal_window modal_forge_trophy mb-10">
-            <img src="../../../../web/images/web/img/icons/close.svg" alt="close" @click="closeClaimTrophy"
-                 class="modal_close_button">
-            <h1 class="modal_header">
-                Claim your trophy
-            </h1>
-            <h3 v-if="is_nft" class="modal_label">
-            <span> This is <span class="number">NFT</span> Collection Trophy.<br>
-            <span class="number">{{ max_supply - minted }}</span> available.</span>
-            </h3>
-            <h3 class="modal_label">
-                You are going to need Ambar:
-            </h3>
-            <div class="ambar_need">
-                {{ ambar_need }} Ambar
-                <img src="../../../../web/images/web/img/points/ambar.svg" alt="ambar">
-            </div>
-            <div class="point_current">
-                You currently have <span class="number">{{ isEnoughBalanceCount }}/{{ ambar_need }}</span> Ambar
-            </div>
-            <h3 class="modal_label">
-                You are going to need badges:
-            </h3>
-            <div class="trophies">
-                <div class="trophies__item" v-for="badge of badgesNeeded">
-                    <img class="trophies__badge-image"
-                         :src="`storage/integrations/${badge.integration.name}/${badge.image}`"
-                         :alt="badge.name">
-                    <img class="trophies__hexagon" src="../../../../web/images/web/img/achievements/borders/border.svg"
-                         alt="hexagon image">
+        <div v-else class="modal_window ct-modal">
+            <img src="../../../../web/images/web/img/icons/close.svg" alt="close" @click="closeClaimTrophy" class="modal_close_button">
+            <h1 class="ct-title">Forge your trophy</h1>
+
+            <p class="ct-label">Cost to forge:</p>
+            <div class="ct-cost">{{ ambar_need }} XP</div>
+            <div class="ct-balance">You have <span class="ct-highlight">{{ isEnoughBalanceCount }}/{{ ambar_need }}</span> XP</div>
+
+            <p class="ct-label">Required badges:</p>
+            <div class="ct-badges">
+                <div class="ct-badge-tile" v-for="badge of badgesNeeded" :key="badge.id" :title="badge.name">
+                    <img :src="`storage/integrations/${badge.integration.name}/${badge.image}`" :alt="badge.name">
                 </div>
             </div>
-            <div class="point_current">
-                You currently have <span class="number">{{ userMatchingBadges }}/{{ badgesNeeded.length }}</span> badges
-            </div>
+            <div class="ct-balance">You have <span class="ct-highlight">{{ userMatchingBadges }}/{{ badgesNeeded.length }}</span> badges</div>
 
-            <div class="point_current mb-0">
-                Choose wisely
-            </div>
             <button-white
                 :text="'Forge your trophy'"
                 :disabled="isDisabledButton"
-                class="validate_achievement_with_button"
+                class="validate_achievement_with_button ct-btn"
                 @click="showNextModal"
-            >
-            </button-white>
-            <h4 class="modal_small_label">
-                Claim your unique piece and showcase to the world in your trophy room
-            </h4>
-            <!--      <h4 class="modal_small_label number mb-0">-->
-            <!--        *plus {{ receive_uru }} Ambar-->
-            <!--      </h4>-->
-            <!--            <button-white :text="'Forge your legacy'" class="validate_achievement_with_button"></button-white>-->
-            <!--            <h4 class="modal_small_label">-->
-            <!--                Mint a NFT with perks and preserve it forever your-->
-            <!--            </h4>-->
-            <!--            <h4 class="modal_small_label number mb-30">-->
-            <!--                *plus mint and gas fee-->
-            <!--            </h4>-->
-            <!--            <h4 class="modal_small_label mb-0">-->
-            <!--                Validation could take some time-->
-            <!--            </h4>-->
+            ></button-white>
+            <p class="ct-footer">Forge this trophy and add it to your collection.</p>
         </div>
     </div>
 
@@ -426,94 +387,100 @@ export default {
 </script>
 
 <style scoped>
-.modal_window {
-    padding: 40px 30px 60px 30px;
-}
-
-.main-button {
-    margin-top: 24px;
-    margin-bottom: 12px;
-    border-radius: 2px;
-    font-size: 18px;
-    font-family: 'Share Tech Mono', monospace;
-    font-weight: 700;
-    line-height: 20px;
-}
-
-.modal_sign_up_with_button {
-    height: 40px;
-}
-
-.point_current {
-    margin-top: 30px;
-    margin-bottom: 12px;
-    color: rgba(255, 255, 255, 0.90);
-    font-size: 20px;
-    font-family: 'Share Tech Mono', monospace;
-    font-weight: 700;
-    line-height: 28px;
-}
-
-.number {
-    color: #CAFB01;
-}
-
-.ambar_need {
-    display: flex;
-    align-items: center;
-    text-align: center;
-    gap: 8px;
-    color: #CAFB01;
-    font-size: 16px;
-    font-family: 'Share Tech Mono', monospace;
-    font-weight: 700;
-    line-height: 22px;
-    word-wrap: break-word
-}
-
-.trophies {
-    display: flex;
-    gap: 14px;
-    flex-direction: row;
-    flex-wrap: wrap;
-}
-
-.trophies__item {
-    width: 100px;
-    height: 100px;
-    min-width: 100px;
-    min-height: 100px;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    align-items: center;
-    justify-content: center;
-}
-
-.trophies__badge-image {
-    width: 50%;
-    margin-top: 5%;
-}
-
-.trophies__hexagon {
-    position: absolute;
-    top: 0;
-    left: 0;
+/* Step 1 — Forge modal */
+.ct-modal {
+    background: #0e0f11;
+    border: 1px solid #2a2c2e;
+    border-radius: 8px;
+    padding: 36px 32px 40px;
+    max-width: 440px;
     width: 100%;
 }
 
-.mb-0 {
-    margin-bottom: 0 !important;
+.ct-title {
+    color: #feeddf;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 22px;
+    font-weight: 400;
+    margin: 0 0 24px;
 }
 
-.mb-30 {
-    margin-bottom: 30px !important;
+.ct-label {
+    color: #9a9590;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 0 0 10px;
 }
 
-.modal_small_label {
-    margin-bottom: 12px;
+.ct-cost {
+    color: #ff6100;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 20px;
+    font-weight: 400;
+    margin-bottom: 8px;
 }
 
+.ct-balance {
+    color: #9a9590;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 14px;
+    margin-bottom: 24px;
+}
+
+.ct-highlight {
+    color: #c1f527;
+}
+
+.ct-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.ct-badge-tile {
+    width: 56px;
+    height: 56px;
+    background: #1a1c1f;
+    border: 1px solid #2a2c2e;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.ct-badge-tile img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+
+.ct-btn {
+    margin-top: 24px;
+    margin-bottom: 8px;
+}
+
+.ct-btn :deep(.main-button) {
+    background: #ff6100;
+    color: #000003;
+    border: none;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 14px;
+    width: 100%;
+}
+
+.ct-footer {
+    color: #5a5550;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    margin: 0;
+    text-align: center;
+}
+
+/* Step 2 — Choose reward */
 .trophy-list {
     margin-top: 30px;
     margin-bottom: 18px;
