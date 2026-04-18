@@ -1,6 +1,7 @@
 import Login from "../pages/Login.vue";
 import Signup from "../pages/Signup.vue";
 import Profile from "../pages/Profile.vue";
+import Dashboard from "../pages/Dashboard.vue";
 import Main from "../Main.vue";
 import Auth from "../Auth.vue";
 import Validate from "../pages/Validate.vue"
@@ -23,6 +24,11 @@ const routes = [
         path: '/',
         component: Main,
         children: [
+            {
+                path: '/dashboard',
+                component: Dashboard,
+                name: 'dashboard'
+            },
             {
                 path: '/profile',
                 component: Profile,
@@ -125,7 +131,7 @@ const routes = [
     },
     {
         path: '',
-        redirect: '/profile',
+        redirect: '/dashboard',
     },
     {
         path: '/:catchAll(.*)',

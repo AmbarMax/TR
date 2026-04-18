@@ -137,7 +137,7 @@ export default {
                     getProfileData();
                     if (localStorage.getItem('access_token')){
                         this.checkAuth();
-                        router.push('/trophy-room');
+                        router.push('/dashboard');
                     }
                 }
             })
@@ -165,7 +165,7 @@ export default {
                                 }
                             }
                         })
-                        router.push('/trophy-room');
+                        router.push('/dashboard');
                     }
                 }
             })

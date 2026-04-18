@@ -127,7 +127,7 @@ export default {
                     getProfileData();
                     if (localStorage.getItem('access_token')) {
                         store.state.showTestData = false;
-                        router.push('/trophy-room');
+                        router.push('/dashboard');
                     }
                 }
             })

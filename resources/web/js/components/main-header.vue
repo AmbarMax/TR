@@ -1,11 +1,6 @@
 <template>
     <div class="web-header" :style="getVirtualHallPadding">
 
-        <router-link to="/trophy-room" class="virtual-hall-logo" v-if="$route.name === 'virtual-hall'">
-            <div class="logo">
-                <img src="../../../web/images/web/img/tr-isologo.png" alt="logo">
-            </div>
-        </router-link>
         <div v-if="store.state.authorized" class="header_right_block">
             <div v-if="isMobile">
                 <router-link to="/trophy-room" >
@@ -14,40 +9,14 @@
                     </div>
                 </router-link>
             </div>
-            <div v-if="isDesktop" class="header_achievement">
-                <img src="../../../web/images/web/img/header_icons/01.svg" alt="circle" title="Uru">
-                <span>{{$store.state.user.balances.uru < 0 ? 0 : $store.state.user.balances.uru}}</span>
-                <div>
-<!--                    <img src="../../../web/images/web/img/icons/plus.svg" alt="plus">-->
-                </div>
-            </div>
-            <div v-if="isDesktop" class="header_achievement">
-                <img src="../../../web/images/web/img/header_icons/02.svg" alt="rhombus" title="Ambar">
-                <span>{{$store.state.user.balances.ambar < 0 ? 0 : $store.state.user.balances.ambar}}</span>
-                <div>
-<!--                    <img src="../../../web/images/web/img/icons/plus.svg" alt="plus">-->
-                </div>
-            </div>
-            <div v-if="isDesktop" class="header_achievement">
-                <img src="../../../web/images/web/img/header_icons/03.svg" alt="heart" title="Rune">
-                <span>{{$store.state.user.balances.rune < 0 ? 0 : $store.state.user.balances.rune}}</span>
-                <div>
-<!--                    <img src="../../../web/images/web/img/icons/plus.svg" alt="plus">-->
-                </div>
-            </div>
-            <div class="header_notification_indicator" @click="openCloseMessageNotification" ref="headerDropdownNotification">
+            <div class="header_notification_indicator" @click="$router.push('/dashboard')" ref="headerDropdownNotification">
                 <div class="header_notification_bell_wrapper">
                     <img src="../../../web/images/web/img/icons/bell.svg" alt="bell">
                     <div v-if="store.state.unread_notifications_count" class="header_notification_indicator_count">
                         {{ messagesCount() }}
                     </div>
                 </div>
-
-                <div class="header_message_notification_wrapper">
-                    <ambar-messages-notification v-if="store.state.messageNotification.show"></ambar-messages-notification>
-                </div>
             </div>
-            <div v-if="!isMobile" class="separator_vertical"></div>
             <div class="header_user_info" @click="openHeaderDropdown">
                 <div class="header_user_avatar">
                     <img v-if="store.state.userAvatar" :src="store.state.userAvatar" alt="avatar" class="header_user_avatar_image">
@@ -59,29 +28,6 @@
             </div>
             <div v-if="isMobile" class="header_user_info header-user-menu" @click="openSideBar">
                 <img src="../../../web/images/web/img/icons/menu.svg" alt="arrow-down">
-            </div>
-        </div>
-        <div v-if="!isDesktop && store.state.authorized" class="header_right_block_mobile">
-            <div class="header_achievement">
-                <img src="../../../web/images/web/img/header_icons/01.svg" alt="Uru" title="Uru">
-                <span>{{$store.state.user.balances.uru}}</span>
-                <div>
-<!--                    <img src="../../../web/images/web/img/icons/plus.svg" alt="plus">-->
-                </div>
-            </div>
-            <div class="header_achievement">
-                <img src="../../../web/images/web/img/header_icons/02.svg" alt="rhombus" title="Ambar">
-                <span>{{$store.state.user.balances.ambar}}</span>
-                <div>
-<!--                    <img src="../../../web/images/web/img/icons/plus.svg" alt="plus">-->
-                </div>
-            </div>
-            <div class="header_achievement">
-                <img src="../../../web/images/web/img/header_icons/03.svg" alt="heart" title="Rune">
-                <span>{{$store.state.user.balances.rune}}</span>
-                <div>
-<!--                    <img src="../../../web/images/web/img/icons/plus.svg" alt="plus">-->
-                </div>
             </div>
         </div>
         <div class="header_dropdown" v-if="isActiveHeaderDropdown && store.state.authorized" @mouseleave="closeHeaderDropdown" ref="headerDropdown" tabindex="-1">
