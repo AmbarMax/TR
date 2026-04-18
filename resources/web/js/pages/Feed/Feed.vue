@@ -7,12 +7,14 @@
     <div class="feed-tabs">
       <div :class="{ active: activeTab === 1 }" class="feed-tab" @click="changeTab(1)">Following</div>
       <div :class="{ active: activeTab === 2 }" class="feed-tab" @click="changeTab(2)">My posts</div>
+      <div :class="{ active: activeTab === 3 }" class="feed-tab" @click="changeTab(3)">My community</div>
     </div>
     <div class="feed-layout">
       <div class="feed-content">
-        <FeedComposer @post-created="refreshFeed" />
+        <FeedComposer v-if="activeTab !== 3" @post-created="refreshFeed" />
         <div v-if="activeTab === 1"><Followers ref="followersTab" /></div>
         <div v-if="activeTab === 2"><MyFeed ref="myFeedTab" /></div>
+        <div v-if="activeTab === 3"><MyCommunity ref="communityTab" /></div>
       </div>
       <div class="feed-sidebar">
         <WallOfFame />
@@ -26,6 +28,7 @@ import Followers from "./components/Followers.vue";
 import MyFeed from "./components/My-feed.vue";
 import WallOfFame from "./components/WallOfFame.vue";
 import FeedComposer from "./components/FeedComposer.vue";
+import MyCommunity from "./components/MyCommunity.vue";
 import {defineComponent} from "vue";
 import store from "../../store/store.js";
 
@@ -35,13 +38,12 @@ export default defineComponent({
     Followers,
     WallOfFame,
     FeedComposer,
+    MyCommunity,
     store,
   },
   data() {
     return {
       activeTab: 1,
-      followersCount: 0,
-      followingCount: 0,
     }
   },
   methods: {
@@ -66,7 +68,11 @@ export default defineComponent({
       }
     },
   },
-  mounted(){}
+  mounted(){
+    if (this.$route.query.tab === 'community') {
+      this.activeTab = 3;
+    }
+  }
 });
 </script>
 

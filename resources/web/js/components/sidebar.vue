@@ -104,35 +104,6 @@
                     </span>
                 </router-link>
             </li>
-            <li>
-                <router-link to="/network" :class="{ active_item: $route.path === '/network' }">
-                    <svg v-if="$route.path === '/network'" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <path d="M15.5709 1.57129L21.2852 10.7141L15.5709 19.857L6.42801 19.857L0.713729 10.7141L6.42801 1.57129L15.5709 1.57129Z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-                        <circle cx="10.9997" cy="10.7141" r="6.20714" stroke="black" stroke-width="1.3"/>
-                        <circle cx="10.9997" cy="10.7141" r="6.20714" stroke="currentColor" stroke-width="1.3"/>
-                        <path d="M8.42773 16.5713L6.71345 19.5713" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M15.2852 1.57129L13.5709 4.57129" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M21 10.7144L17.5714 10.7144" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M6.71345 1.57129L8.42773 4.99986" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M1.28432 10.7144L4.71289 10.7144" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M13.5709 16.4282L15.2852 19.8568" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    <svg v-else xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <path d="M15.5718 1.57129L21.2861 10.7141L15.5718 19.857L6.42899 19.857L0.714705 10.7141L6.42899 1.57129L15.5718 1.57129Z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-                        <circle cx="11.0007" cy="10.7141" r="6.20714" stroke="black" stroke-width="1.3"/>
-                        <circle cx="11.0007" cy="10.7141" r="6.20714" stroke="currentColor" stroke-width="1.3"/>
-                        <path d="M8.42871 16.5713L6.71442 19.5713" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M15.2861 1.57129L13.5718 4.57129" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M21 10.7144L17.5714 10.7144" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M6.71443 1.57129L8.42871 4.99986" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M1.28627 10.7144L4.71484 10.7144" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M13.5718 16.4282L15.2861 19.8568" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    <span>
-                        Network
-                    </span>
-              </router-link>
-            </li>
             <li v-if="isAdmin">
                 <router-link to="/brand-dashboard" :class="{ active_item: $route.path === '/brand-dashboard' }">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -141,7 +112,7 @@
                         <rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.3"/>
                         <rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.3"/>
                     </svg>
-                    <span>Brand Dashboard</span>
+                    <span>Admin Panel</span>
                 </router-link>
             </li>
         </ul>

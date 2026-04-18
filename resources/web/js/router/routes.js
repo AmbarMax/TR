@@ -12,7 +12,6 @@ import VirtualHall from "../pages/VirtualHall/VirtualHall.vue";
 import ForgotPassword from "../pages/ForgotPassword.vue";
 import ResetPassword from "../pages/ResetPassword.vue";
 import SinglePage from "../SinglePage.vue";
-import Network from "../pages/Network/Network.vue";
 import Feed from "../pages/Feed/Feed.vue";
 import ResetTwoFactorAuth from "../pages/ResetTwoFactorAuth.vue";
 import Exchange from "../pages/Exchange.vue";
@@ -61,8 +60,7 @@ const routes = [
             },
             {
                 path: '/network',
-                component: Network,
-                name: 'network'
+                redirect: { name: 'feed', query: { tab: 'community' } }
             },
             {
                 path: '/exchange',
