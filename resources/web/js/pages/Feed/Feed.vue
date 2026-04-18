@@ -1,7 +1,7 @@
 <template>
   <div class="feed-page">
     <div class="feed-header">
-      <h1 class="feed-title">Feed</h1>
+      <h1 class="feed-title">Achievements</h1>
       <p class="feed-subtitle">Share your feats, clips, and forged trophies with the community</p>
     </div>
     <div class="feed-tabs">
@@ -72,7 +72,8 @@ export default defineComponent({
 
 <style scoped>
 .feed-page {
-  padding: 0;
+  padding-top: 20px;
+  padding-left: 20px;
 }
 .feed-header {
   margin-bottom: 20px;
@@ -124,7 +125,7 @@ export default defineComponent({
   max-width: 680px;
 }
 .feed-sidebar {
-  width: 260px;
+  width: 280px;
   flex-shrink: 0;
 }
 

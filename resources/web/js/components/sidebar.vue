@@ -87,7 +87,7 @@
                         <path d="M3.5625 8.0625H20.4375M17.625 12H6.375M6.375 21H17.625C19.489 21 21 19.489 21 17.625V6.375C21 4.51104 19.489 3 17.625 3H6.375C4.51104 3 3 4.51104 3 6.375V17.625C3 19.489 4.51104 21 6.375 21Z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                     <span>
-                        Feed
+                        Achievements
                     </span>
                 </router-link>
             </li>
