@@ -43,13 +43,13 @@ export default defineComponent({
   background: #0e0f11;
   border: 1px solid #2a2c2e;
   border-radius: 6px;
-  padding: 14px;
+  padding: 16px;
   position: sticky;
   top: 20px;
 }
 .wof-label {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 11px;
+  font-size: 12px;
   text-transform: uppercase;
   color: #ff6100;
   letter-spacing: 0.12em;
@@ -64,8 +64,8 @@ export default defineComponent({
 .wof-entry {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 12px;
+  gap: 10px;
+  margin-bottom: 14px;
 }
 .wof-rank {
   font-family: 'Share Tech Mono', monospace;
@@ -78,8 +78,8 @@ export default defineComponent({
   color: #ff6100;
 }
 .wof-avatar {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   background: #1a1c1f;
   border: 1px solid #2a2c2e;
@@ -87,7 +87,7 @@ export default defineComponent({
   align-items: center;
   justify-content: center;
   font-family: 'Share Tech Mono', monospace;
-  font-size: 9px;
+  font-size: 10px;
   color: #9a9590;
   flex-shrink: 0;
 }
@@ -97,7 +97,7 @@ export default defineComponent({
 }
 .wof-name {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 11px;
+  font-size: 12px;
   color: #feeddf;
   white-space: nowrap;
   overflow: hidden;
@@ -105,7 +105,7 @@ export default defineComponent({
 }
 .wof-stats {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 10px;
+  font-size: 11px;
   color: #5a5550;
   display: flex;
   gap: 6px;

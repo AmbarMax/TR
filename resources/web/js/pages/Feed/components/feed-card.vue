@@ -385,6 +385,7 @@ export default {
   border-radius: 6px;
   padding: 16px;
   margin-bottom: 16px;
+  max-width: 680px;
 }
 
 /* Header */
@@ -502,7 +503,7 @@ export default {
 
 .fc-image img {
   width: 100%;
-  max-height: 400px;
+  max-height: 300px;
   object-fit: cover;
   border-radius: 4px;
   display: block;

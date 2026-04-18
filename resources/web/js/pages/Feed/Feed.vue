@@ -98,15 +98,16 @@ export default defineComponent({
 }
 .feed-layout {
   display: flex;
-  gap: 20px;
+  gap: 24px;
   align-items: flex-start;
 }
 .feed-content {
   flex: 1;
   min-width: 0;
+  max-width: 680px;
 }
 .feed-sidebar {
-  width: 220px;
+  width: 260px;
   flex-shrink: 0;
 }
 
