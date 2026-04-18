@@ -433,8 +433,8 @@ export default defineComponent({
       return [...trophyItems, ...achItems, ...badges].slice(0, 4);
     },
     isOwnProfile() {
-      const authUser = store.state.user;
-      return authUser && this.user && authUser.username === this.user.username;
+      const currentUser = JSON.parse(localStorage.getItem('user'));
+      return currentUser && this.user && currentUser.username === this.user.username;
     },
     hasSocialLinks() {
       return Object.values(this.socialLinks).some(v => v);
