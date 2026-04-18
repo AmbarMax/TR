@@ -8,12 +8,16 @@
       </div>
       <div class="dash-currencies">
         <div class="dash-currency">
-          <span class="dash-currency__value dash-currency__value--ambar">{{ Math.floor($store.state.user.balances.ambar || 0) }}</span>
+          <span class="dash-currency__value dash-currency__value--ambar">
+            <img src="../../../web/images/web/img/header_icons/02.svg" style="width:18px;height:18px;margin-right:4px;vertical-align:middle;">{{ Math.floor($store.state.user.balances.ambar || 0) }}
+          </span>
           <span class="dash-currency__label">Ambar</span>
         </div>
         <div class="dash-currency__sep"></div>
         <div class="dash-currency">
-          <span class="dash-currency__value dash-currency__value--uru">{{ Math.floor($store.state.user.balances.uru || 0) }}</span>
+          <span class="dash-currency__value dash-currency__value--uru">
+            <img src="../../../web/images/web/img/header_icons/01.svg" style="width:18px;height:18px;margin-right:4px;vertical-align:middle;">{{ Math.floor($store.state.user.balances.uru || 0) }}
+          </span>
           <span class="dash-currency__label">Uru</span>
         </div>
       </div>
@@ -41,7 +45,13 @@
             <div class="dash-mission__desc">{{ mission.description }}</div>
           </div>
           <div class="dash-mission__reward" :class="mission.done ? 'dash-mission__reward--done' : ''">
-            {{ mission.done ? 'Done' : mission.reward }}
+            <span v-if="mission.done">Done</span>
+            <span v-else-if="mission.rewardType === 'ambar'" style="display:flex;align-items:center;gap:3px;">
+              <img src="../../../web/images/web/img/header_icons/02.svg" style="width:14px;height:14px;"> {{ mission.reward }}
+            </span>
+            <span v-else-if="mission.rewardType === 'uru'" style="display:flex;align-items:center;gap:3px;">
+              <img src="../../../web/images/web/img/header_icons/01.svg" style="width:14px;height:14px;"> {{ mission.reward }}
+            </span>
           </div>
         </div>
       </div>
@@ -87,7 +97,7 @@
       <div class="dash-activity">
         <div class="dash-activity-row" v-for="notif in notifications.slice(0, 5)" :key="notif.id">
           <div class="dash-activity-row__dot"></div>
-          <div class="dash-activity-row__text">{{ notif.message }}</div>
+          <div class="dash-activity-row__text">{{ notif.description }}</div>
           <div class="dash-activity-row__time">{{ formatTime(notif.created_at) }}</div>
         </div>
       </div>
@@ -141,6 +151,7 @@ export default defineComponent({
           name: hasDiscord ? 'Import more Discord badges' : 'Connect Discord',
           description: hasDiscord ? 'Sync your latest achievements' : 'Link your Discord account',
           reward: '+250',
+          rewardType: 'ambar',
           done: false,
           action: () => this.connectPlatform('discord')
         },
@@ -149,6 +160,7 @@ export default defineComponent({
           name: 'Forge a trophy',
           description: this.readyToForge ? `You have ${this.readyToForge} ready to forge` : 'Complete badge requirements first',
           reward: '+Uru',
+          rewardType: 'uru',
           done: false,
           action: () => this.$router.push('/forge')
         },
@@ -157,6 +169,7 @@ export default defineComponent({
           name: 'Share an achievement',
           description: 'Post to the feed and earn Ambar',
           reward: '+50',
+          rewardType: 'ambar',
           done: false,
           action: () => this.$router.push('/feed')
         },
@@ -165,6 +178,7 @@ export default defineComponent({
           name: 'Connect Discord',
           description: 'Completed',
           reward: 'Done',
+          rewardType: 'ambar',
           done: !!hasDiscord,
           action: () => {}
         }
@@ -260,9 +274,10 @@ export default defineComponent({
       }
 
       try {
-        const notifResp = await api.get('/api/notifications');
+        const notifResp = await api.get('/api/notification');
         if (notifResp.status === 200) {
-          this.notifications = notifResp.data.data || notifResp.data || [];
+          const notifData = notifResp.data[0];
+          this.notifications = notifData?.data || notifData || [];
         }
       } catch (e) {
         console.log('Notifications fetch error:', e);
