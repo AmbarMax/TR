@@ -73,7 +73,7 @@ export default defineComponent({
 <style scoped>
 .feed-page {
   padding-top: 20px;
-  padding-left: 20px;
+  padding-left: 32px;
 }
 .feed-header {
   margin-bottom: 20px;
@@ -122,10 +122,9 @@ export default defineComponent({
 .feed-content {
   flex: 1;
   min-width: 0;
-  max-width: 680px;
 }
 .feed-sidebar {
-  width: 280px;
+  width: 300px;
   flex-shrink: 0;
 }
 
