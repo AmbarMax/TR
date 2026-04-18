@@ -14,8 +14,7 @@ import ResetPassword from "../pages/ResetPassword.vue";
 import SinglePage from "../SinglePage.vue";
 import Feed from "../pages/Feed/Feed.vue";
 import ResetTwoFactorAuth from "../pages/ResetTwoFactorAuth.vue";
-import Exchange from "../pages/Exchange.vue";
-import MyChests from "../pages/MyChests.vue";
+import Rewards from "../pages/Rewards.vue";
 import LinkDiscord from "../pages/LinkDiscord.vue";
 
 const routes = [
@@ -63,14 +62,17 @@ const routes = [
                 redirect: { name: 'feed', query: { tab: 'community' } }
             },
             {
+                path: '/rewards',
+                component: Rewards,
+                name: 'rewards'
+            },
+            {
                 path: '/exchange',
-                component: Exchange,
-                name: 'exchange'
+                redirect: { name: 'rewards', query: { tab: 'shop' } }
             },
             {
                 path: '/my-chests',
-                component: MyChests,
-                name: 'my-chests'
+                redirect: { name: 'rewards', query: { tab: 'chests' } }
             },
             {
                 path: '/brand-dashboard',
