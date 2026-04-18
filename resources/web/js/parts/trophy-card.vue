@@ -40,12 +40,15 @@
       </div>
     </div>
 
-    <div class="trophy-card__action" v-if="isReady && showForgeButton">
+    <div class="trophy-card__action" v-if="alreadyForged">
+      <button class="trophy-card__view-btn" @click="$emit('view', trophy)">View</button>
+    </div>
+    <div class="trophy-card__action" v-else-if="isReady && showForgeButton">
       <button class="trophy-card__forge-btn" @click="forgeTrophy">Forge now</button>
     </div>
-    <div class="trophy-card__action" v-else-if="!isReady && trophy.badges_required">
+    <div class="trophy-card__action" v-else-if="!isReady && (badgesRequired || trophy.badges_required)">
       <button class="trophy-card__missing-btn" disabled>
-        Missing {{ (trophy.badges_required || 0) - (trophy.badges_owned || 0) }} badge{{ ((trophy.badges_required || 0) - (trophy.badges_owned || 0)) !== 1 ? 's' : '' }}
+        Missing {{ badgesRequired ? (badgesRequired - badgesOwned) : ((trophy.badges_required || 0) - (trophy.badges_owned || 0)) }} badge{{ (badgesRequired ? (badgesRequired - badgesOwned) : ((trophy.badges_required || 0) - (trophy.badges_owned || 0))) !== 1 ? 's' : '' }}
       </button>
     </div>
 
@@ -75,8 +78,10 @@ export default {
     showShowcase: { type: Boolean, default: true },
     showDescription: { type: Boolean, default: false },
     requiredBadges: { type: Array, default: () => [] },
-    userBadgeIds: { type: Array, default: () => [] }
+    userBadgeIds: { type: Array, default: () => [] },
+    alreadyForged: { type: Boolean, default: false }
   },
+  emits: ['view'],
   computed: {
     imageUrl() {
       return `/storage/trophies/${this.trophy.image}`;
@@ -265,6 +270,24 @@ export default {
   font-family: 'Share Tech Mono', monospace;
   font-size: 13px;
   cursor: default;
+}
+
+.trophy-card__view-btn {
+  width: 100%;
+  background: transparent;
+  border: 1px solid #2a2c2e;
+  color: #9a9590;
+  border-radius: 4px;
+  padding: 10px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 13px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.trophy-card__view-btn:hover {
+  border-color: #9a9590;
+  color: #feeddf;
 }
 
 .trophy-card__showcase-btn {

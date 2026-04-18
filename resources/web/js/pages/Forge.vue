@@ -1,5 +1,6 @@
 <template>
   <div class="main_block">
+    <TrophyRoomBadge v-if="trophyRoomBadgeModalOpen"></TrophyRoomBadge>
     <!-- Header -->
     <div class="forge-header">
       <h1 class="forge-title">Forge</h1>
@@ -31,6 +32,8 @@
         :show-description="true"
         :required-badges="trophy.badges || []"
         :user-badge-ids="userBadgeIds"
+        :already-forged="isAlreadyForged(trophy.id)"
+        @view="openTrophyDetail"
       />
     </div>
 
@@ -48,10 +51,12 @@ import TrophyCard from "../parts/trophy-card.vue";
 import buttonWhite from "../parts/button.vue";
 import store from "../store/store.js";
 import api from "../api/api.js";
+import TrophyRoomBadge from "../components/modals/trophy-room-badge.vue";
 
 export default defineComponent({
     components: {
         TrophyCard,
+        TrophyRoomBadge,
         buttonWhite,
         store
     },
@@ -98,6 +103,15 @@ export default defineComponent({
         setFilter(filter) {
             this.activeFilter = filter;
         },
+        isAlreadyForged(trophyId) {
+            return this.trophies.some(t => t.id === trophyId);
+        },
+        openTrophyDetail(trophy) {
+            store.state.modals.trophyRoomBadge.show = true;
+            store.state.modals.trophyRoomBadge.data.imageUrl = '/storage/trophies/' + trophy.image;
+            store.state.modals.trophyRoomBadge.data.name = trophy.name;
+            store.state.modals.trophyRoomBadge.data.description = trophy.description;
+        },
     },
     mounted() {
         this.totalPages = Math.ceil(this.achievements.length / 3);
@@ -113,6 +127,9 @@ export default defineComponent({
         },
         trophiesChanged() {
             return store.state.modals.claimTrophyModal.show;
+        },
+        trophyRoomBadgeModalOpen() {
+            return store.state.modals.trophyRoomBadge.show;
         },
         userBadgeIds() {
             return this.userBadges.map(b => b.id);
