@@ -109,11 +109,6 @@ export default defineComponent({
   border: 1px solid #2a2c2e;
   border-radius: 6px;
   overflow: hidden;
-  position: sticky;
-  top: 84px;
-  max-height: calc(100vh - 100px);
-  overflow-y: auto;
-  padding-right: 0;
   margin-right: 16px;
 }
 
@@ -267,10 +262,6 @@ export default defineComponent({
   background: #2a2c2e;
   margin: 0;
 }
-
-/* Scrollbar */
-.wof::-webkit-scrollbar { width: 4px; }
-.wof::-webkit-scrollbar-thumb { background: #ff6100; border-radius: 4px; }
 
 /* Footer */
 .wof-footer {

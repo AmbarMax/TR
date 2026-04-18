@@ -1,12 +1,13 @@
 <template>
     <div class="web-header" :style="getVirtualHallPadding">
 
-        <router-link to="/dashboard" class="header-logo">
-            <img src="../../../web/images/web/img/tr-isologo.png" alt="logo" style="height: 32px; width: auto;">
-        </router-link>
-
         <div v-if="store.state.authorized" class="header_right_block">
             <div v-if="isMobile">
+                <router-link to="/trophy-room" >
+                    <div @click="openMainPage" class="front-sidebar_logo">
+                        <img src="../../../web/images/web/img/tr-isologo.png" alt="logo">
+                    </div>
+                </router-link>
             </div>
             <div class="header_notification_indicator" @click="$router.push('/dashboard')" ref="headerDropdownNotification">
                 <div class="header_notification_bell_wrapper">

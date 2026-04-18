@@ -1,5 +1,15 @@
 <template>
     <div class="front-sidebar" v-if="sideBarStatus || !isMobile">
+        <div class="front-sidebar_logo">
+            <router-link to="/trophy-room">
+                <div>
+                    <img src="../../../web/images/web/img/tr-isologo.png" alt="logo">
+                </div>
+            </router-link>
+            <div>
+                <img class="sidebar_component" v-if="isMobile" src="../../../web/images/web/img/icons/close.svg" alt="arrow-down" @click="closeSideBar">
+            </div>
+        </div>
         <ul class="sidebar_menu">
             <li>
                 <router-link to="/dashboard" :class="{ active_item: $route.path === '/dashboard' }">

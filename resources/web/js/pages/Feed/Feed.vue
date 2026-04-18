@@ -128,7 +128,13 @@ export default defineComponent({
   width: 300px;
   flex-shrink: 0;
   align-self: flex-start;
+  position: sticky;
+  top: 84px;
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
 }
+.feed-sidebar::-webkit-scrollbar { width: 4px; }
+.feed-sidebar::-webkit-scrollbar-thumb { background: #ff6100; border-radius: 4px; }
 
 @media (max-width: 968px) {
   .feed-layout {
