@@ -110,7 +110,7 @@ export default defineComponent({
   border-radius: 6px;
   overflow: hidden;
   position: sticky;
-  top: 20px;
+  top: 84px;
   padding-right: 0;
   margin-right: 16px;
 }
