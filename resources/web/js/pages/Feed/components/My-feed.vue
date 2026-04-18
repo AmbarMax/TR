@@ -83,14 +83,17 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.feed-list{
-  overflow-y: auto;
+.feed-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
 }
-
-.feed-list .item-wrapper {
-    @media (max-width: 642px) {
-        width: calc(100% - 20px);
-    }
-
+.item-wrapper {
+  width: 100%;
+}
+@media (max-width: 642px) {
+  .item-wrapper {
+    width: 100%;
+  }
 }
 </style>

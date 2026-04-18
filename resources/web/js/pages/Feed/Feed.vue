@@ -1,26 +1,21 @@
 <template>
-  <div class="main_block">
-    <div class="page_info">
-      <div class="title">
-        <span>Feed</span>
-        <div class="sub_title">
-          <span>The place where you share your feats with friends and community. Unlike your trophy room, you can share anything here, not just your best achievements</span>
-        </div>
-      </div>
-      <div class="tabs">
-        <div :class="{ 'selected': activeTab === 1 }" class="tab" @click="changeTab(1)">
-          Followers
-        </div>
-        <div :class="{ 'selected': activeTab === 2 }" class="tab" @click="changeTab(2)">
-          My feed
-        </div>
-      </div>
+  <div class="feed-page">
+    <div class="feed-header">
+      <h1 class="feed-title">Feed</h1>
+      <p class="feed-subtitle">Share your feats, clips, and forged trophies with the community</p>
     </div>
-    <div v-if="activeTab === 1" class="my-vault-tab">
-      <Followers />
+    <div class="feed-tabs">
+      <div :class="{ active: activeTab === 1 }" class="feed-tab" @click="changeTab(1)">Following</div>
+      <div :class="{ active: activeTab === 2 }" class="feed-tab" @click="changeTab(2)">My posts</div>
     </div>
-    <div v-if="activeTab === 2" class="my-vault-tab">
-      <MyFeed />
+    <div class="feed-layout">
+      <div class="feed-content">
+        <div v-if="activeTab === 1"><Followers /></div>
+        <div v-if="activeTab === 2"><MyFeed /></div>
+      </div>
+      <div class="feed-sidebar">
+        <WallOfFame />
+      </div>
     </div>
   </div>
 </template>
@@ -28,6 +23,7 @@
 <script>
 import Followers from "./components/Followers.vue";
 import MyFeed from "./components/My-feed.vue";
+import WallOfFame from "./components/WallOfFame.vue";
 import {defineComponent} from "vue";
 import store from "../../store/store.js";
 
@@ -35,6 +31,7 @@ export default defineComponent({
   components: {
     MyFeed,
     Followers,
+    WallOfFame,
     store,
   },
   data() {
@@ -57,5 +54,69 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.feed-page {
+  padding: 0;
+}
+.feed-header {
+  margin-bottom: 20px;
+}
+.feed-title {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 22px;
+  font-weight: 400;
+  color: #feeddf;
+  margin: 0 0 4px 0;
+}
+.feed-subtitle {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  color: #9a9590;
+  line-height: 1.5;
+  margin: 0;
+}
+.feed-tabs {
+  display: flex;
+  border-bottom: 1px solid #2a2c2e;
+  margin-bottom: 20px;
+  gap: 0;
+}
+.feed-tab {
+  padding: 10px 16px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 13px;
+  color: #9a9590;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+}
+.feed-tab:hover {
+  color: #feeddf;
+}
+.feed-tab.active {
+  color: #c1f527;
+  border-bottom-color: #c1f527;
+}
+.feed-layout {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+.feed-content {
+  flex: 1;
+  min-width: 0;
+}
+.feed-sidebar {
+  width: 220px;
+  flex-shrink: 0;
+}
 
+@media (max-width: 968px) {
+  .feed-layout {
+    flex-direction: column;
+  }
+  .feed-sidebar {
+    width: 100%;
+    order: -1;
+  }
+}
 </style>

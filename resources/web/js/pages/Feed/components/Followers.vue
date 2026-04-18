@@ -64,3 +64,19 @@ export default {
     },
 }
 </script>
+
+<style scoped>
+.feed-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.item-wrapper {
+  width: 100%;
+}
+@media (max-width: 642px) {
+  .item-wrapper {
+    width: 100%;
+  }
+}
+</style>

@@ -31,26 +31,35 @@ export default {
 
 <style scoped>
 .list-wrapper {
-  background: rgba(186, 186, 186, 0.15);
+  background: #0e0f11;
   width: 100%;
 }
-.item{
+.item {
   display: flex;
   justify-content: space-between;
-  border-bottom: 1px solid white;
-  padding: 18px;
+  align-items: center;
+  border-bottom: 1px solid #2a2c2e;
+  padding: 14px 18px;
+  color: #feeddf;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 13px;
 }
 .left-part {
-  display: flex; /* Размещение элементов внутри контейнера в виде строки */
-  align-items: center; /* Выравнивание элементов по центру по вертикали */
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
-
-.left-part img {
-  margin-right: 10px; /* Расстояние между изображением и текстом */
-}
-
 .left-part span {
-  display: block; /* Делаем span блочными элементами, чтобы они были друг под другом */
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
-
+.left-part span span:first-child {
+  color: #feeddf;
+  font-size: 13px;
+}
+.left-part span span:last-child {
+  color: #9a9590;
+  font-size: 11px;
+}
 </style>
