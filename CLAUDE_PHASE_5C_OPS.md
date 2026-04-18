@@ -1,3 +1,24 @@
+# CLAUDE_PHASE_5C_OPS.md — Settings Page Redesign
+
+> Read TROPHYROOM_WORKING_GUIDE.md and CLAUDE.md before starting.
+> Execute ONE step at a time. Run `npm run dev` after each step to verify no errors.
+> Vue 3 Options API ONLY. Share Tech Mono only. No Composition API, no `<script setup>`.
+
+---
+
+## Goal
+
+Completely restyle Profile.vue as a Settings page with 3 sections: Profile, Virtual Hall (featured slots + social links), and Security. Remove the legacy Tokens section. Preserve ALL existing API calls and functionality. Add new Virtual Hall customization fields (mocked for now — backend later).
+
+---
+
+## Step 1 — Rewrite Profile.vue
+
+**Replace the ENTIRE content of:** `resources/web/js/pages/Profile.vue`
+
+This is a full rewrite. The new version preserves all existing methods and API calls but restructures the template and styles completely.
+
+```vue
 <template>
   <div class="settings-page">
     <div class="settings-label">Settings</div>
@@ -465,6 +486,7 @@ export default {
         });
     },
     openFeaturedPicker(index) {
+      // TODO: open modal to pick from user's trophies/badges/achievements
       console.log("Open featured picker for slot", index);
       store.state.notification = {
         message: "Featured picker coming soon (backend needed)",
@@ -473,6 +495,7 @@ export default {
       };
     },
     saveVirtualHall() {
+      // TODO: backend integration — POST social links + featured slots
       console.log("Save Virtual Hall:", this.socialLinks, this.featuredSlots);
       store.state.notification = {
         message: "Virtual Hall saved! (mock — backend not connected yet)",
@@ -884,3 +907,77 @@ export default {
   }
 }
 </style>
+```
+
+**After replacing, run:** `npm run dev`
+
+---
+
+## Step 2 — Update router: rename route to 'settings'
+
+**Edit file:** `resources/web/js/router/routes.js`
+
+Find the profile route:
+
+```js
+            {
+                path: '/profile',
+                component: Profile,
+                name: 'profile'
+            },
+```
+
+Replace with:
+
+```js
+            {
+                path: '/profile',
+                component: Profile,
+                name: 'settings'
+            },
+```
+
+This keeps the `/profile` URL but renames the route internally. No other changes needed — the import stays the same.
+
+**After editing, run:** `npm run dev`
+
+---
+
+## Step 3 — Verify and commit
+
+Run these checks:
+
+1. `npm run dev` — should compile with zero errors
+2. Navigate to `/profile` — should show the new Settings page with 3 sections
+3. Profile section: all fields should load data (name, username, email, etc.)
+4. Avatar/background upload buttons should work (click triggers file picker)
+5. Virtual Hall section: 3 featured slots visible, social link inputs visible
+6. Security section: password fields with Show/Hide toggle, 2FA card
+7. "Save profile" and "Update password" should work as before
+8. "Save Virtual Hall" should show mock notification
+
+**If all checks pass, commit:**
+
+```bash
+git add -A && git commit -m "feat: redesign Settings page with Profile, Virtual Hall customization, and Security sections"
+```
+
+**Do NOT push yet. Wait for Max to review.**
+
+---
+
+## Files changed summary
+
+| File | Action |
+|------|--------|
+| `resources/web/js/pages/Profile.vue` | **REWRITTEN** — full redesign |
+| `resources/web/js/router/routes.js` | **MODIFIED** — rename route to 'settings' |
+
+## Files NOT touched
+
+| File | Reason |
+|------|--------|
+| `resources/web/js/services/profile-data.js` | Preserved — still used |
+| `resources/web/js/parts/custom-select-countries.vue` | Preserved — still used |
+| Backend (controllers, routes) | No backend changes |
+| `resources/web/js/components/sidebar.vue` | No sidebar changes — Profile is accessed via header avatar, not sidebar |
