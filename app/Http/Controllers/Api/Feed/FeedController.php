@@ -53,6 +53,22 @@ class FeedController extends Controller
             ], ResponseAlias::HTTP_NOT_FOUND);
     }
 
+    public function createAchievement(Request $request): JsonResponse
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string|max:255',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:10240',
+        ]);
+
+        $result = $this->feedService->createAndShareAchievement($request);
+
+        return response()->json([
+            'message' => $result['message'],
+            'achievement_id' => $result['achievement_id'] ?? null,
+        ], $result['status']);
+    }
+
     public function followingFeed(FeedRequest $request)
     {
         /** @var User $user */

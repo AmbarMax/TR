@@ -35,19 +35,7 @@
                     </span>
                 </router-link>
             </li>
-            <li>
-                <router-link to="/validate" :class="{ active_item: $route.path === '/validate' }">
-                    <svg v-if="$route.path === '/validate'" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <path d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C13.5689 2 15.0535 2.36132 16.375 3.00529M20.125 5.75L11.375 14.5L8.875 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    <svg v-else xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <path d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C13.5689 2 15.0535 2.36132 16.375 3.00529M20.125 5.75L11.375 14.5L8.875 12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    <span>
-                        Validate
-                    </span>
-                </router-link>
-            </li>
+            <!-- Validate removed — functionality absorbed into Feed composer -->
             <li>
                 <router-link to="/forge" :class="{ active_item: $route.path === '/forge' }">
                     <svg v-if="$route.path === '/forge'" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">

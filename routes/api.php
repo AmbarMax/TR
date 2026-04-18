@@ -228,6 +228,7 @@ Route::middleware([JwtMiddleware::class])->group(function () {
         ->group(function (){
             Route::get('/', [FeedController::class, 'index'])->name('index');
             Route::post('/share', [FeedController::class, 'share'])->name('share');
+            Route::post('/create-achievement', [FeedController::class, 'createAchievement'])->name('createAchievement');
             Route::get('/my-posts', [FeedController::class, 'getMyFeed'])->name('my-posts');
             Route::get('/posts', [FeedController::class, 'followingFeed'])->name('posts');
             Route::post('/donate', [FeedController::class, 'donate'])->name('donate');

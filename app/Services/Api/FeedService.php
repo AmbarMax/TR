@@ -74,6 +74,53 @@ class FeedService
         return $created;
     }
 
+    /**
+     * Create a custom achievement and publish it to the feed in one step.
+     * No validation protocol required.
+     */
+    public function createAndShareAchievement($request): array
+    {
+        try {
+            DB::beginTransaction();
+
+            $user = $request->user();
+
+            // Save image
+            $fileService = app(\App\Services\FileService::class);
+            $image = $fileService->saveAchievementImage($request->file('image'));
+
+            // Create achievement — auto-validated, auto-shared
+            $achievement = new \App\Models\Achievement();
+            $achievement->user_id = $user->id;
+            $achievement->status = \App\Models\Achievement::VALIDATED;
+            $achievement->image = $image;
+            $achievement->name = $request->input('name');
+            $achievement->description = $request->input('description');
+            $achievement->is_share = true;
+            $achievement->save();
+
+            // Create post (publish to feed)
+            $achievement->posts()->create([
+                'user_id' => $user->id,
+            ]);
+
+            DB::commit();
+
+            return [
+                'message' => 'Achievement created and published!',
+                'status' => 200,
+                'achievement_id' => $achievement->id,
+            ];
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Illuminate\Support\Facades\Log::error('FeedService@createAndShareAchievement: ' . $e->getMessage());
+            return [
+                'message' => $e->getMessage(),
+                'status' => 500,
+            ];
+        }
+    }
+
     public function getUserPosts(User $user, int $page, ?int $count = null)
     {
         try {

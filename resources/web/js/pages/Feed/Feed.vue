@@ -10,8 +10,9 @@
     </div>
     <div class="feed-layout">
       <div class="feed-content">
-        <div v-if="activeTab === 1"><Followers /></div>
-        <div v-if="activeTab === 2"><MyFeed /></div>
+        <FeedComposer @post-created="refreshFeed" />
+        <div v-if="activeTab === 1"><Followers ref="followersTab" /></div>
+        <div v-if="activeTab === 2"><MyFeed ref="myFeedTab" /></div>
       </div>
       <div class="feed-sidebar">
         <WallOfFame />
@@ -24,6 +25,7 @@
 import Followers from "./components/Followers.vue";
 import MyFeed from "./components/My-feed.vue";
 import WallOfFame from "./components/WallOfFame.vue";
+import FeedComposer from "./components/FeedComposer.vue";
 import {defineComponent} from "vue";
 import store from "../../store/store.js";
 
@@ -32,6 +34,7 @@ export default defineComponent({
     MyFeed,
     Followers,
     WallOfFame,
+    FeedComposer,
     store,
   },
   data() {
@@ -47,6 +50,20 @@ export default defineComponent({
     },
     importBudgesModalOpen(){
       store.state.importBudgesModalOpen = true;
+    },
+    refreshFeed() {
+      if (this.activeTab === 1 && this.$refs.followersTab) {
+        this.$refs.followersTab.items = [];
+        this.$refs.followersTab.currentPage = 1;
+        this.$refs.followersTab.endReached = false;
+        this.$refs.followersTab.fetchData();
+      }
+      if (this.activeTab === 2 && this.$refs.myFeedTab) {
+        this.$refs.myFeedTab.items = [];
+        this.$refs.myFeedTab.currentPage = 1;
+        this.$refs.myFeedTab.endReached = false;
+        this.$refs.myFeedTab.fetchData();
+      }
     },
   },
   mounted(){}
