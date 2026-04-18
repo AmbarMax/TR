@@ -10,11 +10,29 @@
     </div>
 
     <div class="trophy-card__name">{{ trophy.name }}</div>
-    <div class="trophy-card__brand" v-if="trophy.description">{{ trophy.description }}</div>
+    <div class="trophy-card__brand" v-if="trophy.description && !showDescription">{{ trophy.description }}</div>
 
-    <div class="trophy-card__progress" v-if="trophy.badges_required !== undefined">
+    <!-- Description (optional, full) -->
+    <div class="trophy-card__desc" v-if="showDescription && trophy.description">
+      {{ trophy.description }}
+    </div>
+
+    <!-- Badge Requirement Chips -->
+    <div class="trophy-card__chips" v-if="badgeChips.length">
+      <div
+        v-for="chip in badgeChips"
+        :key="chip.id"
+        class="trophy-card__chip"
+        :class="chip.owned ? 'trophy-card__chip--owned' : 'trophy-card__chip--missing'"
+      >
+        <span class="trophy-card__chip-icon">{{ chip.owned ? '✓' : chip.name.charAt(0).toUpperCase() }}</span>
+        <span class="trophy-card__chip-name">{{ chip.name }}</span>
+      </div>
+    </div>
+
+    <div class="trophy-card__progress" v-if="badgesRequired || trophy.badges_required !== undefined">
       <div class="trophy-card__progress-info">
-        <span>{{ trophy.badges_owned || 0 }}/{{ trophy.badges_required }} badges</span>
+        <span>{{ badgesRequired ? badgesOwned : (trophy.badges_owned || 0) }}/{{ badgesRequired || trophy.badges_required }} badges</span>
         <span>{{ progressPercent }}%</span>
       </div>
       <div class="trophy-card__progress-bar">
@@ -54,17 +72,39 @@ export default {
   props: {
     trophy: { type: Object, required: true },
     showForgeButton: { type: Boolean, default: false },
-    showShowcase: { type: Boolean, default: true }
+    showShowcase: { type: Boolean, default: true },
+    showDescription: { type: Boolean, default: false },
+    requiredBadges: { type: Array, default: () => [] },
+    userBadgeIds: { type: Array, default: () => [] }
   },
   computed: {
     imageUrl() {
       return `/storage/trophies/${this.trophy.image}`;
     },
+    badgeChips() {
+      if (!this.requiredBadges.length) return [];
+      return this.requiredBadges.map(badge => ({
+        ...badge,
+        owned: this.userBadgeIds.includes(badge.id)
+      }));
+    },
+    badgesOwned() {
+      return this.badgeChips.filter(b => b.owned).length;
+    },
+    badgesRequired() {
+      return this.requiredBadges.length;
+    },
     progressPercent() {
+      if (this.requiredBadges.length) {
+        return Math.round((this.badgesOwned / this.badgesRequired) * 100);
+      }
       if (!this.trophy.badges_required) return 0;
       return Math.round(((this.trophy.badges_owned || 0) / this.trophy.badges_required) * 100);
     },
     isReady() {
+      if (this.requiredBadges.length) {
+        return this.badgesOwned >= this.badgesRequired;
+      }
       return this.trophy.badges_required && (this.trophy.badges_owned || 0) >= this.trophy.badges_required;
     }
   },
@@ -247,5 +287,53 @@ export default {
 .trophy-card__showcase-btn--active {
   border-color: #ff6100;
   color: #ff6100;
+}
+
+.trophy-card__desc {
+  color: #9a9590;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  margin-top: 4px;
+}
+
+.trophy-card__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.trophy-card__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+}
+
+.trophy-card__chip--owned {
+  background: rgba(193, 245, 39, 0.1);
+  border: 1px solid rgba(193, 245, 39, 0.3);
+  color: #c1f527;
+}
+
+.trophy-card__chip--missing {
+  background: #252729;
+  border: 1px solid #2a2c2e;
+  color: #5a5550;
+}
+
+.trophy-card__chip-icon {
+  font-size: 11px;
+}
+
+.trophy-card__chip-name {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>
