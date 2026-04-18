@@ -122,6 +122,7 @@ export default defineComponent({
 .feed-content {
   flex: 1;
   min-width: 0;
+  max-width: 680px;
 }
 .feed-sidebar {
   width: 300px;

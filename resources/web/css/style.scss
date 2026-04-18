@@ -33,16 +33,21 @@ h3 {
     width: 100%;
     align-items: stretch;
     min-width: 0;
+    padding-top: 64px;
 }
 
 .web-header {
-    background-color: $surface;
+    background-color: #000003;
     padding: 20px 40px;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: flex-end;
-    position: relative;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
     border-bottom: 1px solid $border;
 }
 

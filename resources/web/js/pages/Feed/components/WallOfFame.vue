@@ -1,6 +1,11 @@
 <template>
   <div class="wof">
 
+    <!-- Header -->
+    <div class="wof-header">
+      <h2>Wall of Fame</h2>
+    </div>
+
     <!-- Section 1: Top by Trophies -->
     <div class="wof-section">
       <div class="wof-section-label wof-section-label--orange">Top by trophies</div>
@@ -106,6 +111,20 @@ export default defineComponent({
   overflow: hidden;
   position: sticky;
   top: 20px;
+  padding-right: 0;
+  margin-right: 16px;
+}
+
+.wof-header {
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid #2a2c2e;
+}
+.wof-header h2 {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 16px;
+  font-weight: 400;
+  color: #feeddf;
+  margin: 0;
 }
 
 /* Section wrapper */
