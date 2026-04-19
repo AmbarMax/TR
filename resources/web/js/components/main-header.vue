@@ -179,8 +179,10 @@ export default {
 
 <style lang="scss" scoped>
 .main-header {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 270px;
+  right: 0;
   z-index: 40;
   display: flex;
   align-items: center;
@@ -312,6 +314,10 @@ export default {
   font-size: 12px;
   color: var(--text);
   letter-spacing: 0.05em;
+}
+
+@media (max-width: 768px) {
+  .main-header { left: 0; }
 }
 
 @media (max-width: 768px) {

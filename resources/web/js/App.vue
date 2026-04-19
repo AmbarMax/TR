@@ -28,6 +28,9 @@ export default { name: 'App' };
 .app-content {
   position: relative;
   z-index: 1;
+  display: flex;
+  align-items: stretch;
   min-height: 100vh;
+  min-width: 0;
 }
 </style>
