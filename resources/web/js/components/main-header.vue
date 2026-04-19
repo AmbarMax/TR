@@ -1,363 +1,324 @@
 <template>
-    <div class="web-header" :style="getVirtualHallPadding">
-
-        <div v-if="store.state.authorized" class="header_right_block">
-            <div v-if="isMobile">
-                <router-link to="/trophy-room" >
-                    <div @click="openMainPage" class="front-sidebar_logo">
-                        <img src="../../../web/images/web/img/tr-isologo.png" alt="logo">
-                    </div>
-                </router-link>
-            </div>
-            <div class="header_notification_indicator" @click="$router.push('/dashboard')" ref="headerDropdownNotification">
-                <div class="header_notification_bell_wrapper">
-                    <img src="../../../web/images/web/img/icons/bell.svg" alt="bell">
-                    <div v-if="store.state.unread_notifications_count" class="header_notification_indicator_count">
-                        {{ messagesCount() }}
-                    </div>
-                </div>
-            </div>
-            <div class="header_user_info" @click="openHeaderDropdown">
-                <div class="header_user_avatar">
-                    <img v-if="store.state.userAvatar" :src="store.state.userAvatar" alt="avatar" class="header_user_avatar_image">
-                </div>
-                <span v-if="!isMobile">
-                    {{store.state.userUsername}}
-                </span>
-                <img src="../../../web/images/web/img/icons/arrow-down.svg" alt="arrow-down">
-            </div>
-            <div v-if="isMobile" class="header_user_info header-user-menu" @click="openSideBar">
-                <img src="../../../web/images/web/img/icons/menu.svg" alt="arrow-down">
-            </div>
-        </div>
-        <div class="header_dropdown" v-if="isActiveHeaderDropdown && store.state.authorized" @mouseleave="closeHeaderDropdown" ref="headerDropdown" tabindex="-1">
-            <ul>
-                <li>
-                    <router-link @click="closeHeaderDropdown" to="/profile" class="header_dropdown_link">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                            <path d="M16.6663 17.5V15.8333C16.6663 14.9493 16.3152 14.1014 15.69 13.4763C15.0649 12.8512 14.2171 12.5 13.333 12.5H6.66634C5.78229 12.5 4.93444 12.8512 4.30932 13.4763C3.6842 14.1014 3.33301 14.9493 3.33301 15.8333V17.5M13.333 5.83333C13.333 7.67428 11.8406 9.16667 9.99967 9.16667C8.15873 9.16667 6.66634 7.67428 6.66634 5.83333C6.66634 3.99238 8.15873 2.5 9.99967 2.5C11.8406 2.5 13.333 3.99238 13.333 5.83333Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                        <span>
-                            Account
-                        </span>
-                    </router-link>
-                </li>
-                <li>
-                    <a class="header_dropdown_link" @click="logout">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                            <path d="M7.31681 3.33331H4.22857C3.76054 3.33331 3.31168 3.51769 2.98074 3.84588C2.64979 4.17406 2.46387 4.61918 2.46387 5.08331V15.5833C2.46387 16.0474 2.64979 16.4926 2.98074 16.8207C3.31168 17.1489 3.76054 17.3333 4.22857 17.3333H7.31681M7.53613 10.3333H17.5361M17.5361 10.3333L13.7152 6.33331M17.5361 10.3333L13.7152 14.3333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                        <span>
-                            Log Out
-                        </span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-        <router-link to="/login" v-if="!store.state.authorized">
-            <button class="login-btn">
-                <div class="text">
-                    Log in
-                </div>
-                <img class="arrow" src="../../../web/images/web/img/icons/arrow-right-black.svg" alt="logo">
-            </button>
-        </router-link>
+  <header class="main-header">
+    <div class="header-left">
+      <div class="breadcrumb">
+        <span>TrophyRoom</span>
+        <span class="breadcrumb-dot"></span>
+        <span class="breadcrumb-current">{{ currentPageLabel }}</span>
+      </div>
     </div>
+
+    <div class="header-right">
+      <div class="wallet-rail">
+        <div class="coin" title="Ambar">
+          <span class="coin-dot coin-dot--ambar"></span>
+          <div class="coin-meta">
+            <div class="coin-val">{{ formatNumber(ambar) }}</div>
+            <div class="coin-lbl">Ambar</div>
+          </div>
+        </div>
+        <div class="coin" title="Uru">
+          <span class="coin-dot coin-dot--uru"></span>
+          <div class="coin-meta">
+            <div class="coin-val">{{ formatNumber(uru) }}</div>
+            <div class="coin-lbl">Uru</div>
+          </div>
+        </div>
+      </div>
+
+      <button class="bell-btn" @click="onBellClick" aria-label="Notifications">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/>
+        </svg>
+        <span v-if="hasNotifications" class="bell-dot"></span>
+      </button>
+
+      <router-link :to="{ path: '/profile' }" class="avatar-pill">
+        <span class="avatar-img">{{ avatarInitial }}</span>
+        <span class="avatar-name">{{ username }}</span>
+      </router-link>
+    </div>
+  </header>
 </template>
 
 <script>
 
-import buttonWhite from "../parts/button.vue";
 import store from "../store/store.js";
 import api from "../api/api.js";
-import router from "../router/router.js";
 import { Centrifuge } from 'centrifuge';
-import ambarNotification from "./modals/ambar-notification.vue";
-import AmbarMessagesNotification from "./modals/ambar-messages-notification.vue";
+
 export default {
-    components: {
-        AmbarMessagesNotification,
-        ambarNotification,
-        buttonWhite,
+  name: 'MainHeader',
+  data() {
+    return {
+      centrifuge: null,
+    }
+  },
+  computed: {
+    // Vuex bindings preserved from legacy main-header
+    ambar() {
+      return store.state.user?.balances?.ambar ?? 0;
     },
-    data() {
-        return {
-            text: 'Log in',
-            username: '',
-            unread_notifications_count: 0,
-            avatar: '',
-            ambar: 0,
-            uru: 0,
-            rune: 0,
-            centrifugo: null,
-            isActiveHeaderDropdown: false,
-            windowWidth: window.innerWidth,
+    uru() {
+      return store.state.user?.balances?.uru ?? 0;
+    },
+    username() {
+      return store.state.userUsername || 'User';
+    },
+    avatarInitial() {
+      return (store.state.userUsername || 'U').charAt(0).toUpperCase();
+    },
+    hasNotifications() {
+      return !!store.state.unread_notifications_count;
+    },
+    currentPageLabel() {
+      const name = this.$route?.name || '';
+      const map = {
+        dashboard: 'Dashboard',
+        'trophy-room': 'Trophy Room',
+        forge: 'Forge',
+        feed: 'Achievements',
+        rewards: 'Rewards',
+        exchange: 'Exchange',
+        network: 'Network',
+        settings: 'Settings',
+        profile: 'Settings',
+        'brand-dashboard': 'Admin Panel'
+      };
+      return map[name] || name.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    }
+  },
+  methods: {
+    formatNumber(n) {
+      const num = Number(n) || 0;
+      return num.toLocaleString('en-US');
+    },
+    onBellClick() {
+      this.$router.push('/dashboard');
+      this.$emit('bell-click');
+    },
+    getUserBalances() {
+      api.get('/api/profile').then(resp => {
+        if (resp && resp.status === 200) {
+          store.state.userUsername = resp.data.user.data.username;
+          store.state.google2fa_status = resp.data.user.data.google2fa_status;
+          if (resp.data.user.data.avatar === '/images/avatar/default-profile-img.png') {
+            store.state.userAvatar = '';
+          } else {
+            store.state.userAvatar = resp.data.user.data.avatar;
+          }
+          for (let balance of resp.data.user.data.balances) {
+            store.state.user.balances[balance.currency.name] = Math.floor(balance.amount);
+          }
+          store.state.unread_notifications_count = resp.data.user.data.unread_notifications_count;
+          store.state.user.roles = resp.data.user.data.roles;
         }
+      }).catch(error => {
+        console.log('api profile error: ', error)
+      })
     },
-    methods: {
-        handleClickOutside(event) {
-            if (!(this.$refs.headerDropdown && this.$refs.headerDropdown.contains(event.target)) && this.isActiveHeaderDropdown) {
-                this.closeHeaderDropdown();
+    async subscribeCentrifugoBalances() {
+      this.centrifuge = new Centrifuge(localStorage.getItem('websocket_url'));
+      this.centrifuge.setToken(localStorage.getItem('centrifugo_token'));
+
+      let user = JSON.parse(localStorage.getItem('user'));
+      while (!user) {
+        await new Promise(resolve => setTimeout(resolve, 250));
+        user = JSON.parse(localStorage.getItem('user'));
+      }
+
+      this.centrifuge.newSubscription('ambar-balance-ambar-' + user.id)
+        .on('publication', function(ctx) {
+          store.state.user.balances.ambar = Math.floor(ctx.data.amount);
+        }).subscribe();
+
+      this.centrifuge.newSubscription('ambar-balance-uru-' + user.id)
+        .on('publication', function(ctx) {
+          store.state.user.balances.uru = Math.floor(ctx.data.amount);
+        }).subscribe();
+
+      this.centrifuge.newSubscription('ambar-balance-rune-' + user.id)
+        .on('publication', function(ctx) {
+          store.state.user.balances.rune = Math.floor(ctx.data.amount);
+        }).subscribe();
+
+      this.centrifuge.newSubscription('notification-user-' + user.id)
+        .on('publication', function(notification) {
+          store.state.unread_notifications_count = notification.data.unreadCount;
+        }).subscribe();
+
+      this.centrifuge.newSubscription('sync-platform')
+        .on('publication', function(data) {
+          if (data.data.result === true) {
+            store.state.notification = {
+              message: 'Congratulations! You have successfully obtained your badge from ' + data.data.platform + '!',
+              type: 'success',
+              show: true
             }
-        },
-        handleClickOutsideNotification(event) {
-            if (!(this.$refs.headerDropdownNotification && this.$refs.headerDropdownNotification.contains(event.target)) && store.state.messageNotification.show) {
-                this.openCloseMessageNotification();
+          } else {
+            store.state.notification = {
+              message: 'You are not available to get your badge from ' + data.data.platform,
+              type: 'info',
+              show: true
             }
-        },
+          }
+        }).subscribe();
 
-
-
-        openHeaderDropdown() {
-            setTimeout(() => {
-                if (!this.isActiveHeaderDropdown){
-                    this.isActiveHeaderDropdown = true;
-                    this.$nextTick(() => {
-                        this.$refs.headerDropdown.focus();
-                    });
-                } else {
-                    this.isActiveHeaderDropdown = false;
-                }
-            }, 100);
-        },
-        openSideBar() {
-            store.state.activeSideBar = true;
-        },
-        openMainPage() {
-            router.push('/');
-        },
-        closeHeaderDropdown() {
-            setTimeout( () => {
-                this.isActiveHeaderDropdown = false;
-            }, 50);
-        },
-        logout() {
-            localStorage.removeItem('user');
-            localStorage.removeItem('access_token');
-            store.state.authorized = false;
-            if (this.$route.name !== 'virtual-hall') {
-                router.push('/login');
-            }
-        },
-        getUserBalances() {
-            api.get('/api/profile').then( resp => {
-                if (resp && resp.status === 200) {
-                    store.state.userUsername = resp.data.user.data.username;
-                    store.state.google2fa_status = resp.data.user.data.google2fa_status;
-                    if (resp.data.user.data.avatar === '/images/avatar/default-profile-img.png') {
-                        store.state.userAvatar = '';
-                    } else {
-                        store.state.userAvatar = resp.data.user.data.avatar;
-                    }
-                    for (let balance of resp.data.user.data.balances) {
-                        store.state.user.balances[balance.currency.name] = Math.floor(balance.amount);
-                    }
-                  this.unread_notifications_count = resp.data.user.data.unread_notifications_count;
-                  store.state.unread_notifications_count = resp.data.user.data.unread_notifications_count;
-                  store.state.user.roles = resp.data.user.data.roles;
-                }
-            }).catch(error => {
-              console.log('api profile error: ', error)
-            })
-        },
-
-      // async mountUserBalances(){
-        //     let user = JSON.parse(localStorage.getItem('user'));
-        //     while (!user) {
-        //         await new Promise(resolve => setTimeout(resolve, 250));
-        //         user = JSON.parse(localStorage.getItem('user'));
-        //         user.balances.forEach((balance) =>{
-        //             if (balance.currency.name === 'ambar') {
-        //                 this.ambar = Math.floor(balance.amount);
-        //             }
-        //             if (balance.currency.name === 'uru') {
-        //                 this.uru = Math.floor(balance.amount);
-        //             }
-        //             if (balance.currency.name === 'rune') {
-        //                 this.rune = Math.floor(balance.amount);
-        //             }
-        //         })
-        //     }
-        // },
-        async subscribeCentrifugoBalances(){
-            this.centrifuge = new Centrifuge(localStorage.getItem('websocket_url'));
-            this.centrifuge.setToken(localStorage.getItem('centrifugo_token'));
-
-            let user = JSON.parse(localStorage.getItem('user'));
-            while (!user) {
-                await new Promise(resolve => setTimeout(resolve, 250));
-                user = JSON.parse(localStorage.getItem('user'));
-            }
-            let vm = this;
-
-            this.centrifuge.newSubscription('ambar-balance-ambar-' + user.id)
-                .on('publication', function(ctx) {
-                    store.state.user.balances.ambar = Math.floor(ctx.data.amount);
-                }).subscribe();
-
-            this.centrifuge.newSubscription('ambar-balance-uru-' + user.id)
-                .on('publication', function(ctx) {
-                    store.state.user.balances.uru = Math.floor(ctx.data.amount);
-                }).subscribe();
-
-            this.centrifuge.newSubscription('ambar-balance-rune-' + user.id)
-                .on('publication', function(ctx) {
-                    store.state.user.balances.rune = Math.floor(ctx.data.amount);
-                }).subscribe();
-
-          this.centrifuge.newSubscription('notification-user-' + user.id)
-              .on('publication', function(notification) {
-                vm.unread_notifications_count = notification.data.unreadCount;
-                store.state.unread_notifications_count = notification.data.unreadCount;
-              }).subscribe();
-
-          this.centrifuge.newSubscription('sync-platform')
-              .on('publication', function(data) {
-                // console.log('platform', data.data.platform);
-                // console.log('user', data.data.user);
-                // console.log('result', data.data.result);
-
-                if (data.data.result === true) {
-
-                  store.state.notification = {
-                    message: 'Congratulations! You have successfully obtained your badge from '+data.data.platform+'!',
-                    type: 'success',
-                    show: true
-                  }
-
-                }else{
-
-                  store.state.notification = {
-                    message: 'You are not available to get your badge from '+data.data.platform,
-                    type: 'info',
-                    show: true
-                  }
-
-                }
-
-              }).subscribe();
-
-            this.centrifuge.connect();
-        },
-        async setUserDataToHeader() {
-            let user = JSON.parse(localStorage.getItem('user'));
-            while (!user) {
-                await new Promise(resolve => setTimeout(resolve, 250));
-                user = JSON.parse(localStorage.getItem('user'));
-            }
-            this.username = user.username;
-            if (user.avatar && user.avatar != '/images/avatar/default-profile-img.png'){
-                this.avatar = user.avatar;
-            }
-        },
-        handleResize() {
-            this.windowWidth = window.innerWidth;
-        },
-        openCloseMessageNotification() {
-            store.state.messageNotification.show = !store.state.messageNotification.show;
-        },
-        messagesCount(){
-            const count = store.state.unread_notifications_count;
-            if (count > 99) {
-                return '99+'
-            } else {
-                return count
-            }
-        }
-    },
-    computed: {
-        store() {
-            return store
-        },
-        isMobile() {
-            // return window.innerWidth <= 768;
-            return this.windowWidth <= 968;
-        },
-        isDesktop() {
-            // return window.innerWidth <= 768;
-            return this.windowWidth >= 568;
-        },
-        updateHeaderData() {
-            return this.$store.state.updateHeaderData;
-        },
-        getVirtualHallPadding() {
-            if (this.$route.name === 'virtual-hall') {
-                return {
-                    paddingTop: '30px',
-                };
-            }
-        },
-    },
-    watch: {
-        updateHeaderData(newVal, oldVal) {
-            setTimeout(()=>{
-                this.setUserDataToHeader();
-            }, 200);
-        },
-    },
-    created() {
-        window.addEventListener('resize', this.handleResize);
-    },
-    mounted() {
-        this.setUserDataToHeader();
-        this.subscribeCentrifugoBalances();
-        this.getUserBalances();
-        document.addEventListener('click', this.handleClickOutside);
-        document.addEventListener('click', this.handleClickOutsideNotification);
-        document.addEventListener('scroll', this.handleClickOutside);
-        document.addEventListener('scroll', this.handleClickOutsideNotification);
-        let user = JSON.parse(localStorage.getItem('user'));
-        if (user) {
-            this.getUserBalances();
-        }
-
-    },
-    updated() {
-        this.setUserDataToHeader();
-    },
-    destroyed() {
-        window.removeEventListener('resize', this.handleResize);
-    },
-    beforeDestroy() {
-        document.removeEventListener('click', this.handleClickOutside);
-        document.removeEventListener('click', this.handleClickOutsideNotification);
-        document.removeEventListener('scroll', this.handleClickOutside);
-        document.removeEventListener('scroll', this.handleClickOutsideNotification);
-    },
-}
-
+      this.centrifuge.connect();
+    }
+  },
+  mounted() {
+    let user = JSON.parse(localStorage.getItem('user'));
+    if (user) {
+      this.getUserBalances();
+      this.subscribeCentrifugoBalances();
+    }
+  }
+};
 </script>
 
-<style scoped>
-
-.virtual-hall-logo {
-    flex-grow: 1;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
+<style lang="scss" scoped>
+.main-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 14px 48px;
+  background: rgba(0, 0, 3, 0.7);
+  backdrop-filter: blur(14px) saturate(1.3);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  border-bottom: 1px solid rgba(255, 97, 0, 0.12);
 }
 
-@media (max-width: 968px) {
-  .virtual-hall-logo{
-    display: none;
-  }
+.header-left { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.header-right { display: flex; align-items: center; gap: 12px; }
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.breadcrumb-dot {
+  width: 4px;
+  height: 4px;
+  background: var(--primary);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--primary);
+}
+.breadcrumb-current { color: var(--primary); }
+
+.wallet-rail {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.coin {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 8px 14px;
+  border: 1px solid rgba(255, 97, 0, 0.15);
+  background: rgba(14, 15, 17, 0.65);
+}
+.coin-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.coin-dot--ambar {
+  background: var(--primary);
+  box-shadow: 0 0 8px var(--primary);
+}
+.coin-dot--uru {
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+}
+.coin-meta { line-height: 1; }
+.coin-val {
+  font-family: var(--display);
+  font-size: 22px;
+  color: var(--text);
+  line-height: 1;
+  letter-spacing: 0.04em;
+}
+.coin-lbl {
+  font-size: 9px;
+  color: var(--text-muted);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-top: 2px;
 }
 
-.login-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #c1f527; height: 36px; width: 130px;
-    color: #000003;
-    font-size: 16px;
-    font-family: 'Share Tech Mono', monospace;
-    font-weight: 700;
-    line-height: 20px;
-    word-wrap: break-word;
+.bell-btn {
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(255, 97, 0, 0.15);
+  background: rgba(14, 15, 17, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  position: relative;
+  transition: all 0.15s;
+}
+.bell-btn:hover {
+  color: var(--primary);
+  border-color: var(--primary);
+}
+.bell-dot {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  width: 7px;
+  height: 7px;
+  background: var(--primary);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--primary);
+  border: 1.5px solid var(--bg);
 }
 
-.single-page-header .header-user-menu {
-    display: none;
+.avatar-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 13px 4px 4px;
+  border: 1px solid rgba(255, 97, 0, 0.15);
+  background: rgba(14, 15, 17, 0.65);
+  transition: border-color 0.15s;
+}
+.avatar-pill:hover { border-color: var(--primary); }
+.avatar-img {
+  width: 28px;
+  height: 28px;
+  background: linear-gradient(135deg, #f5c547, #d98c3a);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: var(--bg);
+  font-weight: bold;
+  flex-shrink: 0;
+}
+.avatar-name {
+  font-size: 12px;
+  color: var(--text);
+  letter-spacing: 0.05em;
 }
 
+@media (max-width: 768px) {
+  .main-header { padding: 12px 20px; gap: 10px; flex-wrap: wrap; }
+  .wallet-rail { gap: 6px; }
+  .coin { padding: 6px 10px; }
+  .coin-val { font-size: 18px; }
+  .avatar-name { display: none; }
+}
 </style>
