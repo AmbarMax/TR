@@ -1,16 +1,15 @@
 <template>
   <div class="app-root">
-    <!-- Atmospheric layers (z-index 0, behind app) -->
     <div class="bg-atmosphere">
       <div class="bg-deep"></div>
       <div class="bg-hex"></div>
       <div class="bg-grid"></div>
     </div>
 
-    <!-- App content (above atmosphere) -->
-    <router-view class="app-content" />
+    <div class="app-content">
+      <router-view />
+    </div>
 
-    <!-- CRT overlays (z-index 997-999, above everything) -->
     <div class="bg-crt-vignette"></div>
     <div class="bg-scanlines"></div>
     <div class="bg-flicker"></div>
@@ -18,25 +17,7 @@
 </template>
 
 <script>
-
-import store from "./store/store.js";
-
-export default {
-    name: 'App',
-    data() {
-        return {
-          //
-        }
-    },
-    computed: {
-        signUpModalOpen: function () {
-            return store.state.signUpModalOpen;
-        },
-    },
-    mounted() {
-      //
-    }
-}
+export default { name: 'App' };
 </script>
 
 <style lang="scss" scoped>
@@ -47,5 +28,6 @@ export default {
 .app-content {
   position: relative;
   z-index: 1;
+  min-height: 100vh;
 }
 </style>
