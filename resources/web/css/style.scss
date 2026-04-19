@@ -1,3 +1,107 @@
+/* ========== DESIGN TOKENS (TrophyRoom 2.0) ========== */
+:root {
+  --bg: #000003;
+  --surface: #0e0f11;
+  --surface-2: #1a1c1f;
+  --surface-3: #252729;
+  --primary: #ff6100;
+  --primary-glow: rgba(255, 97, 0, 0.45);
+  --accent: #c1f527;
+  --accent-glow: rgba(193, 245, 39, 0.35);
+  --text: #feeddf;
+  --text-muted: #9a9590;
+  --text-dim: #5a5550;
+  --border: #2a2c2e;
+  --mono: 'Share Tech Mono', monospace;
+  --display: 'VT323', monospace;
+}
+
+/* ========== BASE RESET & TYPOGRAPHY ========== */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  font-family: var(--mono);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; }
+ul { list-style: none; }
+
+/* ========== ATMOSPHERIC LAYERS (global, inherited by all routes) ========== */
+/* These are applied via <div class="bg-atmosphere">...</div> placed in App.vue. */
+.bg-atmosphere {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.bg-deep {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 1400px 800px at 80% -5%, rgba(255, 97, 0, 0.22), transparent 50%),
+    radial-gradient(ellipse 1000px 700px at 10% 100%, rgba(193, 245, 39, 0.08), transparent 55%),
+    linear-gradient(180deg, #050507 0%, #000003 100%);
+}
+.bg-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 97, 0, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 97, 0, 0.04) 1px, transparent 1px);
+  background-size: 64px 64px;
+  -webkit-mask-image: radial-gradient(ellipse 1000px 700px at 50% 30%, black 30%, transparent 75%);
+  mask-image: radial-gradient(ellipse 1000px 700px at 50% 30%, black 30%, transparent 75%);
+}
+.bg-hex {
+  position: absolute; inset: 0;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='84' height='72' viewBox='0 0 84 72'><path d='M21 2 L63 2 L82 37 L63 70 L21 70 L2 37 Z' fill='none' stroke='%23ff6100' stroke-width='1' opacity='0.05'/></svg>");
+  background-size: 84px 72px;
+  opacity: 0.6;
+}
+.bg-scanlines {
+  position: fixed; inset: 0;
+  z-index: 999;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.12) 0px,
+    rgba(0, 0, 0, 0.12) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  mix-blend-mode: multiply;
+}
+.bg-crt-vignette {
+  position: fixed; inset: 0;
+  z-index: 998;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(0, 0, 0, 0.6) 100%);
+}
+.bg-flicker {
+  position: fixed; inset: 0;
+  z-index: 997;
+  pointer-events: none;
+  background: rgba(255, 97, 0, 0.015);
+  animation: bg-flicker 7s infinite;
+}
+@keyframes bg-flicker {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+  52% { opacity: 0; }
+  54% { opacity: 1; }
+}
+
+/* Motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .bg-flicker { animation: none; }
+}
+
 @import "./parts/null";
 @import "./parts/typography";
 @import "./parts/variables";
