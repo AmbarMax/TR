@@ -155,22 +155,24 @@ h3 {
     border-bottom: 1px solid $border;
 }
 
-.front-sidebar_logo {
-    width: 230px;
-    height: auto;
-    padding: 0 20px;
-    display: flex;
-    justify-content: center;
-}
+// DEPRECATED 9B — replaced by scoped styles in sidebar.vue
+// .front-sidebar_logo {
+//     width: 230px;
+//     height: auto;
+//     padding: 0 20px;
+//     display: flex;
+//     justify-content: center;
+// }
 
 .virtual_hall_background_image {
     margin-top: 0;
 }
 
-.front-sidebar_logo img {
-    width: 64px;
-    height: auto;
-}
+// DEPRECATED 9B — replaced by scoped styles in sidebar.vue
+// .front-sidebar_logo img {
+//     width: 64px;
+//     height: auto;
+// }
 
 .header_logo img {
     max-width: 200px;
@@ -207,91 +209,102 @@ h3 {
     height: 24px;
 }
 
-.front-sidebar {
-    background-color: $surface;
-    display: flex;
-    width: 270px;
-    min-width: 270px;
-    position: sticky;
-    height: 100vh;
-    min-height: 660px;
-    padding: 100px 0 45px;
-    flex-direction: column;
-    align-items: flex-start;
-    top: 0;
-    left: 0;
-    gap: 24px;
-    border-right: 1px solid $border;
-}
+// DEPRECATED 9B — replaced by scoped styles in sidebar.vue
+// .front-sidebar {
+//     background-color: $surface;
+//     display: flex;
+//     width: 270px;
+//     min-width: 270px;
+//     position: sticky;
+//     height: 100vh;
+//     min-height: 660px;
+//     padding: 100px 0 45px;
+//     flex-direction: column;
+//     align-items: flex-start;
+//     top: 0;
+//     left: 0;
+//     gap: 24px;
+//     border-right: 1px solid $border;
+// }
 
-.sidebar_menu {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    flex-grow: 1;
-    width: 100%;
-}
+// DEPRECATED 9B — replaced by scoped styles in sidebar.vue
+// .sidebar_menu {
+//     display: flex;
+//     flex-direction: column;
+//     gap: 14px;
+//     flex-grow: 1;
+//     width: 100%;
+// }
 
-.sidebar_menu a {
-    padding: 8px 40px;
-    display: flex;
-    flex-direction: row;
-    gap: 12px;
-    align-items: center;
-    justify-content: left;
-    color: $text-muted;
-    transition: color 0.15s;
-}
+// DEPRECATED 9B — replaced by scoped styles in sidebar.vue
+// .sidebar_menu a {
+//     padding: 8px 40px;
+//     display: flex;
+//     flex-direction: row;
+//     gap: 12px;
+//     align-items: center;
+//     justify-content: left;
+//     color: $text-muted;
+//     transition: color 0.15s;
+// }
 
-.sidebar_menu a:hover {
-    color: $text;
-}
+// DEPRECATED 9B — replaced by scoped styles in sidebar.vue
+// .sidebar_menu a:hover {
+//     color: $text;
+// }
 
-.sidebar_menu svg {
-    width: 22px;
-    height: 22px;
-    min-width: 22px;
-    min-height: 22px;
-}
+// DEPRECATED 9B — replaced by scoped styles in sidebar.vue
+// .sidebar_menu svg {
+//     width: 22px;
+//     height: 22px;
+//     min-width: 22px;
+//     min-height: 22px;
+// }
 
-.sidebar_menu span {
-    color: $text-muted;
-    font-family: $mono;
-    font-size: 14px;
-    font-weight: 400;
-    line-height: 24px;
-    letter-spacing: 0.02em;
-}
+// DEPRECATED 9B — replaced by scoped styles in sidebar.vue
+// .sidebar_menu span {
+//     color: $text-muted;
+//     font-family: $mono;
+//     font-size: 14px;
+//     font-weight: 400;
+//     line-height: 24px;
+//     letter-spacing: 0.02em;
+// }
 
-.active_item {
-    border-left: 3px solid $primary;
-    background-color: rgba($primary, 0.08) !important;
-    padding: 8px 40px 8px 37px !important;
-    color: $primary !important;
-}
+// DEPRECATED 9B — replaced by scoped styles in sidebar.vue
+// .active_item {
+//     border-left: 3px solid $primary;
+//     background-color: rgba($primary, 0.08) !important;
+//     padding: 8px 40px 8px 37px !important;
+//     color: $primary !important;
+// }
 
-.active_item span {
-    color: $primary !important;
-}
+// DEPRECATED 9B — replaced by scoped styles in sidebar.vue
+// .active_item span {
+//     color: $primary !important;
+// }
 
-.sidebar_footer_links {
-    display: flex;
-    flex-direction: row;
-    gap: 20px;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto;
-}
+// DEPRECATED 9B — replaced by scoped styles in sidebar.vue
+// .sidebar_footer_links {
+//     display: flex;
+//     flex-direction: row;
+//     gap: 20px;
+//     align-items: center;
+//     justify-content: center;
+//     margin: 0 auto;
+// }
 
-.sidebar_footer_links a {
-    width: 24px;
-    height: 24px;
-}
+// DEPRECATED 9B — replaced by scoped styles in sidebar.vue
+// .sidebar_footer_links a {
+//     width: 24px;
+//     height: 24px;
+// }
 
-.sidebar_footer_links a img {
-    width: 100%;
-    height: 100%;
-}
+// DEPRECATED 9B — replaced by scoped styles in sidebar.vue
+// .sidebar_footer_links a img {
+//     width: 100%;
+//     height: 100%;
+// }
 
 .main_block {
     font-family: $mono;
