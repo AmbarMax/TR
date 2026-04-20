@@ -62,14 +62,17 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .fco {
   display: flex;
   gap: 10px;
-  padding: 10px 0;
-  border-bottom: 1px solid #1a1c1f;
+  padding: 10px 12px;
+  background: rgba(14, 15, 17, 0.5);
+  border: 1px solid rgba(42, 44, 46, 0.5);
   align-items: flex-start;
+  transition: border-color 0.15s;
 }
+.fco:hover { border-color: rgba(255, 97, 0, 0.15); }
 
 .fco__avatar {
   width: 28px;
@@ -78,7 +81,8 @@ export default {
   object-fit: cover;
   flex-shrink: 0;
   cursor: pointer;
-  border: 1px solid #2a2c2e;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
 }
 
 .fco__body {
@@ -87,45 +91,45 @@ export default {
 }
 
 .fco__name {
-  color: #feeddf;
-  font-family: 'Share Tech Mono', monospace;
+  color: var(--text);
+  font-family: var(--mono);
   font-size: 12px;
+  letter-spacing: 0.03em;
   cursor: pointer;
   display: block;
-  margin-bottom: 2px;
+  margin-bottom: 3px;
+  transition: color 0.15s;
 }
-
-.fco__name:hover {
-  color: #c1f527;
-}
+.fco__name:hover { color: var(--primary); }
 
 .fco__text {
-  color: #9a9590;
-  font-family: 'Share Tech Mono', monospace;
+  color: var(--text-muted);
+  font-family: var(--mono);
   font-size: 12px;
-  line-height: 1.4;
-  margin: 0 0 4px;
+  line-height: 1.6;
+  letter-spacing: 0.02em;
+  margin: 0 0 5px;
 }
 
 .fco__date {
-  color: #5a5550;
-  font-family: 'Share Tech Mono', monospace;
+  color: var(--text-dim);
+  font-family: var(--mono);
   font-size: 10px;
+  letter-spacing: 0.1em;
 }
 
 .fco__delete {
   background: transparent;
-  border: none;
+  border: 1px solid transparent;
   cursor: pointer;
-  padding: 4px;
+  padding: 4px 6px;
   display: flex;
   align-items: center;
-  opacity: 0.4;
-  transition: opacity 0.15s;
+  transition: all 0.15s;
   flex-shrink: 0;
+  color: var(--text-dim);
 }
-
-.fco__delete:hover {
-  opacity: 1;
-}
+.fco__delete img { opacity: 0.5; transition: opacity 0.15s; }
+.fco__delete:hover { border-color: rgba(226, 75, 74, 0.3); }
+.fco__delete:hover img { opacity: 1; filter: hue-rotate(-20deg); }
 </style>
