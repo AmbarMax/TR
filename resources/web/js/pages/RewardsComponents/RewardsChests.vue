@@ -112,167 +112,132 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
-.rchests {
-  padding-top: 4px;
-}
-.rchests-filters {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 20px;
-}
+<style lang="scss" scoped>
+.rchests { padding-top: 4px; }
+
+.rchests-filters { display: flex; gap: 8px; margin-bottom: 20px; }
 .rchests-pill {
-  padding: 6px 16px;
-  font-family: "Share Tech Mono", monospace;
-  font-size: 12px;
-  color: #9a9590;
-  border: 1px solid #2a2c2e;
-  border-radius: 20px;
-  cursor: pointer;
-  transition: all 0.2s;
+  padding: 8px 16px; font-size: 11px;
+  font-family: var(--mono);
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  cursor: pointer; transition: all 0.15s;
+  background: none;
 }
-.rchests-pill:hover {
-  color: #feeddf;
-  border-color: #5a5550;
-}
+.rchests-pill:hover { color: var(--text); border-color: var(--text-dim); }
 .rchests-pill.active {
-  background: #c1f527;
-  color: #000003;
-  border-color: #c1f527;
+  color: var(--bg); background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 12px var(--accent-glow);
 }
+
 .rchests-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
 }
+
 .rchest-card {
-  background: #0e0f11;
-  border: 1px solid #2a2c2e;
-  border-radius: 6px;
+  background: rgba(14,15,17,0.8);
+  border: 1px solid rgba(42,44,46,0.8);
   overflow: hidden;
-  transition: border-color 0.2s;
+  transition: all 0.25s;
 }
 .rchest-card:hover {
-  border-color: rgba(255, 97, 0, 0.3);
+  border-color: rgba(255,97,0,0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.4);
 }
+
 .rchest-image {
-  background: #1a1c1f;
-  height: 120px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  height: 140px;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(180deg, rgba(26,28,31,0.6), rgba(14,15,17,0.8));
   position: relative;
 }
 .rchest-placeholder {
-  width: 64px;
-  height: 64px;
-  background: #252729;
-  border: 1px solid #2a2c2e;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: "Share Tech Mono", monospace;
-  font-size: 28px;
-  color: #5a5550;
+  width: 80px; height: 80px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--display); font-size: 28px;
+  color: var(--text-dim);
 }
 .rchest-badge {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  font-family: "Share Tech Mono", monospace;
-  font-size: 10px;
-  padding: 2px 8px;
-  border-radius: 4px;
+  position: absolute; top: 10px; right: 10px;
+  font-size: 9px; padding: 3px 8px;
+  letter-spacing: 0.15em; text-transform: uppercase;
 }
 .rchest-badge-available {
-  background: rgba(193, 245, 39, 0.15);
-  color: #c1f527;
+  background: rgba(193,245,39,0.15); color: var(--accent);
+  border: 1px solid rgba(193,245,39,0.3);
 }
 .rchest-badge-partial {
-  background: rgba(255, 97, 0, 0.15);
-  color: #ff6100;
+  background: rgba(255,97,0,0.15); color: var(--primary);
+  border: 1px solid rgba(255,97,0,0.3);
 }
 .rchest-badge-locked {
-  background: #252729;
-  color: #5a5550;
+  background: var(--surface-3); color: var(--text-dim);
+  border: 1px solid var(--border);
 }
-.rchest-body {
-  padding: 12px;
-}
+
+.rchest-body { padding: 18px 22px; }
 .rchest-name {
-  font-family: "Share Tech Mono", monospace;
-  font-size: 13px;
-  color: #feeddf;
+  font-family: var(--display); font-size: 22px;
+  color: var(--text); letter-spacing: 0.02em;
   margin-bottom: 4px;
 }
 .rchest-desc {
-  font-family: "Share Tech Mono", monospace;
-  font-size: 11px;
-  color: #5a5550;
-  margin-bottom: 10px;
+  font-size: 11px; color: var(--text-muted);
+  letter-spacing: 0.04em; margin-bottom: 14px; line-height: 1.5;
 }
 .rchest-req-label {
-  font-family: "Share Tech Mono", monospace;
-  font-size: 11px;
-  color: #ff6100;
+  font-size: 10px; color: var(--primary);
+  letter-spacing: 0.25em; text-transform: uppercase;
   margin-bottom: 8px;
 }
-.rchest-reqs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  margin-bottom: 10px;
-}
+.rchest-reqs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
 .rchest-req {
-  font-family: "Share Tech Mono", monospace;
-  font-size: 10px;
-  padding: 2px 8px;
-  border-radius: 4px;
+  padding: 4px 10px; font-size: 10px;
+  letter-spacing: 0.1em;
 }
 .rchest-req-met {
-  background: rgba(255, 97, 0, 0.15);
-  color: #ff6100;
+  background: rgba(255,97,0,0.12); color: var(--primary);
+  border: 1px solid rgba(255,97,0,0.3);
 }
 .rchest-req-unmet {
-  background: #1a1c1f;
-  border: 1px solid #2a2c2e;
-  color: #9a9590;
+  background: rgba(42,44,46,0.6); color: var(--text-muted);
+  border: 1px solid var(--border);
 }
+
 .rchest-btn {
-  font-family: "Share Tech Mono", monospace;
-  font-size: 11px;
-  width: 100%;
-  padding: 6px 0;
-  border-radius: 4px;
-  text-align: center;
-  cursor: pointer;
-  border: none;
-  transition: opacity 0.2s;
+  width: 100%; padding: 11px 16px;
+  font-family: var(--mono); font-size: 10px;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  text-align: center; cursor: pointer;
+  transition: all 0.15s; border: none;
 }
 .rchest-btn-open {
-  background: #c1f527;
-  color: #000003;
+  background: var(--accent); color: var(--bg);
+  border: 1px solid var(--accent);
+  box-shadow: 0 0 14px var(--accent-glow);
 }
 .rchest-btn-open:hover {
-  opacity: 0.85;
+  background: #d4ff4a;
+  box-shadow: 0 0 24px var(--accent-glow);
 }
 .rchest-btn-disabled {
-  background: transparent;
-  border: 1px solid #2a2c2e;
-  color: #9a9590;
+  background: transparent; color: var(--text-muted);
+  border: 1px solid var(--border);
   cursor: default;
 }
+
 .rchests-empty {
-  padding: 40px 0;
-  text-align: center;
-  font-family: "Share Tech Mono", monospace;
-  font-size: 13px;
-  color: #5a5550;
+  padding: 40px 0; text-align: center;
+  font-size: 13px; color: var(--text-dim);
+  letter-spacing: 0.06em;
 }
+
 @media (max-width: 520px) {
-  .rchests-grid {
-    grid-template-columns: 1fr;
-  }
+  .rchests-grid { grid-template-columns: 1fr; }
 }
 </style>
