@@ -4,60 +4,61 @@
 
     <!-- Type selector — always visible -->
     <div class="composer-types">
-      <div
-        class="type-btn"
-        :class="{ sel: selectedType === 'trophy' }"
+      <button
+        class="ctype"
+        :class="{ active: selectedType === 'trophy' }"
         @click="selectType('trophy')"
       >
-        <span class="dot dot-trophy"></span> Trophy
-      </div>
-      <div
-        class="type-btn"
-        :class="{ sel: selectedType === 'image' }"
+        <span class="cdot"></span> Trophy
+      </button>
+      <button
+        class="ctype"
+        :class="{ active: selectedType === 'image' }"
         @click="selectType('image')"
       >
-        <span class="dot dot-image"></span> Image
-      </div>
-      <div class="type-btn soon">
-        <span class="dot dot-disabled"></span> Video
-        <span class="soon-tag">soon</span>
-      </div>
-      <div class="type-btn soon">
-        <span class="dot dot-disabled"></span> Clip from Twitch / Overwolf
-        <span class="soon-tag">soon</span>
-      </div>
+        <span class="cdot"></span> Image
+      </button>
+      <button class="ctype disabled" disabled>
+        <span class="cdot"></span> Video
+        <span class="soon">soon</span>
+      </button>
+      <button class="ctype disabled" disabled>
+        <span class="cdot"></span> Clip from Twitch / Overwolf
+        <span class="soon">soon</span>
+      </button>
     </div>
 
     <!-- Expanded: Image mode -->
-    <div v-if="selectedType === 'image'" class="composer-form">
-      <div class="form-section">
-        <div class="form-label">Category</div>
-        <div class="category-pills">
-          <div
+    <div v-if="selectedType === 'image'">
+      <div class="composer-sep"></div>
+
+      <div class="icomp-field">
+        <div class="icomp-label">Category</div>
+        <div class="icomp-cats">
+          <button
             v-for="cat in categories"
             :key="cat"
-            class="cat-pill"
-            :class="{ sel: selectedCategory === cat }"
+            class="icomp-cat"
+            :class="{ active: selectedCategory === cat }"
             @click="selectedCategory = cat"
-          >
-            {{ cat }}
-          </div>
+          >{{ cat }}</button>
         </div>
       </div>
 
-      <div class="form-section">
-        <div class="form-label">Image</div>
+      <div class="icomp-field">
+        <div class="icomp-label">Image</div>
         <div
           v-if="!previewImage"
-          class="upload-zone"
+          class="icomp-upload"
           @click="triggerFileInput"
           @dragover.prevent
           @drop.prevent="handleDrop"
         >
-          <div class="upload-icon">&#8682;</div>
-          <div class="upload-text">
-            <span class="upload-link">Upload a file</span> or drag and drop<br>PNG, JPG up to 10MB
+          <div class="icomp-upload-icon">&#8682;</div>
+          <div class="icomp-upload-text">
+            <strong>Upload a file</strong> or drag and drop
           </div>
+          <div class="icomp-upload-sub">PNG, JPG up to 10MB</div>
         </div>
         <div v-else class="upload-preview">
           <img :src="previewImage" alt="Preview" class="preview-img" />
@@ -72,33 +73,33 @@
         />
       </div>
 
-      <div class="form-section">
-        <div class="form-label">Name</div>
+      <div class="icomp-field">
+        <label class="icomp-label">Name</label>
         <input
           v-model="name"
           type="text"
-          class="form-input"
+          class="icomp-input"
           placeholder="Name your achievement"
           maxlength="255"
         />
       </div>
 
-      <div class="form-section">
-        <div class="form-label">Description</div>
+      <div class="icomp-field">
+        <label class="icomp-label">Description</label>
         <textarea
           v-model="description"
-          class="form-textarea"
+          class="icomp-textarea"
           placeholder="Tell the story behind it..."
           maxlength="255"
           rows="3"
         ></textarea>
-        <div class="char-count">{{ description.length }}/255</div>
+        <div class="icomp-charcount">{{ description.length }}/255</div>
       </div>
 
       <div class="composer-actions">
-        <button class="btn-cancel" @click="resetComposer">Cancel</button>
+        <button class="cbtn cancel" @click="resetComposer">Cancel</button>
         <button
-          class="btn-publish"
+          class="cbtn publish"
           :disabled="!canPublishImage"
           @click="publishImage"
         >
@@ -108,45 +109,43 @@
     </div>
 
     <!-- Expanded: Trophy mode -->
-    <div v-if="selectedType === 'trophy'" class="composer-form">
-      <div class="form-section">
-        <div class="form-label">Select a forged trophy</div>
-        <div v-if="loadingTrophies" class="loading-text">Loading trophies...</div>
-        <div v-else-if="forgedTrophies.length === 0" class="empty-text">
-          No forged trophies yet. Visit the Forge to create one.
-        </div>
-        <div v-else class="trophy-list">
-          <div
-            v-for="trophy in forgedTrophies"
-            :key="trophy.id"
-            class="trophy-option"
-            :class="{ sel: selectedTrophy && selectedTrophy.id === trophy.id }"
-            @click="selectedTrophy = trophy"
-          >
-            <div class="trophy-icon">&#9670;</div>
-            <div class="trophy-info">
-              <div class="trophy-name">{{ trophy.name }}</div>
-            </div>
-          </div>
+    <div v-if="selectedType === 'trophy'">
+      <div class="composer-sep"></div>
+
+      <div class="trophy-selector-label">Select a forged trophy</div>
+      <div v-if="loadingTrophies" class="loading-trophies">Loading trophies...</div>
+      <div v-else-if="forgedTrophies.length === 0" class="no-trophies">
+        No forged trophies yet. Visit the Forge to create one.
+      </div>
+      <div v-else class="trophy-options">
+        <div
+          v-for="trophy in forgedTrophies"
+          :key="trophy.id"
+          class="trophy-opt"
+          :class="{ selected: selectedTrophy && selectedTrophy.id === trophy.id }"
+          @click="selectedTrophy = trophy"
+        >
+          <div class="trophy-opt-icon">&#9670;</div>
+          <div class="trophy-opt-name">{{ trophy.name }}</div>
         </div>
       </div>
 
-      <div class="form-section">
-        <div class="form-label">Comment (optional)</div>
+      <div class="composer-comment">
+        <label>Comment (optional)</label>
         <textarea
           v-model="trophyComment"
-          class="form-textarea"
+          class="composer-comment-input"
           placeholder="Say something about this trophy..."
           maxlength="255"
           rows="2"
         ></textarea>
-        <div class="char-count">{{ trophyComment.length }}/255</div>
+        <div class="composer-comment-count">{{ trophyComment.length }}/255</div>
       </div>
 
       <div class="composer-actions">
-        <button class="btn-cancel" @click="resetComposer">Cancel</button>
+        <button class="cbtn cancel" @click="resetComposer">Cancel</button>
         <button
-          class="btn-publish"
+          class="cbtn publish"
           :disabled="!selectedTrophy"
           @click="publishTrophy"
         >
@@ -323,336 +322,210 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .composer {
-  background: #0e0f11;
-  border: 1px solid #2a2c2e;
-  border-radius: 6px;
-  padding: 16px;
-  margin-bottom: 16px;
+  position: sticky; top: 120px; z-index: 20;
+  padding: 24px 28px;
+  background: rgba(14,15,17,0.9);
+  border: 1px solid rgba(255,97,0,0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  margin-bottom: 32px;
 }
 .composer-label {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  color: #ff6100;
-  letter-spacing: 0.12em;
+  font-size: 11px; color: var(--primary);
+  letter-spacing: 0.25em; text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.composer-types { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+.ctype {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 14px; font-size: 11px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  transition: all 0.15s; cursor: pointer;
+  font-family: var(--mono); background: none;
+}
+.ctype:hover { color: var(--text); border-color: var(--text-dim); }
+.ctype.active {
+  color: var(--bg); background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 12px var(--accent-glow);
+}
+.ctype.disabled { opacity: 0.4; cursor: default; pointer-events: none; }
+.cdot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--text-dim);
+}
+.ctype.active .cdot { background: var(--bg); }
+.soon {
+  font-size: 8px; color: var(--text-dim);
+  letter-spacing: 0.15em; margin-left: 2px;
+}
+.composer-sep {
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255,97,0,0.15), transparent);
+  margin: 16px 0;
+}
+
+/* Trophy selector */
+.trophy-selector-label {
+  font-size: 10px; color: var(--text-dim);
+  letter-spacing: 0.2em; text-transform: uppercase;
   margin-bottom: 12px;
 }
-.composer-types {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
+.trophy-options { display: flex; flex-direction: column; gap: 2px; margin-bottom: 16px; }
+.trophy-opt {
+  display: flex; align-items: center; gap: 14px;
+  padding: 12px 16px;
+  background: rgba(26,28,31,0.8);
+  border: 1px solid var(--border);
+  cursor: pointer; transition: all 0.15s;
 }
-.type-btn {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 11px;
-  padding: 6px 12px;
-  border-radius: 4px;
-  border: 1px solid #2a2c2e;
-  background: #1a1c1f;
-  color: #9a9590;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 5px;
+.trophy-opt:hover { border-color: var(--primary); background: rgba(255,97,0,0.04); }
+.trophy-opt.selected { border-color: var(--primary); background: rgba(255,97,0,0.06); }
+.trophy-opt-icon {
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  color: var(--primary);
+  font-size: 18px;
+}
+.trophy-opt-icon img { width: 28px; height: 28px; object-fit: contain; }
+.trophy-opt-name { font-size: 13px; color: var(--text); letter-spacing: 0.03em; }
+
+/* Image composer */
+.icomp-label {
+  font-size: 10px; color: var(--text-dim);
+  letter-spacing: 0.2em; text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.icomp-cats { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+.icomp-cat {
+  padding: 6px 12px; font-size: 10px;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  border: 1px solid var(--border);
+  color: var(--text-muted); cursor: pointer;
+  transition: all 0.15s;
+  font-family: var(--mono); background: none;
+}
+.icomp-cat:hover { color: var(--text); border-color: var(--text-dim); }
+.icomp-cat.active { color: var(--bg); background: var(--accent); border-color: var(--accent); }
+.icomp-upload {
+  border: 1px dashed rgba(255,97,0,0.25);
+  padding: 32px; text-align: center;
+  margin-bottom: 16px; cursor: pointer;
   transition: all 0.15s;
 }
-.type-btn:hover:not(.soon) {
-  border-color: #5a5550;
-  color: #feeddf;
+.icomp-upload:hover { border-color: var(--primary); background: rgba(255,97,0,0.03); }
+.icomp-upload-icon {
+  color: var(--text-dim); margin-bottom: 8px;
+  font-size: 24px;
 }
-.type-btn.sel {
-  border-color: #ff6100;
-  color: #ff6100;
-  background: rgba(255, 97, 0, 0.08);
+.icomp-upload-text { font-size: 12px; color: var(--text-muted); letter-spacing: 0.04em; }
+.icomp-upload-text strong { color: var(--text); }
+.icomp-upload-sub { font-size: 10px; color: var(--text-dim); margin-top: 4px; letter-spacing: 0.08em; }
+.icomp-field { margin-bottom: 12px; }
+.icomp-field label {
+  display: block; font-size: 10px; color: var(--text-dim);
+  letter-spacing: 0.2em; text-transform: uppercase;
+  margin-bottom: 6px;
 }
-.type-btn.soon {
-  opacity: 0.35;
-  cursor: default;
+.icomp-input {
+  width: 100%; padding: 10px 14px;
+  background: var(--surface-2); border: 1px solid var(--border);
+  color: var(--text); font-size: 13px; letter-spacing: 0.03em;
+  font-family: var(--mono);
+  transition: border-color 0.15s;
 }
-.dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
+.icomp-input:focus { border-color: var(--primary); outline: none; }
+.icomp-input::placeholder { color: var(--text-dim); }
+.icomp-textarea {
+  width: 100%; padding: 10px 14px;
+  background: var(--surface-2); border: 1px solid var(--border);
+  color: var(--text); font-size: 13px; letter-spacing: 0.03em;
+  font-family: var(--mono);
+  min-height: 80px; resize: vertical;
+  transition: border-color 0.15s;
 }
-.dot-trophy {
-  background: #ff6100;
+.icomp-textarea:focus { border-color: var(--primary); outline: none; }
+.icomp-textarea::placeholder { color: var(--text-dim); }
+.icomp-charcount {
+  font-size: 9px; color: var(--text-dim);
+  letter-spacing: 0.15em; text-align: right; margin-top: 4px;
 }
-.dot-image {
-  background: #c1f527;
+
+/* Preview */
+.upload-preview { position: relative; margin-bottom: 16px; }
+.preview-img {
+  width: 100%; max-height: 240px; object-fit: cover;
+  border: 1px solid rgba(42,44,46,0.6);
 }
-.dot-disabled {
-  background: #5a5550;
+.preview-remove {
+  position: absolute; top: 8px; right: 8px;
+  width: 28px; height: 28px;
+  background: rgba(0,0,3,0.8); border: 1px solid var(--border);
+  color: var(--text-muted); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
 }
-.soon-tag {
-  font-size: 8px;
-  color: #ff6100;
-  text-transform: uppercase;
+.preview-remove:hover { color: var(--text); border-color: var(--text-dim); }
+
+/* Composer comment (trophy mode) */
+.composer-comment { margin-top: 4px; }
+.composer-comment label {
+  display: block; font-size: 10px; color: var(--text-dim);
+  letter-spacing: 0.2em; text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.composer-comment-input {
+  width: 100%; padding: 10px 14px;
+  background: var(--surface-2); border: 1px solid var(--border);
+  color: var(--text); font-size: 13px; font-family: var(--mono);
+  min-height: 70px; resize: vertical;
+  transition: border-color 0.15s;
+}
+.composer-comment-input:focus { border-color: var(--primary); outline: none; }
+.composer-comment-input::placeholder { color: var(--text-dim); }
+.composer-comment-count {
+  font-size: 9px; color: var(--text-dim);
+  letter-spacing: 0.15em; text-align: right; margin-top: 4px;
+}
+
+/* Composer actions */
+.composer-actions {
+  display: flex; align-items: center; justify-content: flex-end; gap: 10px;
+  margin-top: 16px; padding-top: 16px;
+  border-top: 1px solid rgba(42,44,46,0.5);
+}
+.cbtn {
+  padding: 10px 20px; font-size: 10px;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  transition: all 0.15s; cursor: pointer;
+  font-family: var(--mono);
+}
+.cbtn.cancel {
+  color: var(--text-muted); border: 1px solid var(--border); background: transparent;
+}
+.cbtn.cancel:hover { color: var(--text); border-color: var(--text-dim); }
+.cbtn.publish {
+  color: var(--bg); background: var(--primary); border: 1px solid var(--primary);
+  box-shadow: 0 0 14px rgba(255,97,0,0.3);
+}
+.cbtn.publish:hover { background: #ff7e2e; box-shadow: 0 0 24px rgba(255,97,0,0.5); }
+.cbtn:disabled { opacity: 0.4; cursor: default; pointer-events: none; }
+
+/* Loading / empty states */
+.loading-trophies, .no-trophies {
+  padding: 20px; text-align: center;
+  font-size: 12px; color: var(--text-dim);
   letter-spacing: 0.08em;
 }
 
-/* Form area */
-.composer-form {
-  margin-top: 14px;
-  padding-top: 14px;
-  border-top: 1px solid #2a2c2e;
-}
-.form-section {
-  margin-bottom: 14px;
-}
-.form-label {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 11px;
-  color: #5a5550;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  margin-bottom: 8px;
-}
-
-/* Category pills */
-.category-pills {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-.cat-pill {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 11px;
-  padding: 5px 12px;
-  border-radius: 14px;
-  border: 1px solid #2a2c2e;
-  background: #1a1c1f;
-  color: #9a9590;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-.cat-pill:hover {
-  border-color: #5a5550;
-  color: #feeddf;
-}
-.cat-pill.sel {
-  border-color: #c1f527;
-  color: #c1f527;
-  background: rgba(193, 245, 39, 0.08);
-}
-
-/* Upload zone */
-.upload-zone {
-  border: 1px dashed #2a2c2e;
-  border-radius: 6px;
-  padding: 24px;
-  text-align: center;
-  background: #0a0b0d;
-  cursor: pointer;
-  transition: border-color 0.15s;
-}
-.upload-zone:hover {
-  border-color: #5a5550;
-}
-.upload-icon {
-  font-size: 20px;
-  color: #5a5550;
-  margin-bottom: 6px;
-}
-.upload-text {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 11px;
-  color: #5a5550;
-  line-height: 1.6;
-}
-.upload-link {
-  color: #feeddf;
-  cursor: pointer;
-}
-
-/* Upload preview */
-.upload-preview {
-  position: relative;
-  border: 1px solid #2a2c2e;
-  border-radius: 6px;
-  overflow: hidden;
-  max-height: 200px;
-}
-.preview-img {
-  width: 100%;
-  max-height: 200px;
-  object-fit: cover;
-  display: block;
-}
-.preview-remove {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: rgba(0, 0, 3, 0.7);
-  border: 1px solid #2a2c2e;
-  color: #9a9590;
-  font-size: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-}
-.preview-remove:hover {
-  color: #ff6100;
-  border-color: #ff6100;
-}
-
-/* Inputs */
-.form-input {
-  width: 100%;
-  background: #1a1c1f;
-  border: 1px solid #2a2c2e;
-  border-radius: 4px;
-  padding: 8px 12px;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 12px;
-  color: #feeddf;
-  outline: none;
-  transition: border-color 0.15s;
-  box-sizing: border-box;
-}
-.form-input:focus {
-  border-color: #5a5550;
-}
-.form-textarea {
-  width: 100%;
-  background: #1a1c1f;
-  border: 1px solid #2a2c2e;
-  border-radius: 4px;
-  padding: 8px 12px;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 12px;
-  color: #feeddf;
-  outline: none;
-  resize: vertical;
-  min-height: 52px;
-  transition: border-color 0.15s;
-  box-sizing: border-box;
-}
-.form-textarea:focus {
-  border-color: #5a5550;
-}
-.char-count {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 10px;
-  color: #5a5550;
-  text-align: right;
-  margin-top: 4px;
-}
-
-/* Trophy list */
-.trophy-list {
-  background: #1a1c1f;
-  border: 1px solid #2a2c2e;
-  border-radius: 6px;
-  padding: 6px;
-  max-height: 200px;
-  overflow-y: auto;
-}
-.trophy-list::-webkit-scrollbar {
-  width: 4px;
-}
-.trophy-list::-webkit-scrollbar-thumb {
-  background: #ff6100;
-  border-radius: 4px;
-}
-.trophy-option {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-bottom: 2px;
-  transition: background 0.15s;
-}
-.trophy-option:hover {
-  background: rgba(255, 97, 0, 0.06);
-}
-.trophy-option.sel {
-  background: rgba(255, 97, 0, 0.1);
-  border: 1px solid rgba(255, 97, 0, 0.3);
-}
-.trophy-icon {
-  width: 32px;
-  height: 32px;
-  background: rgba(255, 97, 0, 0.12);
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #ff6100;
-  font-size: 14px;
-  flex-shrink: 0;
-}
-.trophy-info {
-  flex: 1;
-}
-.trophy-name {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 12px;
-  color: #feeddf;
-}
-.loading-text,
-.empty-text {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 12px;
-  color: #5a5550;
-  padding: 12px 0;
-}
-
-/* Action buttons */
-.composer-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 4px;
-}
-.btn-cancel {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 12px;
-  padding: 8px 16px;
-  border-radius: 4px;
-  border: 1px solid #2a2c2e;
-  background: transparent;
-  color: #9a9590;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-.btn-cancel:hover {
-  border-color: #5a5550;
-  color: #feeddf;
-}
-.btn-publish {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 12px;
-  padding: 8px 20px;
-  border-radius: 4px;
-  border: none;
-  background: #ff6100;
-  color: #feeddf;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-.btn-publish:hover {
-  background: #e55800;
-}
-.btn-publish:disabled {
-  opacity: 0.4;
-  cursor: default;
-}
-
-@media (max-width: 968px) {
-  .composer-types {
-    gap: 6px;
-  }
-  .type-btn {
-    font-size: 10px;
-    padding: 5px 8px;
-  }
+@media (max-width: 700px) {
+  .composer { padding: 18px 20px; top: 110px; }
+  .composer-types { gap: 6px; }
+  .ctype { padding: 6px 10px; font-size: 10px; }
 }
 </style>
