@@ -101,166 +101,124 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
-.rshop {
-  padding-top: 4px;
-}
+<style lang="scss" scoped>
+.rshop { padding-top: 4px; }
 .rshop-curated {
-  font-family: "Share Tech Mono", monospace;
-  font-size: 11px;
-  color: #5a5550;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-bottom: 12px;
-}
-.rshop-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 12px;
+  font-size: 10px; color: var(--text-dim);
+  letter-spacing: 0.25em; text-transform: uppercase;
   margin-bottom: 24px;
 }
+
+.rshop-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px; margin-bottom: 48px;
+}
 .rshop-card {
-  background: #0e0f11;
-  border: 1px solid #2a2c2e;
-  border-radius: 6px;
-  overflow: hidden;
-  transition: border-color 0.2s;
+  background: rgba(14,15,17,0.8);
+  border: 1px solid rgba(42,44,46,0.8);
+  overflow: hidden; transition: all 0.25s;
 }
 .rshop-card:hover {
-  border-color: rgba(255, 97, 0, 0.3);
+  border-color: rgba(255,97,0,0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.4);
 }
+
 .rshop-image {
-  background: #1a1c1f;
-  height: 110px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  height: 160px;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(180deg, rgba(26,28,31,0.6), rgba(14,15,17,0.8));
 }
 .rshop-image-placeholder {
-  width: 64px;
-  height: 48px;
-  background: #252729;
-  border: 1px solid #2a2c2e;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: "Share Tech Mono", monospace;
-  font-size: 11px;
-  color: #5a5550;
+  font-size: 12px; color: var(--text-dim);
+  letter-spacing: 0.12em;
+  padding: 12px 20px;
+  background: rgba(42,44,46,0.4);
+  border: 1px solid var(--border);
 }
-.rshop-body {
-  padding: 12px;
-}
+
+.rshop-body { padding: 18px 22px; }
 .rshop-name {
-  font-family: "Share Tech Mono", monospace;
-  font-size: 13px;
-  color: #feeddf;
-  margin-bottom: 4px;
+  font-family: var(--display); font-size: 22px;
+  color: var(--text); letter-spacing: 0.02em;
+  margin-bottom: 3px;
 }
 .rshop-desc {
-  font-family: "Share Tech Mono", monospace;
-  font-size: 11px;
-  color: #5a5550;
-  margin-bottom: 10px;
+  font-size: 11px; color: var(--text-muted);
+  letter-spacing: 0.04em; margin-bottom: 14px; line-height: 1.5;
 }
 .rshop-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  display: flex; align-items: center; justify-content: space-between;
 }
 .rshop-price {
-  font-family: "Share Tech Mono", monospace;
-  font-size: 13px;
-  color: #c1f527;
+  font-family: var(--display); font-size: 22px;
+  color: var(--accent);
+  text-shadow: 0 0 10px var(--accent-glow);
+  letter-spacing: 0.02em;
 }
 .rshop-buy-btn {
-  font-family: "Share Tech Mono", monospace;
-  font-size: 11px;
-  color: #000003;
-  background: #ff6100;
-  border: none;
-  padding: 5px 14px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: opacity 0.2s;
+  font-family: var(--mono); font-size: 10px;
+  color: var(--bg); background: var(--primary);
+  border: 1px solid var(--primary);
+  padding: 7px 16px;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  cursor: pointer; transition: all 0.15s;
+  box-shadow: 0 0 10px rgba(255,97,0,0.2);
 }
 .rshop-buy-btn:hover {
-  opacity: 0.85;
+  background: #ff7e2e;
+  box-shadow: 0 0 18px rgba(255,97,0,0.4);
 }
 .rshop-buy-btn:disabled {
-  opacity: 0.4;
-  cursor: default;
+  opacity: 0.4; cursor: default;
+  box-shadow: none;
 }
+
+/* Purchase History */
 .rshop-history {
-  background: #0e0f11;
-  border: 1px solid #2a2c2e;
-  border-radius: 6px;
-  padding: 16px;
+  background: rgba(14,15,17,0.7);
+  border: 1px solid rgba(42,44,46,0.7);
+  padding: 24px;
 }
 .rshop-history-label {
-  font-family: "Share Tech Mono", monospace;
-  font-size: 11px;
-  color: #5a5550;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-bottom: 12px;
+  font-size: 10px; color: var(--primary);
+  letter-spacing: 0.25em; text-transform: uppercase;
+  margin-bottom: 16px;
+  display: flex; align-items: center; gap: 8px;
+}
+.rshop-history-label::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(90deg, rgba(255,97,0,0.2), transparent);
 }
 .rshop-history-empty {
-  font-family: "Share Tech Mono", monospace;
-  font-size: 13px;
-  color: #5a5550;
-  text-align: center;
-  padding: 16px 0;
+  font-size: 13px; color: var(--text-dim);
+  text-align: center; padding: 20px 0;
 }
-.rshop-history-list {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
+.rshop-history-list { display: flex; flex-direction: column; gap: 4px; }
 .rshop-history-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 0;
-  border-bottom: 1px solid #1a1c1f;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 12px;
+  background: rgba(26,28,31,0.5);
+  border: 1px solid transparent;
+  transition: border-color 0.15s;
 }
-.rshop-history-row:last-child {
-  border-bottom: none;
-}
-.rshop-history-name {
-  font-family: "Share Tech Mono", monospace;
-  font-size: 12px;
-  color: #feeddf;
-  flex: 1;
-}
-.rshop-history-price {
-  font-family: "Share Tech Mono", monospace;
-  font-size: 12px;
-  color: #9a9590;
-  margin: 0 16px;
-}
+.rshop-history-row:hover { border-color: rgba(255,97,0,0.1); }
+.rshop-history-name { font-size: 12px; color: var(--text); flex: 1; }
+.rshop-history-price { font-size: 12px; color: var(--text-muted); margin: 0 16px; }
 .rshop-history-status {
-  font-family: "Share Tech Mono", monospace;
-  font-size: 10px;
-  padding: 2px 8px;
-  border-radius: 4px;
+  font-size: 9px; padding: 2px 8px;
+  letter-spacing: 0.15em; text-transform: uppercase;
 }
 .rshop-status-delivered {
-  background: rgba(193, 245, 39, 0.15);
-  color: #c1f527;
+  background: rgba(193,245,39,0.15); color: var(--accent);
 }
 .rshop-status-pending {
-  background: rgba(255, 97, 0, 0.15);
-  color: #ff6100;
+  background: rgba(255,97,0,0.15); color: var(--primary);
 }
+
 @media (max-width: 520px) {
-  .rshop-grid {
-    grid-template-columns: 1fr;
-  }
-  .rshop-history-row {
-    flex-wrap: wrap;
-    gap: 4px;
-  }
+  .rshop-grid { grid-template-columns: 1fr; }
+  .rshop-history-row { flex-wrap: wrap; gap: 4px; }
 }
 </style>
