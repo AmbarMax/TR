@@ -1,28 +1,31 @@
 <template>
   <div class="my-community">
+
     <!-- Sub-filter pills -->
     <div class="community-filters">
-      <div
-        :class="['filter-pill', { active: subTab === 'followers' }]"
+      <button
+        class="cpill"
+        :class="{ active: subTab === 'followers' }"
         @click="switchSubTab('followers')"
       >
         Followers · {{ totalFollowers }}
-      </div>
-      <div
-        :class="['filter-pill', { active: subTab === 'following' }]"
+      </button>
+      <button
+        class="cpill"
+        :class="{ active: subTab === 'following' }"
         @click="switchSubTab('following')"
       >
         Following · {{ totalFollowing }}
-      </div>
+      </button>
     </div>
 
     <!-- Search -->
-    <div class="community-search">
+    <div class="community-search-wrap">
       <input
         type="text"
         v-model="searchQuery"
         placeholder="Search users..."
-        class="community-search-input"
+        class="community-search"
       />
     </div>
 
@@ -36,14 +39,14 @@
         :key="user.id"
         class="community-row"
       >
-        <div class="community-user-left" @click="navigateToVirtualHall(user.username)">
+        <div class="community-user" @click="navigateToVirtualHall(user.username)">
           <img
             v-if="user.avatar"
             :src="user.avatar"
             alt="avatar"
             class="community-avatar"
           />
-          <div v-else class="community-avatar-placeholder">
+          <div v-else class="community-avatar community-avatar--initials">
             {{ getInitials(user.name || user.email) }}
           </div>
           <div class="community-user-info">
@@ -51,21 +54,17 @@
             <div class="community-user-meta">{{ user.email }}</div>
           </div>
         </div>
-        <div class="community-user-action">
+        <div class="community-actions">
           <button
             v-if="subTab === 'followers'"
-            class="community-btn community-btn-secondary"
+            class="community-action remove"
             @click="openRemoveModal(user.id, user.name || user.email)"
-          >
-            Remove
-          </button>
+          >Remove</button>
           <button
             v-if="subTab === 'following'"
-            class="community-btn community-btn-secondary"
+            class="community-action"
             @click="openUnfollowModal(user.id, user.name || user.email)"
-          >
-            Unfollow
-          </button>
+          >Unfollow</button>
         </div>
       </div>
 
@@ -204,183 +203,164 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .my-community {
-  padding-top: 4px;
+  padding-top: 8px;
 }
 
+/* Sub-filter pills */
 .community-filters {
   display: flex;
   gap: 8px;
-  margin-bottom: 16px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
 }
-
-.filter-pill {
-  padding: 6px 16px;
-  font-family: "Share Tech Mono", monospace;
-  font-size: 12px;
-  color: #9a9590;
-  border: 1px solid #2a2c2e;
-  border-radius: 20px;
+.cpill {
+  padding: 8px 16px;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-family: var(--mono);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.15s;
+}
+.cpill:hover { color: var(--text); border-color: var(--text-dim); }
+.cpill.active {
+  color: var(--bg);
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 14px var(--accent-glow);
 }
 
-.filter-pill:hover {
-  color: #feeddf;
-  border-color: #5a5550;
-}
-
-.filter-pill.active {
-  background: #c1f527;
-  color: #000003;
-  border-color: #c1f527;
-}
-
+/* Search */
+.community-search-wrap { margin-bottom: 18px; }
 .community-search {
-  margin-bottom: 16px;
-}
-
-.community-search-input {
   width: 100%;
-  background: #1a1c1f;
-  border: 1px solid #2a2c2e;
-  border-radius: 6px;
-  padding: 10px 14px;
-  font-family: "Share Tech Mono", monospace;
+  padding: 12px 16px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--mono);
   font-size: 13px;
-  color: #feeddf;
+  letter-spacing: 0.03em;
+  transition: border-color 0.15s;
+}
+.community-search:focus {
+  border-color: var(--primary);
   outline: none;
-  box-sizing: border-box;
-  transition: border-color 0.2s;
 }
+.community-search::placeholder { color: var(--text-dim); }
 
-.community-search-input::placeholder {
-  color: #5a5550;
-}
-
-.community-search-input:focus {
-  border-color: #ff6100;
-}
-
+/* List */
 .community-list {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 
 .community-row {
-  background: #0e0f11;
-  border: 1px solid #2a2c2e;
-  border-radius: 6px;
-  padding: 12px 16px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  transition: border-color 0.2s;
+  gap: 14px;
+  padding: 14px 16px;
+  background: rgba(14, 15, 17, 0.7);
+  border: 1px solid rgba(42, 44, 46, 0.7);
+  transition: border-color 0.15s;
 }
+.community-row:hover { border-color: rgba(255, 97, 0, 0.2); }
 
-.community-row:hover {
-  border-color: rgba(255, 97, 0, 0.3);
-}
-
-.community-user-left {
+.community-user {
   display: flex;
   align-items: center;
   gap: 12px;
-  cursor: pointer;
   flex: 1;
   min-width: 0;
+  cursor: pointer;
 }
 
 .community-avatar {
-  width: 36px;
-  height: 36px;
+  width: 40px; height: 40px;
   border-radius: 50%;
   object-fit: cover;
   flex-shrink: 0;
+  border: 1px solid var(--border);
 }
-
-.community-avatar-placeholder {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: #1a1c1f;
-  border: 1px solid #2a2c2e;
+.community-avatar--initials {
+  background: linear-gradient(135deg, var(--primary), var(--accent));
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: "Share Tech Mono", monospace;
+  color: var(--bg);
+  font-family: var(--mono);
   font-size: 12px;
-  color: #9a9590;
-  flex-shrink: 0;
+  font-weight: bold;
+  letter-spacing: 0.04em;
 }
 
 .community-user-info {
+  flex: 1;
   min-width: 0;
 }
-
 .community-username {
-  font-family: "Share Tech Mono", monospace;
   font-size: 13px;
-  color: #feeddf;
+  color: var(--text);
+  letter-spacing: 0.04em;
+  margin-bottom: 3px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
+.community-user:hover .community-username { color: var(--primary); }
 .community-user-meta {
-  font-family: "Share Tech Mono", monospace;
-  font-size: 11px;
-  color: #5a5550;
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 0.08em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.community-btn {
-  font-family: "Share Tech Mono", monospace;
-  font-size: 11px;
-  padding: 5px 14px;
-  border-radius: 4px;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.2s;
-  border: none;
+/* Action buttons */
+.community-actions {
+  flex-shrink: 0;
 }
-
-.community-btn-secondary {
+.community-action {
+  padding: 8px 14px;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
   background: transparent;
-  border: 1px solid #2a2c2e;
-  color: #9a9590;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-family: var(--mono);
+  cursor: pointer;
+  transition: all 0.15s;
 }
-
-.community-btn-secondary:hover {
-  border-color: #e24b4a;
+.community-action:hover {
+  color: var(--text);
+  border-color: var(--text-dim);
+}
+.community-action.remove:hover {
   color: #e24b4a;
+  border-color: rgba(226, 75, 74, 0.35);
+  background: rgba(226, 75, 74, 0.04);
 }
 
+/* Empty */
 .community-empty {
-  padding: 40px 0;
+  padding: 40px 20px;
   text-align: center;
-  font-family: "Share Tech Mono", monospace;
-  font-size: 13px;
-  color: #5a5550;
+  font-size: 12px;
+  color: var(--text-dim);
+  letter-spacing: 0.08em;
+  border: 1px dashed rgba(42, 44, 46, 0.7);
 }
 
-@media (max-width: 520px) {
-  .community-row {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-  .community-user-action {
-    width: 100%;
-  }
-  .community-btn {
-    width: 100%;
-    text-align: center;
-  }
+@media (max-width: 700px) {
+  .community-row { padding: 12px 14px; gap: 12px; flex-wrap: wrap; }
+  .community-user-meta { display: none; }
 }
 </style>
