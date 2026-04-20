@@ -1,11 +1,8 @@
 <template>
   <div class="battlepass">
-    <div class="bp-timeline">
-      <div class="bp-line"></div>
-
+    <div class="bp-track">
       <div v-for="(level, index) in levels" :key="level.id" class="bp-tier" :style="{ opacity: tierOpacity(level) }">
         <div class="bp-node" :class="nodeClass(level)">{{ level.number }}</div>
-        <div class="bp-connector" :class="{ 'bp-connector-done': level.status === 'owned' }"></div>
         <div class="bp-card" :class="cardClass(level)">
           <div class="bp-card-left">
             <div class="bp-card-name" :class="{ 'bp-current-name': level.status === 'current' }">
@@ -115,177 +112,145 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
-.battlepass {
-  padding-top: 4px;
-}
-.bp-timeline {
+<style lang="scss" scoped>
+.battlepass { padding-top: 4px; }
+
+.bp-track {
   position: relative;
-  padding-left: 40px;
+  padding-left: 60px;
+  margin-left: 24px;
 }
-.bp-line {
-  position: absolute;
-  left: 17px;
-  top: 0;
-  bottom: 0;
+.bp-track::before {
+  content: '';
+  position: absolute; left: 21px; top: 0; bottom: 0;
   width: 2px;
-  background: #2a2c2e;
+  background: linear-gradient(180deg, var(--accent), var(--accent) 45%, var(--border) 45%);
+  box-shadow: 0 0 8px var(--accent-glow);
 }
+
 .bp-tier {
   position: relative;
-  margin-bottom: 8px;
+  padding: 0 0 32px;
   transition: opacity 0.3s;
 }
+.bp-tier:last-child { padding-bottom: 0; }
+
+/* Node — absolute positioned left of card */
 .bp-node {
-  position: absolute;
-  left: -40px;
-  top: 14px;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: "Share Tech Mono", monospace;
-  font-size: 13px;
-  z-index: 1;
+  position: absolute; left: -56px; top: 4px;
+  width: 44px; height: 44px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 13px;
+  z-index: 2; transition: all 0.2s;
 }
 .bp-node-done {
-  background: #c1f527;
-  color: #000003;
+  background: rgba(193,245,39,0.08);
+  border: 2px solid var(--accent);
+  color: var(--accent);
+  box-shadow: 0 0 14px var(--accent-glow);
 }
 .bp-node-next {
-  background: #252729;
-  border: 2px solid #ff6100;
-  color: #ff6100;
+  background: rgba(255,97,0,0.08);
+  border: 2px solid var(--primary);
+  color: var(--primary);
+  box-shadow: 0 0 18px var(--primary-glow);
 }
 .bp-node-locked {
-  background: #1a1c1f;
-  border: 1px solid #2a2c2e;
-  color: #5a5550;
+  background: var(--surface-2);
+  border: 2px solid var(--border);
+  border-style: dashed;
+  color: var(--text-dim);
 }
-.bp-connector {
-  position: absolute;
-  left: -5px;
-  top: 22px;
-  width: 12px;
-  height: 2px;
-  background: #2a2c2e;
-}
-.bp-connector-done {
-  background: #c1f527;
-}
+
+/* Card */
 .bp-card {
-  background: #0e0f11;
-  border-radius: 6px;
-  padding: 14px 16px;
-  margin-left: 12px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
+  padding: 16px 20px;
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 16px;
   transition: border-color 0.2s;
 }
 .bp-card-owned {
-  border: 1px solid rgba(193, 245, 39, 0.2);
+  background: rgba(14,15,17,0.7);
+  border: 1px solid rgba(193,245,39,0.15);
 }
 .bp-card-current {
-  border: 1px solid #c1f527;
+  background: rgba(14,15,17,0.8);
+  border: 1px solid var(--accent);
+  box-shadow: 0 0 20px rgba(193,245,39,0.08);
 }
 .bp-card-next {
-  border: 1px solid rgba(255, 97, 0, 0.3);
+  background: rgba(14,15,17,0.7);
+  border: 1px solid rgba(255,97,0,0.3);
 }
 .bp-card-locked {
-  border: 1px solid #2a2c2e;
+  background: rgba(14,15,17,0.5);
+  border: 1px solid var(--border);
+  border-style: dashed;
 }
-.bp-card-left {
-  min-width: 0;
-}
+
+.bp-card-left { min-width: 0; }
 .bp-card-name {
-  font-family: "Share Tech Mono", monospace;
-  font-size: 13px;
-  color: #feeddf;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  font-size: 13px; color: var(--text);
+  display: flex; align-items: center; gap: 8px;
 }
-.bp-card-locked .bp-card-name {
-  color: #9a9590;
-}
-.bp-current-name {
-  color: #c1f527;
-}
+.bp-card-locked .bp-card-name { color: var(--text-muted); }
+.bp-current-name { color: var(--accent); }
 .bp-current-badge {
-  font-size: 10px;
-  background: rgba(193, 245, 39, 0.15);
-  color: #c1f527;
+  font-size: 9px;
+  background: rgba(193,245,39,0.15);
+  color: var(--accent);
   padding: 2px 6px;
-  border-radius: 4px;
+  letter-spacing: 0.1em; text-transform: uppercase;
 }
 .bp-card-cost {
-  font-family: "Share Tech Mono", monospace;
-  font-size: 11px;
-  color: #5a5550;
+  font-size: 11px; color: var(--text-dim);
   margin-top: 2px;
 }
-.bp-card-next .bp-card-cost {
-  color: #ff6100;
-}
+.bp-card-next .bp-card-cost { color: var(--primary); }
+
 .bp-card-right {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  display: flex; align-items: center; gap: 8px;
   flex-shrink: 0;
 }
-.bp-rewards {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-}
+.bp-rewards { display: flex; gap: 6px; flex-wrap: wrap; }
 .bp-reward-pill {
-  font-family: "Share Tech Mono", monospace;
-  font-size: 10px;
-  padding: 3px 8px;
-  border-radius: 4px;
+  font-size: 10px; padding: 3px 8px;
+  letter-spacing: 0.08em;
   white-space: nowrap;
 }
 .bp-reward-ambar {
-  background: rgba(193, 245, 39, 0.15);
-  color: #c1f527;
+  background: rgba(193,245,39,0.15);
+  color: var(--accent);
 }
 .bp-reward-key {
-  background: rgba(255, 97, 0, 0.15);
-  color: #ff6100;
+  background: rgba(255,97,0,0.15);
+  color: var(--primary);
 }
+
 .bp-status-owned {
-  font-family: "Share Tech Mono", monospace;
-  font-size: 11px;
-  color: #5a5550;
+  font-size: 11px; color: var(--text-dim);
+  letter-spacing: 0.1em; text-transform: uppercase;
 }
+
 .bp-buy-btn {
-  font-family: "Share Tech Mono", monospace;
-  font-size: 11px;
-  color: #000003;
-  background: #ff6100;
-  border: none;
-  padding: 5px 14px;
-  border-radius: 4px;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: opacity 0.2s;
+  font-family: var(--mono); font-size: 11px;
+  color: var(--bg); background: var(--primary);
+  border: 1px solid var(--primary);
+  padding: 8px 16px;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  cursor: pointer; white-space: nowrap;
+  transition: all 0.15s;
+  box-shadow: 0 0 12px rgba(255,97,0,0.25);
 }
 .bp-buy-btn:hover {
-  opacity: 0.85;
+  background: #ff7e2e;
+  box-shadow: 0 0 20px rgba(255,97,0,0.4);
 }
+
 @media (max-width: 640px) {
-  .bp-card {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .bp-card-right {
-    width: 100%;
-    justify-content: space-between;
-    margin-top: 8px;
-  }
+  .bp-card { flex-direction: column; align-items: flex-start; }
+  .bp-card-right { width: 100%; justify-content: space-between; margin-top: 8px; }
+  .bp-track { padding-left: 48px; margin-left: 16px; }
+  .bp-node { left: -44px; width: 36px; height: 36px; font-size: 11px; }
 }
 </style>
