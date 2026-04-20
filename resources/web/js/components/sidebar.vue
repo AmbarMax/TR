@@ -129,10 +129,25 @@
 
 <script>
 import store from "../store/store.js";
+import raptorRun from '../../../web/images/web/img/mascot/raptor-run.png';
+import raptorTrophy from '../../../web/images/web/img/mascot/raptor-trophy.png';
+import raptorForge from '../../../web/images/web/img/mascot/raptor-forge.png';
+import raptorRewards from '../../../web/images/web/img/mascot/raptor-rewards.png';
+import raptorPodium from '../../../web/images/web/img/mascot/raptor-podium.png';
+import raptorAdmin from '../../../web/images/web/img/mascot/raptor-admin.png';
+
 export default {
     data() {
         return {
             windowWidth: window.innerWidth,
+            sprites: {
+                'raptor-run': raptorRun,
+                'raptor-trophy': raptorTrophy,
+                'raptor-forge': raptorForge,
+                'raptor-rewards': raptorRewards,
+                'raptor-podium': raptorPodium,
+                'raptor-admin': raptorAdmin
+            }
         }
     },
     computed: {
@@ -167,12 +182,8 @@ export default {
       },
       pixelStyle(spriteName) {
         return {
-          backgroundImage: `url(${this.spritePath(spriteName)})`
+          backgroundImage: `url(${this.sprites[spriteName]})`
         };
-      },
-      spritePath(spriteName) {
-        // Vite resolves this at build time via asset import
-        return new URL(`../../../web/images/web/img/mascot/${spriteName}.png`, import.meta.url).href;
       },
       async handleLogout() {
         // No Vuex logout action exists in this project — use direct state + localStorage cleanup (mirrors legacy main-header behavior).
