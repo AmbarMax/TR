@@ -1,80 +1,52 @@
 <template>
   <div class="wof">
 
-    <!-- Header -->
-    <div class="wof-header">
-      <h2>Wall of Fame</h2>
+    <div class="wof-head">
+      <div class="wof-title">Wall of Fame</div>
+      <div class="wof-sub">Global leaderboard</div>
     </div>
 
     <!-- Section 1: Top by Trophies -->
     <div class="wof-section">
-      <div class="wof-section-label wof-section-label--orange">Top by trophies</div>
-
-      <!-- Crown #1 -->
-      <div class="wof-crown wof-crown--orange">
-        <div class="crown-rank crown-rank--orange">1</div>
-        <div class="crown-av crown-av--orange">{{ topByTrophies[0].initials }}</div>
-        <div class="crown-info">
-          <div class="crown-name">{{ topByTrophies[0].username }}</div>
-          <div class="crown-stats">
-            <span class="t">{{ topByTrophies[0].trophies }} troph.</span>
-            <span class="a">{{ topByTrophies[0].ambar }} Ambar</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- List #2-5 -->
+      <div class="wof-label wof-label--primary">Top by trophies</div>
       <div class="wof-list">
-        <div class="wof-entry" v-for="(user, idx) in topByTrophies.slice(1)" :key="'t'+idx">
-          <div class="wof-rank">{{ idx + 2 }}</div>
-          <div class="wof-av">{{ user.initials }}</div>
+        <div
+          v-for="(user, idx) in topByTrophies"
+          :key="'t'+idx"
+          class="wof-row"
+          :class="{ 'wof-row--top': idx === 0 }"
+        >
+          <div class="wof-rank">{{ idx + 1 }}</div>
+          <div class="wof-avatar">{{ user.initials }}</div>
           <div class="wof-info">
             <div class="wof-name">{{ user.username }}</div>
-            <div class="wof-stats">
-              <span class="t">{{ user.trophies }} troph.</span>
-              <span class="a">{{ user.ambar }} Ambar</span>
-            </div>
           </div>
+          <div class="wof-val">{{ user.trophies }}</div>
         </div>
       </div>
     </div>
-
-    <!-- Divider -->
-    <div class="wof-divider"></div>
 
     <!-- Section 2: Top by Ambar -->
     <div class="wof-section">
-      <div class="wof-section-label wof-section-label--accent">Top by Ambar</div>
-
-      <!-- Crown #1 -->
-      <div class="wof-crown wof-crown--accent">
-        <div class="crown-rank crown-rank--accent">1</div>
-        <div class="crown-av crown-av--accent">{{ topByAmbar[0].initials }}</div>
-        <div class="crown-info">
-          <div class="crown-name">{{ topByAmbar[0].username }}</div>
-          <div class="crown-stats">
-            <span class="a">{{ topByAmbar[0].ambar }} Ambar</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- List #2-5 -->
+      <div class="wof-label wof-label--accent">Top by Ambar</div>
       <div class="wof-list">
-        <div class="wof-entry" v-for="(user, idx) in topByAmbar.slice(1)" :key="'a'+idx">
-          <div class="wof-rank">{{ idx + 2 }}</div>
-          <div class="wof-av">{{ user.initials }}</div>
+        <div
+          v-for="(user, idx) in topByAmbar"
+          :key="'a'+idx"
+          class="wof-row"
+          :class="{ 'wof-row--top-accent': idx === 0 }"
+        >
+          <div class="wof-rank">{{ idx + 1 }}</div>
+          <div class="wof-avatar">{{ user.initials }}</div>
           <div class="wof-info">
             <div class="wof-name">{{ user.username }}</div>
-            <div class="wof-stats">
-              <span class="a">{{ user.ambar }} Ambar</span>
-            </div>
           </div>
+          <div class="wof-val wof-val--accent">{{ user.ambar }}</div>
         </div>
       </div>
     </div>
 
-    <!-- Footer -->
-    <div class="wof-footer">Resets every Monday</div>
+    <div class="wof-foot">Resets every Monday</div>
   </div>
 </template>
 
@@ -103,173 +75,149 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .wof {
-  background: #0e0f11;
-  border: 1px solid #2a2c2e;
-  border-radius: 6px;
-  overflow: hidden;
-  margin-right: 16px;
+  background: rgba(14, 15, 17, 0.7);
+  border: 1px solid rgba(42, 44, 46, 0.7);
+  padding: 22px 22px 14px;
 }
 
-.wof-header {
-  padding: 14px 16px 12px;
-  border-bottom: 1px solid #2a2c2e;
+.wof-head {
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(42, 44, 46, 0.6);
 }
-.wof-header h2 {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 16px;
-  font-weight: 400;
-  color: #feeddf;
-  margin: 0;
-}
-
-/* Section wrapper */
-.wof-section {
-  padding-bottom: 4px;
-}
-
-.wof-section-label {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  padding: 12px 16px 10px;
-}
-.wof-section-label--orange { color: #ff6100; }
-.wof-section-label--accent { color: #c1f527; }
-
-/* Crown */
-.wof-crown {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  border-bottom: 1px solid #2a2c2e;
-}
-.wof-crown--orange { background: rgba(255, 97, 0, 0.04); }
-.wof-crown--accent { background: rgba(193, 245, 39, 0.04); }
-
-.crown-rank {
-  font-family: 'Share Tech Mono', monospace;
+.wof-title {
+  font-family: var(--display);
   font-size: 24px;
-  width: 24px;
-  text-align: center;
-  flex-shrink: 0;
+  color: var(--text);
+  line-height: 1;
+  letter-spacing: 0.02em;
 }
-.crown-rank--orange { color: #ff6100; }
-.crown-rank--accent { color: #c1f527; }
-
-.crown-av {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 12px;
-  flex-shrink: 0;
-  border: 2px solid;
-}
-.crown-av--orange {
-  background: rgba(255, 97, 0, 0.12);
-  border-color: #ff6100;
-  color: #ff6100;
-}
-.crown-av--accent {
-  background: rgba(193, 245, 39, 0.12);
-  border-color: #c1f527;
-  color: #c1f527;
+.wof-sub {
+  font-size: 9px;
+  color: var(--text-dim);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  margin-top: 4px;
 }
 
-.crown-info {
-  flex: 1;
-  min-width: 0;
-}
-.crown-name {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 13px;
-  color: #feeddf;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  margin-bottom: 2px;
-}
-.crown-stats {
-  display: flex;
-  gap: 8px;
-  font-family: 'Share Tech Mono', monospace;
-}
-.crown-stats .t { font-size: 11px; color: #ff6100; }
-.crown-stats .a { font-size: 11px; color: #c1f527; }
+.wof-section { margin-bottom: 18px; }
+.wof-section:last-of-type { margin-bottom: 10px; }
 
-/* List #2-5 */
-.wof-list { padding: 4px 0; }
-
-.wof-entry {
+.wof-label {
+  position: relative;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 7px 16px;
 }
+.wof-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, currentColor, transparent);
+  opacity: 0.3;
+}
+.wof-label--primary { color: var(--primary); }
+.wof-label--accent { color: var(--accent); }
+
+.wof-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.wof-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 8px;
+  transition: background 0.15s;
+}
+.wof-row:hover { background: rgba(255, 97, 0, 0.03); }
+
 .wof-rank {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 15px;
-  color: #5a5550;
+  font-family: var(--display);
+  font-size: 22px;
+  color: var(--text-dim);
   width: 24px;
   text-align: center;
   flex-shrink: 0;
+  line-height: 1;
 }
-.wof-av {
-  width: 32px;
-  height: 32px;
+.wof-row--top .wof-rank {
+  color: var(--primary);
+  text-shadow: 0 0 10px var(--primary-glow);
+}
+.wof-row--top-accent .wof-rank {
+  color: var(--accent);
+  text-shadow: 0 0 10px var(--accent-glow);
+}
+
+.wof-avatar {
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
-  background: #1a1c1f;
-  border: 1px solid #2a2c2e;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Share Tech Mono', monospace;
+  font-family: var(--mono);
   font-size: 10px;
-  color: #9a9590;
+  color: var(--text-muted);
   flex-shrink: 0;
+  letter-spacing: 0.04em;
 }
+.wof-row--top .wof-avatar {
+  border-color: var(--primary);
+  color: var(--primary);
+  box-shadow: 0 0 8px rgba(255, 97, 0, 0.25);
+}
+.wof-row--top-accent .wof-avatar {
+  border-color: var(--accent);
+  color: var(--accent);
+  box-shadow: 0 0 8px rgba(193, 245, 39, 0.25);
+}
+
 .wof-info {
   flex: 1;
   min-width: 0;
 }
 .wof-name {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 12px;
-  color: #feeddf;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text);
+  letter-spacing: 0.03em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  margin-bottom: 1px;
-}
-.wof-stats {
-  display: flex;
-  gap: 6px;
-  font-family: 'Share Tech Mono', monospace;
-}
-.wof-stats .t { font-size: 10px; color: #ff6100; }
-.wof-stats .a { font-size: 10px; color: #c1f527; }
-
-/* Divider between sections */
-.wof-divider {
-  height: 1px;
-  background: #2a2c2e;
-  margin: 0;
 }
 
-/* Footer */
-.wof-footer {
-  padding: 10px 16px;
-  border-top: 1px solid #2a2c2e;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 10px;
-  color: #5a5550;
+.wof-val {
+  font-family: var(--display);
+  font-size: 16px;
+  color: var(--text-muted);
+  line-height: 1;
+  flex-shrink: 0;
+}
+.wof-row--top .wof-val { color: var(--primary); }
+.wof-val--accent { color: var(--text-muted); }
+.wof-row--top-accent .wof-val--accent { color: var(--accent); }
+
+.wof-foot {
+  padding-top: 12px;
+  margin-top: 6px;
+  border-top: 1px solid rgba(42, 44, 46, 0.6);
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text-dim);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
   text-align: center;
 }
 </style>
