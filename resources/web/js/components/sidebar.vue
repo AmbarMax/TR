@@ -1,120 +1,130 @@
 <template>
-    <div class="front-sidebar" v-if="sideBarStatus || !isMobile">
-        <div class="front-sidebar_logo">
-            <router-link to="/trophy-room">
-                <div>
-                    <img src="../../../web/images/web/img/tr-isologo.png" alt="logo">
-                </div>
-            </router-link>
-            <div>
-                <img class="sidebar_component" v-if="isMobile" src="../../../web/images/web/img/icons/close.svg" alt="arrow-down" @click="closeSideBar">
-            </div>
-        </div>
-        <ul class="sidebar_menu">
-            <li>
-                <router-link to="/dashboard" :class="{ active_item: $route.path === '/dashboard' }">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.3"/>
-                        <rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.3"/>
-                        <rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.3"/>
-                        <rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.3"/>
-                    </svg>
-                    <span>Dashboard</span>
-                </router-link>
-            </li>
-            <li>
-                <router-link to="/trophy-room" :class="{ active_item: $route.path === '/trophy-room' }">
-                    <svg v-if="$route.path === '/trophy-room'" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
-                        <path d="M21.3555 1.58782H18.5323C18.5425 1.27514 18.5482 0.960566 18.5482 0.644531C18.5482 0.288535 18.2595 0 17.9037 0H4.0963C3.74047 0 3.45177 0.288535 3.45177 0.644531C3.45177 0.960566 3.45748 1.27514 3.46771 1.58782H0.644531C0.288535 1.58782 0 1.87636 0 2.23236C0 5.12033 0.754789 7.84497 2.12523 9.90464C3.47995 11.9408 5.28447 13.1086 7.23388 13.2223C7.67581 13.7032 8.14292 14.0953 8.6295 14.3944V17.259H7.54823C6.24104 17.259 5.17773 18.3225 5.17773 19.6295V20.7108H5.13193C4.77589 20.7108 4.4874 20.9995 4.4874 21.3553C4.4874 21.7113 4.77589 21.9998 5.13193 21.9998H16.8681C17.2241 21.9998 17.5126 21.7113 17.5126 21.3553C17.5126 20.9995 17.2241 20.7108 16.8681 20.7108H16.8223V19.6295C16.8223 18.3225 15.759 17.259 14.4518 17.259H13.3705V14.3944C13.8571 14.0954 14.3244 13.7032 14.7663 13.2223C16.7155 13.1086 18.52 11.9408 19.8749 9.90464C21.2453 7.84497 22 5.12033 22 2.23236C22 1.87636 21.7115 1.58782 21.3555 1.58782ZM3.19846 9.19063C2.06804 7.49182 1.40387 5.2699 1.30268 2.87689H3.53972C3.77218 5.81857 4.46269 8.53767 5.54198 10.696C5.71386 11.0398 5.89359 11.3645 6.08008 11.6704C5.00801 11.2655 4.01586 10.4192 3.19846 9.19063ZM15.5332 19.6295V20.7109H6.4668V19.6295C6.4668 19.0333 6.95191 18.5481 7.54823 18.5481H14.4518C15.0481 18.5481 15.5332 19.0333 15.5332 19.6295ZM12.0814 17.259H9.91856V14.9545C10.2729 15.0478 10.6339 15.0963 11 15.0963C11.3661 15.0963 11.7271 15.0478 12.0814 14.9545V17.259ZM12.4806 13.421C12.4515 13.4329 12.4237 13.4474 12.397 13.4633C11.9414 13.6899 11.4733 13.8072 11 13.8072C10.5268 13.8072 10.0589 13.6899 9.60352 13.4637C9.57646 13.4473 9.54824 13.4329 9.51908 13.4207C9.01368 13.1535 8.52479 12.7499 8.06236 12.2197C8.03818 12.1851 8.01069 12.153 7.98029 12.1237C7.52121 11.5787 7.08933 10.9083 6.69492 10.1195C5.5104 7.75062 4.82625 4.6359 4.74839 1.28906H17.2516C17.1736 4.6359 16.4894 7.75083 15.3051 10.1195C14.9107 10.9084 14.4788 11.5787 14.0199 12.1237C13.9893 12.1529 13.9617 12.1852 13.9375 12.2199C13.4751 12.7503 12.986 13.1536 12.4806 13.421ZM18.8015 9.19063C17.9841 10.4192 16.9919 11.2655 15.9199 11.6704C16.1128 11.3533 16.2924 11.0282 16.458 10.696C17.5373 8.53772 18.2276 5.81857 18.4603 2.87689H20.6974C20.5961 5.2699 19.932 7.49182 18.8015 9.19063Z" fill="currentColor"/>
-                    </svg>
-                    <svg v-else xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
-                        <path d="M21.3555 1.58782H18.5323C18.5425 1.27514 18.5482 0.960566 18.5482 0.644531C18.5482 0.288535 18.2595 0 17.9037 0H4.0963C3.74047 0 3.45177 0.288535 3.45177 0.644531C3.45177 0.960566 3.45748 1.27514 3.46771 1.58782H0.644531C0.288535 1.58782 0 1.87636 0 2.23236C0 5.12033 0.754789 7.84497 2.12523 9.90464C3.47995 11.9408 5.28447 13.1086 7.23388 13.2223C7.67581 13.7032 8.14292 14.0953 8.6295 14.3944V17.259H7.54823C6.24104 17.259 5.17773 18.3225 5.17773 19.6295V20.7108H5.13193C4.77589 20.7108 4.4874 20.9995 4.4874 21.3553C4.4874 21.7113 4.77589 21.9998 5.13193 21.9998H16.8681C17.2241 21.9998 17.5126 21.7113 17.5126 21.3553C17.5126 20.9995 17.2241 20.7108 16.8681 20.7108H16.8223V19.6295C16.8223 18.3225 15.759 17.259 14.4518 17.259H13.3705V14.3944C13.8571 14.0954 14.3244 13.7032 14.7663 13.2223C16.7155 13.1086 18.52 11.9408 19.8749 9.90464C21.2453 7.84497 22 5.12033 22 2.23236C22 1.87636 21.7115 1.58782 21.3555 1.58782ZM3.19846 9.19063C2.06804 7.49182 1.40387 5.2699 1.30268 2.87689H3.53972C3.77218 5.81857 4.46269 8.53767 5.54198 10.696C5.71386 11.0398 5.89359 11.3645 6.08008 11.6704C5.00801 11.2655 4.01586 10.4192 3.19846 9.19063ZM15.5332 19.6295V20.7109H6.4668V19.6295C6.4668 19.0333 6.95191 18.5481 7.54823 18.5481H14.4518C15.0481 18.5481 15.5332 19.0333 15.5332 19.6295ZM12.0814 17.259H9.91856V14.9545C10.2729 15.0478 10.6339 15.0963 11 15.0963C11.3661 15.0963 11.7271 15.0478 12.0814 14.9545V17.259ZM12.4806 13.421C12.4515 13.4329 12.4237 13.4474 12.397 13.4633C11.9414 13.6899 11.4733 13.8072 11 13.8072C10.5268 13.8072 10.0589 13.6899 9.60352 13.4637C9.57646 13.4473 9.54824 13.4329 9.51908 13.4207C9.01368 13.1535 8.52479 12.7499 8.06236 12.2197C8.03818 12.1851 8.01069 12.153 7.98029 12.1237C7.52121 11.5787 7.08933 10.9083 6.69492 10.1195C5.5104 7.75062 4.82625 4.6359 4.74839 1.28906H17.2516C17.1736 4.6359 16.4894 7.75083 15.3051 10.1195C14.9107 10.9084 14.4788 11.5787 14.0199 12.1237C13.9893 12.1529 13.9617 12.1852 13.9375 12.2199C13.4751 12.7503 12.986 13.1536 12.4806 13.421ZM18.8015 9.19063C17.9841 10.4192 16.9919 11.2655 15.9199 11.6704C16.1128 11.3533 16.2924 11.0282 16.458 10.696C17.5373 8.53772 18.2276 5.81857 18.4603 2.87689H20.6974C20.5961 5.2699 19.932 7.49182 18.8015 9.19063Z" fill="currentColor"/>
-                    </svg>
-                    <span>
-                        Trophy Room
-                    </span>
-                </router-link>
-            </li>
-            <!-- Validate removed — functionality absorbed into Feed composer -->
-            <li>
-                <router-link to="/forge" :class="{ active_item: $route.path === '/forge' }">
-                    <svg v-if="$route.path === '/forge'" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <g clip-path="url(#clip0_1957_7171)">
-                            <path fill-rule="evenodd" clip-rule="evenodd" d="M1.43783 7.87275H4.78074V9.61888C3.02385 9.6487 1.97392 8.72638 1.43783 7.87275ZM6.08074 10.2142V10.233V10.7709C6.71032 11.0554 7.4264 11.6016 7.68769 12.5016C7.91819 13.2955 7.75102 14.2067 7.11206 15.2228H16.2267C15.9418 14.7414 15.7238 14.1719 15.706 13.5669C15.6893 12.9972 15.8525 12.4122 16.2775 11.884C16.6939 11.3665 17.3308 10.941 18.2025 10.6141C20.6182 9.70826 21.8059 9.14269 22.2807 8.87507V7.14998H6.08074V7.22275V10.2142ZM17.8507 15.2228C17.4179 14.7752 17.0229 14.1213 17.0055 13.5287C16.9972 13.2484 17.0716 12.9708 17.2903 12.699C17.5176 12.4165 17.9307 12.1045 18.659 11.8314C21.4869 10.7709 22.7701 10.129 23.2 9.83556C23.4813 9.64351 23.5807 9.34202 23.5807 9.0985V6.79998C23.5807 6.2753 23.1554 5.84998 22.6307 5.84998H5.73074C5.28438 5.84998 4.90993 6.15781 4.80808 6.57275H0.695884C0.151987 6.57275 -0.316622 7.11431 -0.0935012 7.70385C0.393644 8.99102 1.89056 10.9646 4.78074 10.9199V10.9965C4.78074 11.4304 5.06628 11.7703 5.41632 11.9021C5.89027 12.0806 6.30904 12.4156 6.43924 12.864C6.55898 13.2765 6.50195 14.0283 5.50243 15.2228H4.43074C4.1546 15.2228 3.93074 15.4466 3.93074 15.7228V18.7228C3.93074 18.9989 4.1546 19.2228 4.43074 19.2228H18.4307C18.7069 19.2228 18.9307 18.9989 18.9307 18.7228V15.7228C18.9307 15.4466 18.7069 15.2228 18.4307 15.2228H17.8507ZM5.23074 17.9228V16.5228H17.6307V17.9228H5.23074Z" fill="currentColor"/>
-                        </g>
-                        <defs>
-                            <clipPath id="clip0_1957_7171">
-                                <rect width="24" height="24" fill="white"/>
-                            </clipPath>
-                        </defs>
-                    </svg>
-                    <svg v-else xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <g clip-path="url(#clip0_1957_6332)">
-                            <path fill-rule="evenodd" clip-rule="evenodd" d="M1.43783 7.87275H4.78074V9.61888C3.02385 9.6487 1.97392 8.72638 1.43783 7.87275ZM6.08074 10.2142V10.233V10.7709C6.71032 11.0554 7.4264 11.6016 7.68769 12.5016C7.91819 13.2955 7.75102 14.2067 7.11206 15.2228H16.2267C15.9418 14.7414 15.7238 14.1719 15.706 13.5669C15.6893 12.9972 15.8525 12.4122 16.2775 11.884C16.6939 11.3665 17.3308 10.941 18.2025 10.6141C20.6182 9.70826 21.8059 9.14269 22.2807 8.87507V7.14998H6.08074V7.22275V10.2142ZM17.8507 15.2228C17.4179 14.7752 17.0229 14.1213 17.0055 13.5287C16.9972 13.2484 17.0716 12.9708 17.2903 12.699C17.5176 12.4165 17.9307 12.1045 18.659 11.8314C21.4869 10.7709 22.7701 10.129 23.2 9.83556C23.4813 9.64351 23.5807 9.34202 23.5807 9.0985V6.79998C23.5807 6.2753 23.1554 5.84998 22.6307 5.84998H5.73074C5.28438 5.84998 4.90993 6.15781 4.80808 6.57275H0.695884C0.151987 6.57275 -0.316622 7.11431 -0.0935012 7.70385C0.393644 8.99102 1.89056 10.9646 4.78074 10.9199V10.9965C4.78074 11.4304 5.06628 11.7703 5.41632 11.9021C5.89027 12.0806 6.30904 12.4156 6.43924 12.864C6.55898 13.2765 6.50195 14.0283 5.50243 15.2228H4.43074C4.1546 15.2228 3.93074 15.4466 3.93074 15.7228V18.7228C3.93074 18.9989 4.1546 19.2228 4.43074 19.2228H18.4307C18.7069 19.2228 18.9307 18.9989 18.9307 18.7228V15.7228C18.9307 15.4466 18.7069 15.2228 18.4307 15.2228H17.8507ZM5.23074 17.9228V16.5228H17.6307V17.9228H5.23074Z" fill="currentColor"/>
-                        </g>
-                        <defs>
-                            <clipPath id="clip0_1957_6332">
-                                <rect width="24" height="24" fill="white"/>
-                            </clipPath>
-                        </defs>
-                    </svg>
-                    <span>
-                        Forge
-                    </span>
-                </router-link>
-            </li>
-            <li>
-                <router-link to="/rewards" :class="{ active_item: $route.path === '/rewards' }">
-                    <svg v-if="$route.path === '/rewards'" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <path d="M17.25 3.75H6.75C5.35807 3.75149 4.02358 4.30509 3.03933 5.28933C2.05509 6.27358 1.50149 7.60807 1.5 9V18C1.5 18.3978 1.65804 18.7794 1.93934 19.0607C2.22064 19.342 2.60218 19.5 3 19.5H21C21.3978 19.5 21.7794 19.342 22.0607 19.0607C22.342 18.7794 22.5 18.3978 22.5 18V9C22.4985 7.60807 21.9449 6.27358 20.9607 5.28933C19.9764 4.30509 18.6419 3.75149 17.25 3.75ZM21 9V9.75H18V5.325C18.8465 5.49904 19.607 5.95959 20.1535 6.62903C20.7 7.29846 20.9989 8.13584 21 9ZM12.75 12.75H11.25V9.75H12.75V12.75ZM10.5 14.25H13.5C13.6989 14.25 13.8897 14.171 14.0303 14.0303C14.171 13.8897 14.25 13.6989 14.25 13.5V11.25H16.5V18H7.5V11.25H9.75V13.5C9.75 13.6989 9.82902 13.8897 9.96967 14.0303C10.1103 14.171 10.3011 14.25 10.5 14.25ZM14.25 9.75V9C14.25 8.80109 14.171 8.61032 14.0303 8.46967C13.8897 8.32902 13.6989 8.25 13.5 8.25H10.5C10.3011 8.25 10.1103 8.32902 9.96967 8.46967C9.82902 8.61032 9.75 8.80109 9.75 9V9.75H7.5V5.25H16.5V9.75H14.25ZM6 5.325V9.75H3V9C3.00106 8.13584 3.30002 7.29846 3.8465 6.62903C4.39297 5.95959 5.15354 5.49904 6 5.325ZM3 11.25H6V18H3V11.25ZM21 18H18V11.25H21V18Z" fill="currentColor"/>
-                    </svg>
-
-                    <svg v-else xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <path d="M17.25 3.75H6.75C5.35807 3.75149 4.02358 4.30509 3.03933 5.28933C2.05509 6.27358 1.50149 7.60807 1.5 9V18C1.5 18.3978 1.65804 18.7794 1.93934 19.0607C2.22064 19.342 2.60218 19.5 3 19.5H21C21.3978 19.5 21.7794 19.342 22.0607 19.0607C22.342 18.7794 22.5 18.3978 22.5 18V9C22.4985 7.60807 21.9449 6.27358 20.9607 5.28933C19.9764 4.30509 18.6419 3.75149 17.25 3.75ZM21 9V9.75H18V5.325C18.8465 5.49904 19.607 5.95959 20.1535 6.62903C20.7 7.29846 20.9989 8.13584 21 9ZM12.75 12.75H11.25V9.75H12.75V12.75ZM10.5 14.25H13.5C13.6989 14.25 13.8897 14.171 14.0303 14.0303C14.171 13.8897 14.25 13.6989 14.25 13.5V11.25H16.5V18H7.5V11.25H9.75V13.5C9.75 13.6989 9.82902 13.8897 9.96967 14.0303C10.1103 14.171 10.3011 14.25 10.5 14.25ZM14.25 9.75V9C14.25 8.80109 14.171 8.61032 14.0303 8.46967C13.8897 8.32902 13.6989 8.25 13.5 8.25H10.5C10.3011 8.25 10.1103 8.32902 9.96967 8.46967C9.82902 8.61032 9.75 8.80109 9.75 9V9.75H7.5V5.25H16.5V9.75H14.25ZM6 5.325V9.75H3V9C3.00106 8.13584 3.30002 7.29846 3.8465 6.62903C4.39297 5.95959 5.15354 5.49904 6 5.325ZM3 11.25H6V18H3V11.25ZM21 18H18V11.25H21V18Z" fill="currentColor"/>
-                    </svg>
-                    <span>
-                        Rewards
-                    </span>
-                </router-link>
-            </li>
-
-            <li>
-                <router-link to="/feed" :class="{ active_item: $route.path === '/feed' }">
-                    <svg v-if="$route.path === '/feed'" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <path d="M3.5625 8.0625H20.4375M17.625 12H6.375M6.375 21H17.625C19.489 21 21 19.489 21 17.625V6.375C21 4.51104 19.489 3 17.625 3H6.375C4.51104 3 3 4.51104 3 6.375V17.625C3 19.489 4.51104 21 6.375 21Z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    <svg v-else xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <path d="M3.5625 8.0625H20.4375M17.625 12H6.375M6.375 21H17.625C19.489 21 21 19.489 21 17.625V6.375C21 4.51104 19.489 3 17.625 3H6.375C4.51104 3 3 4.51104 3 6.375V17.625C3 19.489 4.51104 21 6.375 21Z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    <span>
-                        Achievements
-                    </span>
-                </router-link>
-            </li>
-            <li v-if="isAdmin">
-                <router-link to="/brand-dashboard" :class="{ active_item: $route.path === '/brand-dashboard' }">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.3"/>
-                        <rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.3"/>
-                        <rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.3"/>
-                        <rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.3"/>
-                    </svg>
-                    <span>Admin Panel</span>
-                </router-link>
-            </li>
-        </ul>
-        <ul class="sidebar_footer_links">
-            <li @click="redirectToTwitter" class="cursor-pointer">
-                    <img src="../../../web/images/web/img/social_icons/twitter.svg" alt="twitter" title="twitter">
-            </li>
-            <li @click="redirectToDiscord" class="cursor-pointer">
-                    <img src="../../../web/images/web/img/social_icons/discord.svg" alt="discord" title="discord">
-            </li>
-            <li @click="redirectToSupport" class="cursor-pointer">
-                    <img style="max-width: 24px; max-height: 24px" src="../../../web/images/web/img/social_icons/support.svg" alt="twitch" title="support">
-            </li>
-        </ul>
+  <aside class="front-sidebar" v-if="sideBarStatus || !isMobile">
+    <!-- Logo -->
+    <div class="front-sidebar_logo">
+      <router-link to="/trophy-room">
+        <img src="../../../web/images/web/img/tr-isologo.png" alt="TrophyRoom">
+      </router-link>
+      <button v-if="isMobile" class="sidebar-close" @click="closeSideBar" aria-label="Close menu">
+        <img src="../../../web/images/web/img/icons/close.svg" alt="Close">
+      </button>
     </div>
+
+    <!-- Nav -->
+    <nav class="sidebar_menu">
+      <!-- Dashboard -->
+      <router-link to="/dashboard" class="nav-item" :class="{ active_item: $route.path === '/dashboard' }">
+        <span class="nav-icon">
+          <span class="nav-icon-svg">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round">
+              <path d="M3 11 L12 4 L21 11 L21 20 L15 20 L15 14 L9 14 L9 20 L3 20 Z" fill="rgba(255,97,0,0.2)"/>
+              <path d="M10 7 L14 7" stroke="#c1f527" stroke-width="2.5"/>
+            </svg>
+          </span>
+          <span class="nav-icon-pixel" :style="pixelStyle('raptor-run')"></span>
+        </span>
+        <span class="nav-label">Dashboard</span>
+      </router-link>
+
+      <!-- Trophy Room -->
+      <router-link to="/trophy-room" class="nav-item" :class="{ active_item: $route.path === '/trophy-room' }">
+        <span class="nav-icon">
+          <span class="nav-icon-svg">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round">
+              <path d="M7 4 L17 4 L17 10 C17 13 15 15 12 15 C9 15 7 13 7 10 Z"/>
+              <path d="M7 6 C4 6 3 7 3 9 C3 11 5 12 7 12"/>
+              <path d="M17 6 C20 6 21 7 21 9 C21 11 19 12 17 12"/>
+              <path d="M9 15 L9 18 L15 18 L15 15"/>
+              <path d="M8 20 L16 20"/>
+              <path d="M10 7 L14 7" stroke="#c1f527" stroke-width="2.5"/>
+            </svg>
+          </span>
+          <span class="nav-icon-pixel" :style="pixelStyle('raptor-trophy')"></span>
+        </span>
+        <span class="nav-label">Trophy Room</span>
+      </router-link>
+
+      <!-- Forge -->
+      <router-link to="/forge" class="nav-item" :class="{ active_item: $route.path === '/forge' }">
+        <span class="nav-icon">
+          <span class="nav-icon-svg">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round">
+              <path d="M15 4 L22 7 L18 10 L15 7 Z" fill="rgba(255,97,0,0.15)"/>
+              <path d="M4 14 L18 14 L20 16 L16 18 L4 18 Z" fill="rgba(255,97,0,0.15)"/>
+              <path d="M8 18 L8 21 M14 18 L14 21"/>
+              <circle cx="17" cy="8" r="1.5" fill="#c1f527" stroke="none"/>
+            </svg>
+          </span>
+          <span class="nav-icon-pixel" :style="pixelStyle('raptor-forge')"></span>
+        </span>
+        <span class="nav-label">Forge</span>
+      </router-link>
+
+      <!-- Rewards -->
+      <router-link to="/rewards" class="nav-item" :class="{ active_item: $route.path === '/rewards' }">
+        <span class="nav-icon">
+          <span class="nav-icon-svg">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round">
+              <path d="M3 10 L21 10 L21 20 L3 20 Z" fill="rgba(255,97,0,0.15)"/>
+              <path d="M3 10 L3 7 L21 7 L21 10"/>
+              <path d="M11 7 L11 20 M13 7 L13 20"/>
+              <circle cx="12" cy="13" r="1.3" fill="#c1f527" stroke="none"/>
+            </svg>
+          </span>
+          <span class="nav-icon-pixel" :style="pixelStyle('raptor-rewards')"></span>
+        </span>
+        <span class="nav-label">Rewards</span>
+      </router-link>
+
+      <!-- Achievements -->
+      <router-link to="/feed" class="nav-item" :class="{ active_item: $route.path === '/feed' }">
+        <span class="nav-icon">
+          <span class="nav-icon-svg">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round">
+              <path d="M4 5 L20 5 L20 9 L16 12 L12 11 L8 12 L4 9 Z" fill="rgba(255,97,0,0.15)"/>
+              <path d="M12 11 L12 16"/>
+              <path d="M8 19 L16 19 L15 16 L9 16 Z"/>
+              <path d="M7 6 L10 6" stroke="#c1f527" stroke-width="2.5"/>
+            </svg>
+          </span>
+          <span class="nav-icon-pixel" :style="pixelStyle('raptor-podium')"></span>
+        </span>
+        <span class="nav-label">Achievements</span>
+      </router-link>
+
+      <!-- Admin Panel (guarded by isAdmin) -->
+      <router-link v-if="isAdmin" to="/brand-dashboard" class="nav-item" :class="{ active_item: $route.path === '/brand-dashboard' }">
+        <span class="nav-icon">
+          <span class="nav-icon-svg">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round">
+              <path d="M12 3 L19 6 L19 12 C19 16 16 19 12 20 C8 19 5 16 5 12 L5 6 Z" fill="rgba(255,97,0,0.15)"/>
+              <path d="M9 12 L11 14 L15 10" stroke="#c1f527" stroke-width="2.5"/>
+            </svg>
+          </span>
+          <span class="nav-icon-pixel" :style="pixelStyle('raptor-admin')"></span>
+        </span>
+        <span class="nav-label">Admin Panel</span>
+      </router-link>
+    </nav>
+
+    <!-- Logout (restored in 9B, was lost in 9A header refactor) -->
+    <button class="sidebar-logout" @click="handleLogout" aria-label="Logout">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round">
+        <path d="M16 17l5-5-5-5M21 12H9M13 21H5V3h8"/>
+      </svg>
+      <span>Logout</span>
+    </button>
+
+    <!-- Social footer (preserved from legacy) -->
+    <div class="sidebar-foot">
+      <a href="https://twitter.com/TrophyRoomGG" target="_blank" rel="noopener" class="social" aria-label="Twitter">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+      </a>
+      <a href="https://discord.gg/3sGk8uGQBT" target="_blank" rel="noopener" class="social" aria-label="Discord">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4C2.9 4 2 4.9 2 6v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zM9.5 16c-1.4 0-2.5-1.1-2.5-2.5S8.1 11 9.5 11s2.5 1.1 2.5 2.5S10.9 16 9.5 16zm5 0c-1.4 0-2.5-1.1-2.5-2.5S13.1 11 14.5 11s2.5 1.1 2.5 2.5S15.9 16 14.5 16z"/></svg>
+      </a>
+    </div>
+  </aside>
 </template>
 
 <script>
@@ -155,6 +165,30 @@ export default {
       redirectToSupport(){
         window.open('https://trophyroom.gg/support', '_blank');
       },
+      pixelStyle(spriteName) {
+        return {
+          backgroundImage: `url(${this.spritePath(spriteName)})`
+        };
+      },
+      spritePath(spriteName) {
+        // Vite resolves this at build time via asset import
+        return new URL(`../../../web/images/web/img/mascot/${spriteName}.png`, import.meta.url).href;
+      },
+      async handleLogout() {
+        // No Vuex logout action exists in this project — use direct state + localStorage cleanup (mirrors legacy main-header behavior).
+        try {
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('user');
+        } catch (e) {
+          // ignore
+        }
+        try {
+          store.state.authorized = false;
+        } catch (e) {
+          // ignore
+        }
+        this.$router.push({ path: '/login' });
+      },
     },
     created() {
         window.addEventListener('resize', this.handleResize);
@@ -165,8 +199,266 @@ export default {
 }
 </script>
 
-<style>
-.cursor-pointer{
+<style lang="scss" scoped>
+/* Sidebar container */
+.front-sidebar {
+  width: 270px;
+  min-width: 270px;
+  height: 100vh;
+  min-height: 660px;
+  position: sticky;
+  top: 0;
+  left: 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 26px 0 18px;
+  background: rgba(5, 5, 8, 0.75);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  border-right: 1px solid rgba(255, 97, 0, 0.12);
+  box-shadow: inset -1px 0 0 rgba(255, 97, 0, 0.05);
+}
+
+/* Logo area */
+.front-sidebar_logo {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 20px;
+  margin-bottom: 28px;
+  position: relative;
+}
+.front-sidebar_logo a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.front-sidebar_logo img {
+  width: 58px;
+  height: 58px;
+  filter: drop-shadow(0 0 14px rgba(255, 97, 0, 0.4));
+}
+.sidebar-close {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: 6px;
   cursor: pointer;
+}
+.sidebar-close img {
+  width: 18px;
+  height: 18px;
+}
+
+/* Nav menu */
+.sidebar_menu {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 0 10px;
+  flex: 1;
+  list-style: none;
+  margin: 0;
+}
+
+/* Nav item (router-link) */
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  font-size: 11px;
+  color: var(--text-muted);
+  border-left: 2px solid transparent;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+.nav-item:hover {
+  color: var(--text);
+  background: rgba(255, 97, 0, 0.04);
+}
+.nav-item.active_item {
+  color: var(--primary);
+  background: linear-gradient(90deg, rgba(255, 97, 0, 0.14), rgba(255, 97, 0, 0.02));
+  border-left-color: var(--primary);
+  text-shadow: 0 0 10px rgba(255, 97, 0, 0.4);
+}
+.nav-item.active_item::before {
+  content: '';
+  position: absolute;
+  left: -2px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--primary);
+  box-shadow: 0 0 14px var(--primary);
+}
+
+.nav-label {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ========== ICON HYBRID SYSTEM (SVG default + pixel-art hover/active) ========== */
+.nav-icon {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.nav-icon-svg {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.1s cubic-bezier(0.6, 0, 0.4, 1), opacity 0.1s;
+  color: inherit;
+}
+.nav-icon-svg svg {
+  width: 22px;
+  height: 22px;
+  color: inherit;
+}
+.nav-icon-pixel {
+  position: absolute;
+  inset: 0;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  transform: scale(0);
+  opacity: 0;
+  transition:
+    transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s,
+    opacity 0.08s 0.1s;
+}
+
+/* Hover on non-active: SVG out, pixel pops in */
+.nav-item:hover:not(.active_item) .nav-icon-svg {
+  transform: scale(0);
+  opacity: 0;
+  transition-delay: 0s;
+}
+.nav-item:hover:not(.active_item) .nav-icon-pixel {
+  transform: scale(1);
+  opacity: 1;
+  transition:
+    transform 0.18s cubic-bezier(0.34, 1.8, 0.64, 1) 0.08s,
+    opacity 0.08s 0.08s;
+}
+
+/* Active state: pixel permanent + idle bob */
+.nav-item.active_item .nav-icon-svg {
+  transform: scale(0);
+  opacity: 0;
+}
+.nav-item.active_item .nav-icon-pixel {
+  transform: scale(1);
+  opacity: 1;
+  animation: sidebar-idle-bob 1.6s ease-in-out infinite;
+  filter: drop-shadow(0 0 6px rgba(255, 97, 0, 0.35));
+}
+
+@keyframes sidebar-idle-bob {
+  0%, 100% {
+    transform: scale(1) translateY(0);
+  }
+  50% {
+    transform: scale(1) translateY(-2px);
+  }
+}
+
+/* Motion reduction */
+@media (prefers-reduced-motion: reduce) {
+  .nav-icon-pixel,
+  .nav-icon-svg {
+    transition: none;
+  }
+  .nav-item.active_item .nav-icon-pixel {
+    animation: none;
+  }
+}
+
+/* ========== LOGOUT ========== */
+.sidebar-logout {
+  margin: auto 10px 4px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border-top: 1px dashed rgba(255, 97, 0, 0.1);
+  padding-top: 14px;
+  cursor: pointer;
+  background: none;
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
+  font-family: inherit;
+  transition: color 0.15s;
+  text-align: left;
+  width: calc(100% - 20px);
+}
+.sidebar-logout:hover {
+  color: var(--primary);
+}
+.sidebar-logout svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+/* ========== SOCIAL FOOTER ========== */
+.sidebar-foot {
+  padding: 14px 18px 0;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: center;
+  border-top: 1px solid rgba(255, 97, 0, 0.08);
+}
+.social {
+  color: var(--text-dim);
+  transition: all 0.15s;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.social:hover {
+  color: var(--primary);
+  filter: drop-shadow(0 0 4px var(--primary));
+}
+
+/* ========== MOBILE ========== */
+@media (max-width: 768px) {
+  .front-sidebar {
+    width: 100%;
+    min-width: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+  }
 }
 </style>
