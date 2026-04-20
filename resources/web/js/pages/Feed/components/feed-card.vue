@@ -1,90 +1,87 @@
 <template>
-  <div class="fc" :id="item.id+'feed-dom-obj'">
+  <div class="post" :id="item.id+'feed-dom-obj'">
 
     <!-- Header -->
-    <div class="fc-header">
-      <div class="fc-user" @click="navigateToVirtualHall(item.creator.username)">
-        <div class="fc-avatar">
-          <img v-if="!item.creator.avatar" src="../../../../images/web/img/user.svg" alt="post-user" class="fc-avatar__img">
-          <img v-else :src="item.creator.avatar" alt="user" class="fc-avatar__img">
-        </div>
-        <span class="fc-username">{{ item.creator.username }}</span>
+    <div class="post-header">
+      <div class="post-avatar" @click="navigateToVirtualHall(item.creator.username)">
+        <img v-if="!item.creator.avatar" src="../../../../images/web/img/user.svg" alt="post-user">
+        <img v-else :src="item.creator.avatar" alt="user">
       </div>
-      <div class="fc-header__right">
-        <span class="fc-date">{{ item.created_at }}</span>
-        <button class="fc-delete" v-if="myFeed || this.isModerator() === true" @click="openDeletePostModal(item.id)">
-          <img src="../../../../images/web/img/icons/trash.svg" alt="trash-icon">
-        </button>
+      <div class="post-user-info">
+        <div class="post-username" @click="navigateToVirtualHall(item.creator.username)">{{ item.creator.username }}</div>
+        <div class="post-timestamp">{{ item.created_at }}</div>
       </div>
+      <button class="post-delete" v-if="myFeed || this.isModerator() === true" @click="openDeletePostModal(item.id)">
+        Delete
+      </button>
     </div>
 
-    <!-- Title + Description -->
-    <h2 class="fc-title">{{ item.entity.name }}</h2>
-    <p class="fc-text" ref="cardText">{{ item.entity.description }}</p>
-    <div class="fc-read-more" v-if="item.entity.description && item.entity.description.length > 150" @click="readMoreToggle">
-      <span>{{ moreButton }}</span>
-      <img src="../../../../images/web/img/icons/arrow-down.svg" alt="arrow" ref="arrowDown" class="fc-read-more__arrow">
-    </div>
-
-    <!-- Image -->
-    <div class="fc-image">
+    <!-- Post entity (image, trophy, or achievement art) -->
+    <div class="post-image">
       <img :src="getImageUrl()" alt="post-image">
+      <div class="post-image-caption">
+        <div class="post-image-title">{{ item.entity.name }}</div>
+        <p class="post-image-desc" ref="cardText">{{ item.entity.description }}</p>
+        <div class="read-more-toggle" v-if="item.entity.description && item.entity.description.length > 150" @click="readMoreToggle">
+          <span>{{ moreButton }}</span>
+          <img src="../../../../images/web/img/icons/arrow-down.svg" alt="arrow" ref="arrowDown" class="read-more-arrow">
+        </div>
+      </div>
     </div>
 
     <!-- Actions -->
-    <div class="fc-actions">
-      <!-- Default state -->
-      <div class="fc-balance-row" v-if="actionStatuses.default">
-        <div class="fc-balance">
-          <img src="../../../../images/web/img/points/ambar.svg" alt="ambars" class="fc-balance__icon">
-          <span class="fc-balance__value">{{ item.donations }}</span>
-        </div>
-        <button class="fc-donate-btn" v-if="!myFeed" @click="addAmbars">Donate</button>
-        <button class="fc-donate-btn fc-donate-btn--disabled" disabled v-else>{{ item.donations_count }} people donated</button>
+    <!-- Default state -->
+    <div class="post-actions" v-if="actionStatuses.default">
+      <button class="pact donate-btn" v-if="!myFeed" @click="addAmbars">
+        <img src="../../../../images/web/img/points/ambar.svg" alt="ambars" class="pact-icon">
+        <span class="pact-count">{{ item.donations }}</span>
+        <span>Donate</span>
+      </button>
+      <div class="pact pact-static" v-else>
+        <img src="../../../../images/web/img/points/ambar.svg" alt="ambars" class="pact-icon">
+        <span class="pact-count">{{ item.donations }}</span>
+        <span>{{ item.donations_count }} donated</span>
       </div>
+    </div>
 
-      <!-- Send state -->
-      <div class="fc-balance-row" v-if="actionStatuses.send">
-        <div class="fc-count">
-          <img src="../../../../images/web/img/points/ambar.svg" alt="ambars" class="fc-balance__icon">
-          <button class="fc-operator" @click="increaseDecreaseAmbars('-')">
-            <img src="../../../../../../public/web/img/icons/green-minus.svg" alt="minus">
-          </button>
-          <span class="fc-count__value">{{ data.balance }}</span>
-          <button class="fc-operator" @click="increaseDecreaseAmbars('+')">
-            <img src="../../../../../../public/web/img/icons/green-plus.svg" alt="plus">
-          </button>
-        </div>
-        <button-white :text="'Send'" @click="sendAmbars(item.id, data.balance)"></button-white>
+    <!-- Send state -->
+    <div class="donate-send" v-if="actionStatuses.send">
+      <div class="donate-amount">
+        <img src="../../../../images/web/img/points/ambar.svg" alt="ambars" class="pact-icon">
+        <button @click="increaseDecreaseAmbars('-')">−</button>
+        <span class="donate-amount-val">{{ data.balance }}</span>
+        <button @click="increaseDecreaseAmbars('+')">+</button>
       </div>
+      <button class="donate-send-btn" @click="sendAmbars(item.id, data.balance)">Send</button>
+      <button class="donate-cancel-btn" @click="closeAmbarsAdd">Cancel</button>
+    </div>
 
-      <!-- Success state -->
-      <div class="fc-balance-row" v-if="actionStatuses.sendSuccess">
-        <div class="fc-count">
-          <img src="../../../../images/web/img/points/ambar.svg" alt="ambars" class="fc-balance__icon">
-          <span class="fc-count__value">{{ data.balance }}</span>
-        </div>
-        <span class="fc-status">
-          {{ item.donations_count === 1 || item.donations_count === 0
-            ? 'You donated Ambars'
-            : `You and ${item.donations_count} people donated Ambars` }}
-        </span>
+    <!-- Success state -->
+    <div class="donate-send" v-if="actionStatuses.sendSuccess">
+      <div class="donate-amount">
+        <img src="../../../../images/web/img/points/ambar.svg" alt="ambars" class="pact-icon">
+        <span class="donate-amount-val">{{ data.balance }}</span>
       </div>
+      <span class="donate-status">
+        {{ item.donations_count === 1 || item.donations_count === 0
+          ? 'You donated Ambars'
+          : `You and ${item.donations_count} people donated Ambars` }}
+      </span>
     </div>
 
     <!-- Comments -->
-    <div class="fc-comments" :ref="'scrollable_'+index" :class="{'scroll-height': item.comments_count > 3}" @scroll="handleScroll">
+    <div class="post-comments" :ref="'scrollable_'+index" :class="{'scroll-height': item.comments_count > 3}" @scroll="handleScroll">
       <feed-comment v-for="comment of item.comments" :comment="comment" :post="item.id"></feed-comment>
     </div>
-    <button v-if="item.comments_count > 3" class="fc-show-more">
+    <button v-if="item.comments_count > 3" class="post-show-more">
       <span v-if="checkShowMoreComments(item)" @click="showMoreComments(item.id)">Show more comments ({{ item.comments_count }})</span>
       <span v-if="checkTotalCommentsText(item)">Total ({{ item.comments_count }})</span>
     </button>
 
     <!-- New comment -->
-    <div class="fc-new-comment">
-      <img :src="getAvatar()" alt="user-avatar" class="fc-new-comment__avatar">
-      <div class="fc-new-comment__input">
+    <div class="post-new-comment">
+      <img :src="getAvatar()" alt="user-avatar" class="post-new-comment-avatar">
+      <div class="post-new-comment-input">
         <textarea
           ref="textarea"
           @input="changeHeight"
@@ -92,7 +89,7 @@
           placeholder="Leave comment..."
           @keydown="event => handleEnterMessage(event, item.id)"
         ></textarea>
-        <button @click="sendMessage(item.id)" class="fc-new-comment__send">
+        <button @click="sendMessage(item.id)" class="post-new-comment-send">
           <img src="../../../../../../public/web/img/icons/send-icon.svg" alt="send">
         </button>
       </div>
@@ -378,335 +375,226 @@ export default {
 }
 </script>
 
-<style scoped>
-.fc {
-  background: #0e0f11;
-  border: 1px solid #2a2c2e;
-  border-radius: 6px;
-  padding: 16px;
+<style lang="scss" scoped>
+.post {
+  padding: 24px 28px;
+  background: rgba(14,15,17,0.7);
+  border: 1px solid rgba(42,44,46,0.7);
+  transition: border-color 0.2s;
+  margin-bottom: 20px;
+}
+.post:hover { border-color: rgba(255,97,0,0.2); }
+
+.post-header {
+  display: flex; align-items: center; gap: 12px;
   margin-bottom: 16px;
-  max-width: 680px;
 }
-
-/* Header */
-.fc-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.fc-user {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+.post-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; color: var(--bg); font-weight: bold;
+  flex-shrink: 0; overflow: hidden;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
   cursor: pointer;
 }
+.post-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.post-user-info { flex: 1; min-width: 0; }
+.post-username {
+  font-size: 13px; color: var(--text);
+  letter-spacing: 0.04em; cursor: pointer;
+}
+.post-username:hover { color: var(--primary); }
+.post-timestamp {
+  font-size: 10px; color: var(--text-dim);
+  letter-spacing: 0.1em;
+}
+.post-delete {
+  margin-left: auto;
+  color: var(--text-dim); cursor: pointer;
+  font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
+  padding: 4px 10px; border: 1px solid transparent;
+  transition: all 0.15s; background: none;
+  font-family: var(--mono);
+}
+.post-delete:hover { color: #e24b4a; border-color: rgba(226,75,74,0.3); }
 
-.fc-avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: #1a1c1f;
-  border: 1px solid #2a2c2e;
+/* Image content */
+.post-image {
+  margin-bottom: 14px;
+  border: 1px solid rgba(42,44,46,0.6);
   overflow: hidden;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
-
-.fc-avatar__img {
-  width: 36px;
-  height: 36px;
-  object-fit: cover;
-  border-radius: 50%;
+.post-image > img {
+  width: 100%; max-height: 300px; object-fit: cover;
+  display: block;
 }
-
-.fc-username {
-  color: #feeddf;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 13px;
+.post-image-caption {
+  padding: 14px 16px;
+  background: rgba(14,15,17,0.8);
 }
-
-.fc-header__right {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+.post-image-title {
+  font-size: 13px; color: var(--text);
+  letter-spacing: 0.03em; margin-bottom: 3px;
 }
-
-.fc-date {
-  color: #5a5550;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 11px;
+.post-image-desc {
+  font-size: 11px; color: var(--text-muted);
+  letter-spacing: 0.03em; line-height: 1.5;
+  margin: 0;
+  height: 63px; overflow: hidden;
+  transition: height 0.3s ease;
 }
-
-.fc-delete {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 4px;
-  display: flex;
-  align-items: center;
-  opacity: 0.4;
-  transition: opacity 0.15s;
+.read-more-toggle {
+  color: var(--primary); cursor: pointer;
+  font-size: 11px; letter-spacing: 0.08em;
+  margin-top: 6px;
+  display: inline-flex; align-items: center; gap: 4px;
 }
-
-.fc-delete:hover {
-  opacity: 1;
-}
-
-/* Title + text */
-.fc-title {
-  color: #feeddf;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 15px;
-  font-weight: 400;
-  margin: 0 0 8px;
-}
-
-.fc-text {
-  color: #9a9590;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 12px;
-  line-height: 1.5;
-  margin: 0 0 4px;
-  height: 63px;
-  overflow: hidden;
-  transition: height 0.2s;
-}
-
-.fc-read-more {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  cursor: pointer;
-  margin-bottom: 12px;
-  color: #5a5550;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 11px;
-}
-
-.fc-read-more__arrow {
-  width: 12px;
-  height: 12px;
+.read-more-arrow {
+  width: 10px; height: 10px;
   transition: transform 0.2s;
 }
 
-/* Image */
-.fc-image {
-  margin-top: 12px;
-  margin-bottom: 12px;
-  border-radius: 4px;
-  overflow: hidden;
+/* Post actions */
+.post-actions {
+  display: flex; align-items: center; gap: 16px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(42,44,46,0.5);
 }
-
-.fc-image img {
-  width: 100%;
-  max-height: 300px;
-  object-fit: cover;
-  border-radius: 4px;
-  display: block;
+.pact {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 10px; color: var(--text-dim);
+  letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 6px 10px; border: 1px solid transparent;
+  transition: all 0.15s; cursor: pointer;
+  font-family: var(--mono); background: none;
 }
-
-/* Actions */
-.fc-actions {
-  margin-top: 16px;
-  padding-top: 12px;
-  border-top: 1px solid #1a1c1f;
+.pact-icon { width: 14px; height: 14px; }
+.pact:hover {
+  color: var(--primary);
+  border-color: rgba(255,97,0,0.2);
+  background: rgba(255,97,0,0.04);
 }
+.pact-count {
+  font-family: var(--display); font-size: 16px;
+  color: var(--text-muted); line-height: 1;
+}
+.pact:hover .pact-count { color: var(--primary); }
+.pact.donate-btn:hover {
+  color: var(--accent);
+  border-color: rgba(193,245,39,0.2);
+  background: rgba(193,245,39,0.04);
+}
+.pact.donate-btn:hover .pact-count { color: var(--accent); }
+.pact.pact-static { cursor: default; }
+.pact.pact-static:hover { color: var(--text-dim); border-color: transparent; background: none; }
+.pact.pact-static:hover .pact-count { color: var(--text-muted); }
 
-.fc-balance-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+/* Donate send mode */
+.donate-send {
+  display: flex; align-items: center; gap: 10px;
+  padding-top: 14px; border-top: 1px solid rgba(42,44,46,0.5);
   flex-wrap: wrap;
 }
-
-.fc-balance {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex: 1;
+.donate-amount {
+  display: flex; align-items: center; gap: 6px;
+}
+.donate-amount button {
+  width: 28px; height: 28px;
+  background: var(--surface-2); border: 1px solid var(--border);
+  color: var(--text-muted); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 16px;
+  transition: all 0.15s;
+}
+.donate-amount button:hover { color: var(--text); border-color: var(--text-dim); }
+.donate-amount-val {
+  font-family: var(--display); font-size: 22px;
+  color: var(--text); min-width: 40px; text-align: center;
+}
+.donate-send-btn {
+  padding: 8px 16px; font-size: 10px;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  background: var(--primary); color: var(--bg);
+  border: 1px solid var(--primary);
+  box-shadow: 0 0 10px rgba(255,97,0,0.25);
+  cursor: pointer; transition: all 0.15s;
+  font-family: var(--mono);
+}
+.donate-send-btn:hover { background: #ff7e2e; }
+.donate-cancel-btn {
+  padding: 8px 12px; font-size: 10px;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--text-muted); border: 1px solid var(--border);
+  background: transparent; cursor: pointer;
+  font-family: var(--mono); transition: all 0.15s;
+}
+.donate-cancel-btn:hover { color: var(--text); }
+.donate-status {
+  font-size: 11px; color: var(--accent);
+  letter-spacing: 0.1em;
 }
 
-.fc-balance__icon {
-  width: 18px;
-  height: 18px;
+/* Comments list */
+.post-comments {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(42,44,46,0.5);
+  display: flex; flex-direction: column; gap: 8px;
 }
-
-.fc-balance__value {
-  color: #9a9590;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 13px;
-}
-
-.fc-donate-btn {
-  background: transparent;
-  border: 1px solid #ff6100;
-  color: #ff6100;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 12px;
-  padding: 6px 14px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background 0.15s;
-}
-
-.fc-donate-btn:hover {
-  background: rgba(255, 97, 0, 0.1);
-}
-
-.fc-donate-btn--disabled {
-  border-color: #2a2c2e;
-  color: #5a5550;
-  cursor: default;
-}
-
-.fc-donate-btn--disabled:hover {
-  background: transparent;
-}
-
-.fc-count {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex: 1;
-}
-
-.fc-count__value {
-  color: #feeddf;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 14px;
-  min-width: 24px;
-  text-align: center;
-}
-
-.fc-operator {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  padding: 0;
-}
-
-.fc-operator img {
-  width: 18px;
-  height: 18px;
-}
-
-.fc-status {
-  color: #c1f527;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 12px;
-}
-
-/* Comments */
-.fc-comments {
-  overflow-y: auto;
-  margin-top: 12px;
-  border-top: 1px solid #1a1c1f;
-}
-
-.scroll-height {
-  height: 350px;
+.post-comments.scroll-height {
+  max-height: 260px;
   overflow-y: auto;
 }
-
-.scroll-height::-webkit-scrollbar {
-  width: 5px;
+.post-show-more {
+  font-size: 10px; color: var(--text-muted);
+  letter-spacing: 0.14em; text-transform: uppercase;
+  padding: 6px 0; margin-top: 6px;
+  background: none; border: none; cursor: pointer;
+  font-family: var(--mono);
+  text-align: left;
 }
-
-.scroll-height::-webkit-scrollbar-thumb {
-  background-color: #ff6100;
-  border-radius: 4px;
-}
-
-.fc-show-more {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  width: 100%;
-  text-align: center;
-  padding: 8px 0;
-  color: #5a5550;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 12px;
-  transition: color 0.15s;
-}
-
-.fc-show-more:hover {
-  color: #9a9590;
-}
+.post-show-more:hover { color: var(--primary); }
 
 /* New comment */
-.fc-new-comment {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
+.post-new-comment {
+  display: flex; align-items: flex-start; gap: 10px;
   margin-top: 12px;
   padding-top: 12px;
-  border-top: 1px solid #1a1c1f;
+  border-top: 1px solid rgba(42,44,46,0.5);
 }
-
-.fc-new-comment__avatar {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  object-fit: cover;
-  flex-shrink: 0;
-  border: 1px solid #2a2c2e;
+.post-new-comment-avatar {
+  width: 28px; height: 28px; border-radius: 50%;
+  object-fit: cover; flex-shrink: 0;
+  background: var(--surface-2);
 }
-
-.fc-new-comment__input {
-  flex: 1;
-  background: #1a1c1f;
-  border: 1px solid #2a2c2e;
-  border-radius: 4px;
-  display: flex;
-  align-items: flex-end;
-  padding: 6px 10px;
-  gap: 8px;
+.post-new-comment-input {
+  flex: 1; min-width: 0;
+  display: flex; align-items: flex-start; gap: 8px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  padding: 8px 10px;
 }
-
-.fc-new-comment__input textarea {
-  flex: 1;
-  background: transparent;
-  border: none;
-  outline: none;
-  color: #feeddf;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 13px;
+.post-new-comment-input:focus-within { border-color: var(--primary); }
+.post-new-comment-input textarea {
+  flex: 1; min-width: 0;
+  background: transparent; border: none; outline: none;
+  color: var(--text); font-family: var(--mono);
+  font-size: 12px; letter-spacing: 0.02em;
   resize: none;
-  height: 21px;
-  line-height: 1.5;
+  height: 21px; line-height: 1.5;
+  max-height: 63px;
 }
-
-.fc-new-comment__input textarea::placeholder {
-  color: #5a5550;
+.post-new-comment-input textarea::placeholder { color: var(--text-dim); }
+.post-new-comment-send {
+  background: none; border: none;
+  padding: 0; cursor: pointer;
+  flex-shrink: 0; opacity: 0.7;
+  transition: opacity 0.15s;
 }
+.post-new-comment-send:hover { opacity: 1; }
+.post-new-comment-send img { width: 18px; height: 18px; }
 
-.fc-new-comment__send {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-}
-
-.fc-new-comment__send img {
-  width: 18px;
-  height: 18px;
-  filter: invert(40%) sepia(80%) saturate(600%) hue-rotate(350deg) brightness(100%);
-}
-
-@media (max-width: 968px) {
-  .fc-balance-row {
-    flex-direction: column;
-    align-items: flex-start;
-  }
+@media (max-width: 700px) {
+  .post { padding: 18px 20px; }
 }
 </style>
