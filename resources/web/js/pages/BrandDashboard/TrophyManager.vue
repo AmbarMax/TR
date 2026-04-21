@@ -2,28 +2,30 @@
     <div class="tm">
 
         <!-- Header -->
-        <div class="tm-header">
-            <span class="tm-label">Trophies</span>
-            <button class="tm-btn tm-btn--primary" @click="openCreate">+ Create Trophy</button>
+        <div class="trophies-header">
+            <div class="sec-label tm-header-label"><span class="label-text">Trophies</span></div>
+            <button class="btn-create" @click="openCreate">+ Create Trophy</button>
         </div>
 
         <!-- Form Panel (create / edit) -->
-        <div v-if="showForm" class="tm-panel">
-            <div class="tm-panel__head">
-                <span class="tm-panel__title">{{ editingTrophy ? 'Edit Trophy' : 'New Trophy' }}</span>
-                <button class="tm-panel__close" type="button" @click="closeForm">✕</button>
+        <div v-if="showForm" class="trophy-form visible">
+            <div class="trophy-form-header">
+                <span class="trophy-form-title">{{ editingTrophy ? 'Edit Trophy' : 'New Trophy' }}</span>
+                <button class="trophy-form-close" type="button" @click="closeForm" aria-label="Close">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
             </div>
 
-            <form class="tm-form" @submit.prevent="submitForm">
+            <form @submit.prevent="submitForm">
                 <!-- Row 1: name + type -->
-                <div class="tm-form-row">
-                    <div class="tm-field tm-field--grow">
-                        <label>Title</label>
-                        <input type="text" v-model="form.name" placeholder="Trophy name" required />
+                <div class="field-row field-row-2">
+                    <div class="field">
+                        <label class="field-label">Title</label>
+                        <input type="text" class="field-input" v-model="form.name" placeholder="Trophy name" required />
                     </div>
-                    <div class="tm-field tm-field--fixed">
-                        <label>Type</label>
-                        <select v-model="form.type">
+                    <div class="field">
+                        <label class="field-label">Type</label>
+                        <select class="field-select" v-model="form.type">
                             <option value="trophy">Trophy</option>
                             <option value="key">Key</option>
                         </select>
@@ -31,48 +33,48 @@
                 </div>
 
                 <!-- Description -->
-                <div class="tm-field">
-                    <label>Description</label>
-                    <textarea v-model="form.description" placeholder="Describe what this trophy represents" rows="2"></textarea>
+                <div class="field">
+                    <label class="field-label">Description</label>
+                    <textarea class="field-textarea" v-model="form.description" placeholder="Describe what this trophy represents" rows="2"></textarea>
                 </div>
 
                 <!-- Row 2: price + receive + weight + availability -->
-                <div class="tm-form-row tm-form-row--4">
-                    <div class="tm-field">
-                        <label>Price (Ambar)</label>
-                        <input type="number" v-model.number="form.price" min="0" step="1" placeholder="0" required />
+                <div class="field-row field-row-4">
+                    <div class="field">
+                        <label class="field-label">Price (Ambar)</label>
+                        <input type="number" class="field-input" v-model.number="form.price" min="0" step="1" placeholder="0" required />
                     </div>
-                    <div class="tm-field">
-                        <label>Reward (Uru)</label>
-                        <input type="number" v-model.number="form.receive" min="0" step="1" placeholder="0" required />
+                    <div class="field">
+                        <label class="field-label">Reward (Uru)</label>
+                        <input type="number" class="field-input" v-model.number="form.receive" min="0" step="1" placeholder="0" required />
                     </div>
-                    <div class="tm-field">
-                        <label>Weight (XP)</label>
-                        <input type="number" v-model.number="form.weight" min="0" step="1" placeholder="0" />
+                    <div class="field">
+                        <label class="field-label">Weight (XP)</label>
+                        <input type="number" class="field-input" v-model.number="form.weight" min="0" step="1" placeholder="0" />
                     </div>
-                    <div class="tm-field">
-                        <label>Availability</label>
-                        <input type="number" v-model.number="form.availability" min="1" step="1" placeholder="Unlimited" />
+                    <div class="field">
+                        <label class="field-label">Availability</label>
+                        <input type="number" class="field-input" v-model.number="form.availability" min="1" step="1" placeholder="Unlimited" />
                     </div>
                 </div>
 
                 <!-- Image upload -->
-                <div class="tm-field">
-                    <label>
+                <div class="field">
+                    <label class="field-label">
                         Image
-                        <span v-if="editingTrophy" class="tm-field-hint">— leave blank to keep current</span>
+                        <span v-if="editingTrophy" class="field-hint">— leave blank to keep current</span>
                     </label>
-                    <div class="tm-upload" @click="$refs.trophyImg.click()">
-                        <img v-if="imagePreview" :src="imagePreview" class="tm-upload__preview" alt="preview" />
-                        <img v-else-if="editingTrophy && editingTrophy.image_url" :src="editingTrophy.image_url" class="tm-upload__preview" alt="current" />
-                        <span v-else class="tm-upload__placeholder">Click to select image</span>
+                    <div class="image-upload" @click="$refs.trophyImg.click()">
+                        <img v-if="imagePreview" :src="imagePreview" class="image-upload__preview" alt="preview" />
+                        <img v-else-if="editingTrophy && editingTrophy.image_url" :src="editingTrophy.image_url" class="image-upload__preview" alt="current" />
+                        <span v-else class="image-upload-text">Click to select image</span>
                     </div>
                     <input ref="trophyImg" type="file" accept="image/*" style="display:none" @change="onImageChange" />
                 </div>
 
                 <!-- Badge multi-select -->
-                <div class="tm-field">
-                    <label>Required Badges</label>
+                <div class="field">
+                    <label class="field-label">Required Badges</label>
                     <div v-if="availableBadges.length" class="tm-badge-selector">
                         <div
                             v-for="badge in availableBadges"
@@ -85,17 +87,17 @@
                             <span>{{ badge.name }}</span>
                         </div>
                     </div>
-                    <p v-else class="tm-field-hint">No badges available — create badges in the Badges tab first.</p>
+                    <p v-else class="field-hint tm-field-hint-block">No badges available — create badges in the Badges tab first.</p>
 
                     <!-- Selected chips summary -->
                     <div v-if="form.badge_ids.length" class="tm-selected-badges">
                         <span
                             v-for="id in form.badge_ids"
                             :key="id"
-                            class="tm-selected-chip"
+                            class="badge-tag badge-tag--on"
                         >
                             {{ badgeName(id) }}
-                            <button type="button" class="tm-selected-chip__rm" @click="toggleBadge(id)">✕</button>
+                            <button type="button" class="badge-tag__rm" @click="toggleBadge(id)">✕</button>
                         </span>
                     </div>
                 </div>
@@ -104,66 +106,56 @@
                 <div class="tm-form-actions">
                     <button
                         type="submit"
-                        class="tm-btn tm-btn--primary"
+                        class="btn-create"
                         :disabled="submitting || (!editingTrophy && !form.image)"
                     >
                         {{ submitting ? 'Saving…' : (editingTrophy ? 'Save Changes' : '+ Create Trophy') }}
                     </button>
-                    <button type="button" class="tm-btn tm-btn--ghost" @click="closeForm">Cancel</button>
+                    <button type="button" class="btn-ghost" @click="closeForm">Cancel</button>
                 </div>
             </form>
         </div>
 
-        <!-- Trophy Grid -->
+        <!-- Trophy List -->
         <div v-if="loading" class="tm-empty">Loading trophies…</div>
         <div v-else-if="trophies.length === 0 && !showForm" class="tm-empty">No trophies yet. Use "+ Create Trophy" to add your first one.</div>
-        <div v-else-if="trophies.length" class="tm-grid">
-            <div v-for="t in trophies" :key="t.id" class="tm-card">
-                <div class="tm-card__img-wrap">
-                    <img v-if="t.image_url" :src="t.image_url" class="tm-card__img" alt="" />
-                    <div v-else class="tm-card__img-empty">?</div>
+        <div v-else-if="trophies.length" class="tm-list">
+            <div v-for="t in trophies" :key="t.id" class="trophy-list-item">
+                <div class="trophy-item-art">
+                    <img v-if="t.image_url" :src="t.image_url" class="trophy-item-art__img" alt="" />
+                    <span v-else class="trophy-item-art__empty">?</span>
                 </div>
 
-                <div class="tm-card__body">
-                    <div class="tm-card__top">
-                        <span class="tm-card__name">{{ t.name }}</span>
-                        <span class="tm-type-pill" :class="'tm-type-pill--' + t.type">{{ t.type }}</span>
-                    </div>
-
-                    <p v-if="t.description" class="tm-card__desc">{{ t.description }}</p>
-
-                    <div class="tm-card__economy">
-                        <span class="tm-economy__cost">{{ t.price }} Ambar</span>
-                        <span class="tm-economy__sep">→</span>
-                        <span class="tm-economy__reward">{{ t.receive }} Uru</span>
-                        <span v-if="t.weight" class="tm-economy__xp">· {{ t.weight }} XP</span>
-                    </div>
-
-                    <div class="tm-card__footer">
-                        <div class="tm-card__req">
-                            <template v-if="t.badges && t.badges.length">
-                                <img
-                                    v-for="b in t.badges.slice(0, 5)"
-                                    :key="b.id"
-                                    :src="'/storage/' + b.image"
-                                    class="tm-req-thumb"
-                                    :title="b.name"
-                                    alt=""
-                                    @error="$event.target.style.display='none'"
-                                />
-                                <span v-if="t.badges.length > 5" class="tm-req-more">+{{ t.badges.length - 5 }}</span>
-                            </template>
-                            <span v-else class="tm-req-none">No requirements</span>
-                        </div>
-                        <span class="tm-card__avail">
-                            {{ t.forged_count }}/{{ t.availability ?? '∞' }} forged
-                        </span>
+                <div class="trophy-item-info">
+                    <div class="trophy-item-name">{{ t.name }}</div>
+                    <div v-if="t.description" class="trophy-item-meta trophy-item-meta--desc">{{ t.description }}</div>
+                    <div class="trophy-item-meta">
+                        <span class="trophy-item-econ">{{ t.price }} Ambar → {{ t.receive }} Uru</span>
+                        <template v-if="t.badges && t.badges.length">
+                            <span class="trophy-req-sep">·</span>
+                            <img
+                                v-for="b in t.badges.slice(0, 5)"
+                                :key="b.id"
+                                :src="'/storage/' + b.image"
+                                class="trophy-req-thumb"
+                                :title="b.name"
+                                alt=""
+                                @error="$event.target.style.display='none'"
+                            />
+                            <span v-if="t.badges.length > 5" class="trophy-req-more">+{{ t.badges.length - 5 }}</span>
+                        </template>
                     </div>
                 </div>
 
-                <div class="tm-card__actions">
-                    <button class="tm-btn tm-btn--ghost tm-btn--sm" @click="openEdit(t)">Edit</button>
-                    <button class="tm-btn tm-btn--danger tm-btn--sm" @click="deleteTrophy(t.id)">Delete</button>
+                <div class="trophy-item-pills">
+                    <span class="trophy-item-pill" :class="'trophy-item-pill--type-' + t.type">{{ t.type }}</span>
+                    <span v-if="t.weight" class="trophy-item-pill xp">{{ t.weight }} XP</span>
+                    <span class="trophy-item-pill price">{{ t.forged_count }}/{{ t.availability ?? '∞' }}</span>
+                </div>
+
+                <div class="trophy-item-actions">
+                    <button class="btn-ghost" @click="openEdit(t)">Edit</button>
+                    <button class="btn-danger" @click="deleteTrophy(t.id)">Delete</button>
                 </div>
             </div>
         </div>
@@ -334,416 +326,466 @@ export default {
 </script>
 
 <style scoped>
-/* ── Layout ─────────────────────────────────────────────────────────────── */
-.tm { display: flex; flex-direction: column; gap: 24px; }
-
-.tm-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.tm-label {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 11px;
-    color: #ff6100;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-}
-
-.tm-empty {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 13px;
-    color: #5a5550;
-    padding: 24px 0;
-}
-
-/* ── Form Panel ─────────────────────────────────────────────────────────── */
-.tm-panel {
-    background: #0e0f11;
-    border: 1px solid #2a2c2e;
-    border-radius: 6px;
-    overflow: hidden;
-}
-
-.tm-panel__head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 20px;
-    border-bottom: 1px solid #2a2c2e;
-}
-
-.tm-panel__title {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 13px;
-    color: #feeddf;
-}
-
-.tm-panel__close {
-    background: none;
-    border: none;
-    color: #5a5550;
-    font-size: 16px;
-    cursor: pointer;
-    padding: 0 4px;
-    line-height: 1;
-    transition: color 0.15s;
-}
-.tm-panel__close:hover { color: #feeddf; }
-
-/* ── Form ───────────────────────────────────────────────────────────────── */
-.tm-form {
-    padding: 20px;
+.tm {
     display: flex;
     flex-direction: column;
+    font-family: var(--mono);
+    color: var(--text);
+}
+
+/* Header */
+.trophies-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+.tm-header-label { margin-bottom: 0; }
+
+/* Section label */
+.sec-label {
+    font-size: 11px;
+    color: var(--primary);
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
     gap: 14px;
 }
-
-.tm-form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+.sec-label::before {
+    content: '';
+    width: 20px;
+    height: 1px;
+    background: var(--primary);
+    box-shadow: 0 0 6px var(--primary);
+}
+.sec-label .label-text {
+    display: flex;
+    align-items: center;
     gap: 12px;
+    flex: 1;
+}
+.sec-label .label-text::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(255, 97, 0, 0.3), transparent);
+    margin-left: 12px;
+    min-width: 40px;
 }
 
-.tm-form-row--4 { grid-template-columns: repeat(4, 1fr); }
-
-.tm-field { display: flex; flex-direction: column; gap: 6px; }
-.tm-field--grow { flex: 1; }
-.tm-field--fixed { width: 140px; flex-shrink: 0; }
-
-.tm-field label {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 11px;
-    color: #9a9590;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
+/* Trophy form panel */
+.trophy-form {
+    padding: 28px;
+    background: rgba(14, 15, 17, 0.7);
+    border: 1px solid rgba(255, 97, 0, 0.15);
+    margin-bottom: 24px;
+    display: none;
 }
-
-.tm-field-hint {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 11px;
-    color: #5a5550;
-    font-weight: normal;
-    text-transform: none;
-    letter-spacing: 0;
-    margin: 0;
+.trophy-form.visible { display: block; }
+.trophy-form-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
 }
-
-.tm-field input,
-.tm-field select,
-.tm-field textarea {
-    background: #1a1c1f;
-    border: 1px solid #2a2c2e;
-    border-radius: 4px;
-    padding: 8px 12px;
-    color: #feeddf;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 13px;
-    outline: none;
-    resize: vertical;
+.trophy-form-title {
+    font-size: 14px;
+    color: var(--text);
+    letter-spacing: 0.06em;
 }
-
-.tm-field input:focus,
-.tm-field select:focus,
-.tm-field textarea:focus { border-color: #ff6100; }
-
-.tm-field select option { background: #1a1c1f; }
-
-/* ── Image upload ───────────────────────────────────────────────────────── */
-.tm-upload {
-    background: #1a1c1f;
-    border: 1px dashed #2a2c2e;
-    border-radius: 4px;
-    height: 100px;
+.trophy-form-close {
+    width: 28px;
+    height: 28px;
     display: flex;
     align-items: center;
     justify-content: center;
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    background: transparent;
     cursor: pointer;
-    overflow: hidden;
+    transition: all 0.15s;
+}
+.trophy-form-close:hover {
+    color: var(--text);
+    border-color: var(--text-dim);
+}
+
+/* Form fields */
+.field { margin-bottom: 16px; }
+.field-label {
+    display: block;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+.field-hint {
+    font-size: 10px;
+    color: var(--text-dim);
+    text-transform: none;
+    letter-spacing: 0.04em;
+    margin-left: 6px;
+}
+.tm-field-hint-block {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin: 4px 0 0;
+    letter-spacing: 0.04em;
+}
+.field-input,
+.field-textarea,
+.field-select {
+    width: 100%;
+    padding: 10px 14px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 0.03em;
     transition: border-color 0.15s;
+    outline: none;
 }
-.tm-upload:hover { border-color: #ff6100; }
+.field-input:focus,
+.field-textarea:focus,
+.field-select:focus { border-color: var(--primary); }
+.field-input::placeholder,
+.field-textarea::placeholder { color: var(--text-dim); }
+.field-textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+.field-select {
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239a9590' stroke-width='2'><path d='M6 9l6 6 6-6'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 36px;
+    cursor: pointer;
+}
+.field-select option { background: var(--surface-2); color: var(--text); }
 
-.tm-upload__preview { width: 100%; height: 100%; object-fit: contain; }
-.tm-upload__placeholder {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 12px;
-    color: #5a5550;
+.field-row {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+.field-row-2 { grid-template-columns: 1fr 1fr; }
+.field-row-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+.field-row .field { margin-bottom: 0; }
+
+/* Image upload */
+.image-upload {
+    border: 1px dashed rgba(255, 97, 0, 0.25);
+    padding: 28px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s;
+    min-height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+.image-upload:hover {
+    border-color: var(--primary);
+    background: rgba(255, 97, 0, 0.03);
+}
+.image-upload-text {
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+}
+.image-upload__preview {
+    max-width: 100%;
+    max-height: 140px;
+    object-fit: contain;
 }
 
-/* ── Badge selector ─────────────────────────────────────────────────────── */
+/* Badge selector */
 .tm-badge-selector {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
     padding: 12px;
-    background: #1a1c1f;
-    border: 1px solid #2a2c2e;
-    border-radius: 4px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
     max-height: 180px;
     overflow-y: auto;
 }
-
 .tm-badge-chip {
     display: flex;
     align-items: center;
     gap: 6px;
     padding: 5px 10px;
-    border-radius: 4px;
-    border: 1px solid #2a2c2e;
-    background: #0e0f11;
+    border: 1px solid var(--border);
+    background: var(--surface);
     cursor: pointer;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 12px;
-    color: #9a9590;
-    transition: border-color 0.12s, color 0.12s, background 0.12s;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+    transition: all 0.12s;
     user-select: none;
 }
-.tm-badge-chip:hover { border-color: #ff6100; color: #feeddf; }
+.tm-badge-chip:hover {
+    border-color: var(--primary);
+    color: var(--text);
+}
 .tm-badge-chip--on {
-    border-color: #c1f527;
-    color: #c1f527;
+    border-color: var(--accent);
+    color: var(--accent);
     background: rgba(193, 245, 39, 0.07);
 }
-
 .tm-badge-chip__img {
-    width: 20px;
-    height: 20px;
-    border-radius: 3px;
+    width: 18px;
+    height: 18px;
     object-fit: cover;
 }
 
+/* Selected badge tags */
 .tm-selected-badges {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
-    margin-top: 6px;
+    margin-top: 8px;
 }
-
-.tm-selected-chip {
+.badge-tag {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
-    padding: 3px 8px;
-    background: rgba(193, 245, 39, 0.1);
-    border: 1px solid rgba(193, 245, 39, 0.3);
-    border-radius: 4px;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 11px;
-    color: #c1f527;
+    gap: 4px;
+    padding: 4px 10px;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    background: rgba(42, 44, 46, 0.6);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
 }
-
-.tm-selected-chip__rm {
+.badge-tag--on {
+    background: rgba(193, 245, 39, 0.1);
+    color: var(--accent);
+    border-color: rgba(193, 245, 39, 0.3);
+}
+.badge-tag__rm {
     background: none;
     border: none;
     color: rgba(193, 245, 39, 0.6);
     cursor: pointer;
-    font-size: 11px;
+    font-size: 10px;
     padding: 0;
     line-height: 1;
     transition: color 0.12s;
 }
-.tm-selected-chip__rm:hover { color: #c1f527; }
+.badge-tag__rm:hover { color: var(--accent); }
 
-/* ── Form actions ───────────────────────────────────────────────────────── */
+/* Form actions */
 .tm-form-actions {
     display: flex;
     gap: 10px;
-    padding-top: 4px;
+    margin-top: 8px;
 }
 
-/* ── Buttons ────────────────────────────────────────────────────────────── */
-.tm-btn {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 13px;
-    border-radius: 4px;
+/* Buttons (shared admin panel patterns) */
+.btn-create {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    background: var(--accent);
+    color: var(--bg);
+    border: 1px solid var(--accent);
+    box-shadow: 0 0 12px var(--accent-glow);
+    transition: all 0.15s;
     cursor: pointer;
-    border: none;
-    padding: 8px 16px;
-    transition: opacity 0.15s;
     white-space: nowrap;
 }
-.tm-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-.tm-btn--primary { background: #c1f527; color: #000003; }
-.tm-btn--ghost   { background: transparent; border: 1px solid #2a2c2e; color: #9a9590; }
-.tm-btn--danger  { background: transparent; border: 1px solid rgba(255, 80, 80, 0.3); color: #ff5050; }
-.tm-btn--sm      { padding: 4px 10px; font-size: 11px; }
-.tm-btn--danger:hover { border-color: #ff5050; }
+.btn-create:hover:not(:disabled) {
+    background: #d4ff4a;
+    box-shadow: 0 0 22px var(--accent-glow);
+}
+.btn-create:disabled { opacity: 0.5; cursor: not-allowed; }
 
-/* ── Trophy Grid ────────────────────────────────────────────────────────── */
-.tm-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
+.btn-ghost {
+    padding: 8px 14px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    background: transparent;
+    transition: all 0.15s;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.btn-ghost:hover:not(:disabled) {
+    color: var(--text);
+    border-color: var(--text-dim);
+}
+.btn-ghost:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-danger {
+    padding: 8px 14px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #e24b4a;
+    border: 1px solid rgba(226, 75, 74, 0.3);
+    background: transparent;
+    transition: all 0.15s;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.btn-danger:hover {
+    background: rgba(226, 75, 74, 0.1);
+    border-color: #e24b4a;
 }
 
-/* ── Trophy Card ────────────────────────────────────────────────────────── */
-.tm-card {
-    background: #0e0f11;
-    border: 1px solid #2a2c2e;
-    border-left: 3px solid #ff6100;
-    border-radius: 6px;
+/* Trophy list */
+.tm-list {
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+}
+.trophy-list-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    background: rgba(14, 15, 17, 0.6);
+    border: 1px solid rgba(42, 44, 46, 0.6);
+    margin-bottom: 8px;
     transition: border-color 0.15s;
 }
-.tm-card:hover { border-color: rgba(255, 97, 0, 0.5); border-left-color: #ff6100; }
-
-.tm-card__img-wrap {
-    height: 120px;
-    background: #1a1c1f;
+.trophy-list-item:hover { border-color: rgba(255, 97, 0, 0.2); }
+.trophy-item-art {
+    width: 48px;
+    height: 48px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    filter: drop-shadow(0 0 10px rgba(255, 97, 0, 0.15));
+    overflow: hidden;
 }
-
-.tm-card__img {
+.trophy-item-art__img {
     width: 100%;
     height: 100%;
     object-fit: contain;
 }
-
-.tm-card__img-empty {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 24px;
-    color: #2a2c2e;
+.trophy-item-art__empty {
+    font-family: var(--display);
+    font-size: 20px;
+    color: var(--text-dim);
 }
-
-.tm-card__body {
-    padding: 14px 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+.trophy-item-info {
     flex: 1;
+    min-width: 0;
 }
-
-.tm-card__top {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 8px;
+.trophy-item-name {
+    font-family: var(--display);
+    font-size: 20px;
+    color: var(--text);
+    letter-spacing: 0.02em;
+    line-height: 1;
 }
-
-.tm-card__name {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 14px;
-    color: #feeddf;
-    line-height: 1.3;
-}
-
-.tm-card__desc {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 11px;
-    color: #5a5550;
-    margin: 0;
-    line-height: 1.4;
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-}
-
-/* ── Type pill ──────────────────────────────────────────────────────────── */
-.tm-type-pill {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 10px;
-    padding: 2px 7px;
-    border-radius: 3px;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    white-space: nowrap;
-    flex-shrink: 0;
-}
-.tm-type-pill--trophy {
-    background: rgba(255, 97, 0, 0.12);
-    color: #ff6100;
-    border: 1px solid rgba(255, 97, 0, 0.25);
-}
-.tm-type-pill--key {
-    background: rgba(193, 245, 39, 0.08);
-    color: #c1f527;
-    border: 1px solid rgba(193, 245, 39, 0.2);
-}
-
-/* ── Economy row ────────────────────────────────────────────────────────── */
-.tm-card__economy {
+.trophy-item-meta {
     display: flex;
     align-items: center;
     gap: 6px;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 12px;
-}
-.tm-economy__cost   { color: #ff6100; }
-.tm-economy__sep    { color: #5a5550; }
-.tm-economy__reward { color: #9a9590; }
-.tm-economy__xp     { color: #5a5550; }
-
-/* ── Card footer (badges + availability) ───────────────────────────────── */
-.tm-card__footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    margin-top: auto;
-    padding-top: 4px;
-}
-
-.tm-card__req {
-    display: flex;
-    align-items: center;
-    gap: 3px;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+    margin-top: 4px;
     flex-wrap: wrap;
 }
-
-.tm-req-thumb {
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 1px solid #2a2c2e;
+.trophy-item-meta--desc {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 360px;
 }
-
-.tm-req-more {
-    font-family: 'Share Tech Mono', monospace;
+.trophy-item-econ { color: var(--primary); }
+.trophy-req-sep { color: var(--text-dim); }
+.trophy-req-thumb {
+    width: 18px;
+    height: 18px;
+    object-fit: cover;
+    border: 1px solid var(--border);
+}
+.trophy-req-more {
     font-size: 10px;
-    color: #5a5550;
+    color: var(--text-dim);
     padding: 0 2px;
 }
-
-.tm-req-none {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 11px;
-    color: #5a5550;
+.trophy-item-pills {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+    align-items: center;
 }
-
-.tm-card__avail {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 11px;
-    color: #5a5550;
+.trophy-item-pill {
+    padding: 3px 8px;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
     white-space: nowrap;
 }
-
-/* ── Card actions ───────────────────────────────────────────────────────── */
-.tm-card__actions {
+.trophy-item-pill--type-trophy {
+    background: rgba(255, 97, 0, 0.12);
+    color: var(--primary);
+    border: 1px solid rgba(255, 97, 0, 0.25);
+}
+.trophy-item-pill--type-key {
+    background: rgba(193, 245, 39, 0.08);
+    color: var(--accent);
+    border: 1px solid rgba(193, 245, 39, 0.2);
+}
+.trophy-item-pill.xp {
+    background: rgba(255, 97, 0, 0.12);
+    color: var(--primary);
+}
+.trophy-item-pill.price {
+    background: rgba(42, 44, 46, 0.5);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+}
+.trophy-item-actions {
     display: flex;
-    gap: 8px;
-    padding: 10px 16px;
-    border-top: 1px solid #2a2c2e;
+    gap: 6px;
+    flex-shrink: 0;
 }
 
-/* ── Responsive ─────────────────────────────────────────────────────────── */
-@media (max-width: 1100px) {
-    .tm-grid { grid-template-columns: repeat(2, 1fr); }
+/* Empty */
+.tm-empty {
+    font-size: 12px;
+    color: var(--text-dim);
+    letter-spacing: 0.06em;
+    padding: 16px 0;
 }
-@media (max-width: 900px) {
-    .tm-form-row--4 { grid-template-columns: repeat(2, 1fr); }
+
+/* Responsive */
+@media (max-width: 1100px) {
+    .field-row-4 { grid-template-columns: 1fr 1fr; }
+    .trophy-list-item { flex-wrap: wrap; }
+    .trophy-item-info { min-width: 180px; }
 }
 @media (max-width: 700px) {
-    .tm-grid { grid-template-columns: 1fr; }
-    .tm-form-row { grid-template-columns: 1fr; }
-    .tm-field--fixed { width: auto; }
+    .trophies-header { flex-wrap: wrap; gap: 12px; }
+    .field-row-2, .field-row-4 { grid-template-columns: 1fr; }
+    .trophy-item-meta--desc { max-width: 100%; }
+    .trophy-item-pills, .trophy-item-actions { width: 100%; }
 }
 </style>

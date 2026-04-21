@@ -1,15 +1,15 @@
 <template>
     <div class="bm">
-        <div class="bm-cols">
+        <div class="dual-layout">
             <!-- Badge Rules -->
             <section class="bm-section">
-                <span class="bd-section-label">Badge Rules</span>
+                <div class="sec-label"><span class="label-text">Badge rules</span></div>
 
-                <form class="bm-form" @submit.prevent="createRule">
-                    <div class="bm-form-row">
-                        <div class="bm-field">
-                            <label>Trigger</label>
-                            <select v-model="ruleForm.trigger_type" required>
+                <form class="form-panel" @submit.prevent="createRule">
+                    <div class="field-row field-row-2">
+                        <div class="field">
+                            <label class="field-label">Trigger</label>
+                            <select class="field-select" v-model="ruleForm.trigger_type" required>
                                 <option value="">Select trigger</option>
                                 <option value="voice_minutes">Voice minutes</option>
                                 <option value="message_count">Message count</option>
@@ -19,78 +19,80 @@
                                 <option value="role_obtain">Role obtain</option>
                             </select>
                         </div>
-                        <div class="bm-field">
-                            <label>Channel</label>
-                            <select v-model="ruleForm.channel_id">
+                        <div class="field">
+                            <label class="field-label">Channel</label>
+                            <select class="field-select" v-model="ruleForm.channel_id">
                                 <option value="">Any channel</option>
                                 <option v-for="ch in channels" :key="ch.id" :value="ch.channel_id">{{ ch.name }}</option>
                             </select>
                         </div>
                     </div>
-                    <div class="bm-form-row">
-                        <div class="bm-field">
-                            <label>Threshold</label>
-                            <input type="number" v-model.number="ruleForm.threshold" min="1" placeholder="e.g. 60" required />
+                    <div class="field-row field-row-2">
+                        <div class="field">
+                            <label class="field-label">Threshold</label>
+                            <input type="number" class="field-input" v-model.number="ruleForm.threshold" min="1" placeholder="e.g. 60" required />
                         </div>
-                        <div class="bm-field">
-                            <label>Badge</label>
-                            <select v-model="ruleForm.badge_id" required>
+                        <div class="field">
+                            <label class="field-label">Badge</label>
+                            <select class="field-select" v-model="ruleForm.badge_id" required>
                                 <option value="">Select badge</option>
                                 <option v-for="b in badges" :key="b.id" :value="b.id">{{ b.name }}</option>
                             </select>
                         </div>
                     </div>
-                    <button type="submit" class="bm-btn bm-btn--primary" :disabled="submittingRule">
+                    <button type="submit" class="btn-create" :disabled="submittingRule">
                         {{ submittingRule ? 'Creating…' : '+ Create Rule' }}
                     </button>
                 </form>
 
                 <div v-if="loadingRules" class="bm-empty">Loading rules…</div>
                 <div v-else-if="rules.length === 0" class="bm-empty">No rules yet.</div>
-                <ul v-else class="bm-list">
-                    <li v-for="rule in rules" :key="rule.id" class="bm-list-item">
-                        <div class="bm-list-item__info">
-                            <span class="bm-list-item__name">{{ rule.trigger_type }}</span>
-                            <span class="bm-list-item__meta">threshold: {{ rule.threshold }}</span>
+                <ul v-else class="bm-rules-list">
+                    <li v-for="rule in rules" :key="rule.id" class="list-row">
+                        <div class="list-row-info">
+                            <div class="list-row-name">{{ rule.trigger_type }}</div>
+                            <div class="list-row-sub">threshold: {{ rule.threshold }}</div>
                         </div>
-                        <span class="bm-status" :class="rule.active ? 'bm-status--on' : 'bm-status--off'">
+                        <span class="status-badge" :class="rule.active ? 'active' : 'inactive'">
                             {{ rule.active ? 'Active' : 'Inactive' }}
                         </span>
-                        <button class="bm-btn bm-btn--ghost bm-btn--sm" @click="toggleRule(rule)">
-                            {{ rule.active ? 'Disable' : 'Enable' }}
-                        </button>
+                        <div class="list-row-actions">
+                            <button class="btn-ghost" @click="toggleRule(rule)">
+                                {{ rule.active ? 'Disable' : 'Enable' }}
+                            </button>
+                        </div>
                     </li>
                 </ul>
             </section>
 
             <!-- Badges -->
             <section class="bm-section">
-                <span class="bd-section-label">Badges</span>
+                <div class="sec-label"><span class="label-text">Badges</span></div>
 
-                <form class="bm-form" @submit.prevent="createBadge">
-                    <div class="bm-form-row">
-                        <div class="bm-field">
-                            <label>Name</label>
-                            <input type="text" v-model="badgeForm.name" placeholder="Badge name" required />
+                <form class="form-panel" @submit.prevent="createBadge">
+                    <div class="field-row field-row-2">
+                        <div class="field">
+                            <label class="field-label">Name</label>
+                            <input type="text" class="field-input" v-model="badgeForm.name" placeholder="Badge name" required />
                         </div>
-                        <div class="bm-field">
-                            <label>Type</label>
-                            <select v-model.number="badgeForm.type">
+                        <div class="field">
+                            <label class="field-label">Type</label>
+                            <select class="field-select" v-model.number="badgeForm.type">
                                 <option :value="3">Custom (Bot)</option>
                                 <option :value="0">Common</option>
                                 <option :value="2">Discord Badge</option>
                             </select>
                         </div>
                     </div>
-                    <div class="bm-field">
-                        <label>Description</label>
-                        <input type="text" v-model="badgeForm.description" placeholder="Short description (optional)" />
+                    <div class="field">
+                        <label class="field-label">Description</label>
+                        <input type="text" class="field-input" v-model="badgeForm.description" placeholder="Short description (optional)" />
                     </div>
-                    <div class="bm-field">
-                        <label>Image</label>
-                        <div class="bm-upload" @click="$refs.imageInput.click()">
-                            <img v-if="imagePreview" :src="imagePreview" class="bm-upload-preview" alt="preview" />
-                            <span v-else class="bm-upload-placeholder">Click to select image</span>
+                    <div class="field">
+                        <label class="field-label">Image</label>
+                        <div class="image-upload" @click="$refs.imageInput.click()">
+                            <img v-if="imagePreview" :src="imagePreview" class="image-upload__preview" alt="preview" />
+                            <span v-else class="image-upload-text">Click to select image</span>
                         </div>
                         <input
                             ref="imageInput"
@@ -100,49 +102,53 @@
                             @change="onImageChange"
                         />
                     </div>
-                    <button type="submit" class="bm-btn bm-btn--primary" :disabled="submittingBadge || !badgeForm.image">
+                    <button type="submit" class="btn-create" :disabled="submittingBadge || !badgeForm.image">
                         {{ submittingBadge ? 'Creating…' : '+ Create Badge' }}
                     </button>
                     <span v-if="badgeSuccess" class="bm-success">{{ badgeSuccess }}</span>
                 </form>
 
-                <div v-if="editingBadge" class="bm-form bm-edit-form">
-                    <span class="bd-section-label" style="margin-bottom:8px">Edit Badge</span>
-                    <div class="bm-field">
-                        <label>Name</label>
-                        <input type="text" v-model="editForm.name" required />
+                <div v-if="editingBadge" class="form-panel bm-edit-form">
+                    <div class="sec-label bm-edit-label"><span class="label-text">Edit badge</span></div>
+                    <div class="field">
+                        <label class="field-label">Name</label>
+                        <input type="text" class="field-input" v-model="editForm.name" required />
                     </div>
-                    <div class="bm-field">
-                        <label>Description</label>
-                        <input type="text" v-model="editForm.description" />
+                    <div class="field">
+                        <label class="field-label">Description</label>
+                        <input type="text" class="field-input" v-model="editForm.description" />
                     </div>
-                    <div class="bm-field">
-                        <label>Type</label>
-                        <select v-model.number="editForm.type">
+                    <div class="field">
+                        <label class="field-label">Type</label>
+                        <select class="field-select" v-model.number="editForm.type">
                             <option :value="3">Custom (Bot)</option>
                             <option :value="0">Common</option>
                             <option :value="2">Discord Badge</option>
                         </select>
                     </div>
-                    <div class="bm-form-row" style="margin-top:4px">
-                        <button type="button" class="bm-btn bm-btn--primary" :disabled="savingEdit" @click="saveEdit">
+                    <div class="bm-edit-actions">
+                        <button type="button" class="btn-create" :disabled="savingEdit" @click="saveEdit">
                             {{ savingEdit ? 'Saving…' : 'Save' }}
                         </button>
-                        <button type="button" class="bm-btn bm-btn--ghost" @click="cancelEdit">Cancel</button>
+                        <button type="button" class="btn-ghost" @click="cancelEdit">Cancel</button>
                     </div>
                 </div>
 
                 <div v-if="loadingBadges" class="bm-empty">Loading badges…</div>
                 <div v-else-if="badges.length === 0" class="bm-empty">No badges found.</div>
-                <ul v-else class="bm-list bm-list--scroll">
-                    <li v-for="badge in badges" :key="badge.id" class="bm-list-item">
-                        <img v-if="badge.image" :src="'/storage/' + badge.image.replace(/^public\//, '')" class="bm-badge-img" alt="">
-                        <div class="bm-list-item__info">
-                            <span class="bm-list-item__name">{{ badge.name }}</span>
-                            <span v-if="badge.description" class="bm-list-item__meta">{{ badge.description }}</span>
+                <ul v-else class="bm-badges-list">
+                    <li v-for="badge in badges" :key="badge.id" class="list-row">
+                        <div class="list-row-thumb">
+                            <img v-if="badge.image" :src="'/storage/' + badge.image.replace(/^public\//, '')" class="list-row-thumb__img" alt="">
                         </div>
-                        <button class="bm-btn bm-btn--ghost bm-btn--sm" @click="startEdit(badge)">Edit</button>
-                        <button class="bm-btn bm-btn--danger bm-btn--sm" @click="deleteBadge(badge)">Delete</button>
+                        <div class="list-row-info">
+                            <div class="list-row-name">{{ badge.name }}</div>
+                            <div v-if="badge.description" class="list-row-sub">{{ badge.description }}</div>
+                        </div>
+                        <div class="list-row-actions">
+                            <button class="btn-ghost" @click="startEdit(badge)">Edit</button>
+                            <button class="btn-danger" @click="deleteBadge(badge)">Delete</button>
+                        </div>
                     </li>
                 </ul>
             </section>
@@ -276,164 +282,305 @@ export default {
 </script>
 
 <style scoped>
-.bm-success {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 12px;
-    color: #c1f527;
-    margin-top: 4px;
+.bm {
+    display: flex;
+    flex-direction: column;
+    font-family: var(--mono);
+    color: var(--text);
 }
 
-.bm { display: flex; flex-direction: column; gap: 32px; }
-
-.bm-cols {
+/* Dual layout */
+.dual-layout {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 32px;
     align-items: start;
 }
 
-.bd-section-label {
-    display: block;
-    font-family: 'Share Tech Mono', monospace;
+/* Section label */
+.sec-label {
     font-size: 11px;
-    color: #ff6100;
+    color: var(--primary);
+    letter-spacing: 0.25em;
     text-transform: uppercase;
-    letter-spacing: 0.12em;
-    margin-bottom: 16px;
-}
-
-.bm-section { display: flex; flex-direction: column; gap: 16px; }
-
-.bm-form {
-    background: #0e0f11;
-    border: 1px solid #2a2c2e;
-    border-radius: 6px;
-    padding: 20px;
+    margin-bottom: 20px;
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+}
+.sec-label::before {
+    content: '';
+    width: 20px;
+    height: 1px;
+    background: var(--primary);
+    box-shadow: 0 0 6px var(--primary);
+}
+.sec-label .label-text {
+    display: flex;
+    align-items: center;
     gap: 12px;
+    flex: 1;
 }
+.sec-label .label-text::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(255, 97, 0, 0.3), transparent);
+    margin-left: 12px;
+    min-width: 40px;
+}
+.bm-edit-label { margin-bottom: 12px; }
 
-.bm-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-
-.bm-field {
+.bm-section {
     display: flex;
     flex-direction: column;
-    gap: 6px;
 }
 
-.bm-field label {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 11px;
-    color: #9a9590;
+/* Form panel */
+.form-panel {
+    padding: 24px 28px;
+    background: rgba(14, 15, 17, 0.7);
+    border: 1px solid rgba(42, 44, 46, 0.7);
+    margin-bottom: 24px;
+}
+.bm-edit-form { border-color: rgba(255, 97, 0, 0.25); }
+
+/* Fields */
+.field { margin-bottom: 16px; }
+.field:last-child { margin-bottom: 0; }
+.field-label {
+    display: block;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.2em;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    margin-bottom: 6px;
 }
-
-.bm-field input,
-.bm-field select {
-    background: #1a1c1f;
-    border: 1px solid #2a2c2e;
-    border-radius: 4px;
-    padding: 8px 12px;
-    color: #feeddf;
-    font-family: 'Share Tech Mono', monospace;
+.field-input,
+.field-select {
+    width: 100%;
+    padding: 10px 14px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--mono);
     font-size: 13px;
+    letter-spacing: 0.03em;
+    transition: border-color 0.15s;
     outline: none;
 }
-
-.bm-field input:focus,
-.bm-field select:focus { border-color: #ff6100; }
-
-.bm-field select option { background: #1a1c1f; }
-
-.bm-btn {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 13px;
-    border-radius: 4px;
+.field-input:focus,
+.field-select:focus { border-color: var(--primary); }
+.field-input::placeholder { color: var(--text-dim); }
+.field-select {
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239a9590' stroke-width='2'><path d='M6 9l6 6 6-6'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 36px;
     cursor: pointer;
-    border: none;
-    padding: 8px 16px;
-    transition: opacity 0.15s;
+}
+.field-select option { background: var(--surface-2); color: var(--text); }
+
+.field-row {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+.field-row-2 { grid-template-columns: 1fr 1fr; }
+.field-row .field { margin-bottom: 0; }
+
+/* Image upload */
+.image-upload {
+    border: 1px dashed rgba(255, 97, 0, 0.25);
+    padding: 22px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s;
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+.image-upload:hover {
+    border-color: var(--primary);
+    background: rgba(255, 97, 0, 0.03);
+}
+.image-upload-text {
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+}
+.image-upload__preview {
+    max-width: 100%;
+    max-height: 100px;
+    object-fit: contain;
 }
 
-.bm-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+/* Buttons (shared) */
+.btn-create {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    background: var(--accent);
+    color: var(--bg);
+    border: 1px solid var(--accent);
+    box-shadow: 0 0 12px var(--accent-glow);
+    transition: all 0.15s;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.btn-create:hover:not(:disabled) {
+    background: #d4ff4a;
+    box-shadow: 0 0 22px var(--accent-glow);
+}
+.btn-create:disabled { opacity: 0.5; cursor: not-allowed; }
 
-.bm-btn--primary { background: #c1f527; color: #000003; align-self: flex-start; }
-.bm-btn--ghost   { background: transparent; border: 1px solid #2a2c2e; color: #9a9590; }
-.bm-btn--danger  { background: transparent; border: 1px solid rgba(255,80,80,0.3); color: #ff5050; }
-.bm-btn--sm      { padding: 4px 10px; font-size: 11px; }
+.btn-ghost {
+    padding: 8px 14px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    background: transparent;
+    transition: all 0.15s;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.btn-ghost:hover:not(:disabled) {
+    color: var(--text);
+    border-color: var(--text-dim);
+}
+.btn-ghost:disabled { opacity: 0.5; cursor: not-allowed; }
 
-.bm-list {
+.btn-danger {
+    padding: 8px 14px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #e24b4a;
+    border: 1px solid rgba(226, 75, 74, 0.3);
+    background: transparent;
+    transition: all 0.15s;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.btn-danger:hover {
+    background: rgba(226, 75, 74, 0.1);
+    border-color: #e24b4a;
+}
+
+.bm-edit-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+/* List rows */
+.bm-rules-list,
+.bm-badges-list {
     list-style: none;
     padding: 0;
     margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 8px;
 }
+.bm-badges-list { max-height: 420px; overflow-y: auto; }
 
-.bm-list-item {
+.list-row {
     display: flex;
     align-items: center;
-    gap: 12px;
-    background: #0e0f11;
-    border: 1px solid #2a2c2e;
-    border-radius: 6px;
-    padding: 12px 16px;
+    gap: 14px;
+    padding: 14px 18px;
+    background: rgba(14, 15, 17, 0.6);
+    border: 1px solid rgba(42, 44, 46, 0.6);
+    margin-bottom: 8px;
+    transition: border-color 0.15s;
 }
-
-.bm-list-item__info { display: flex; flex-direction: column; gap: 2px; flex: 1; }
-.bm-list-item__name { font-family: 'Share Tech Mono', monospace; font-size: 13px; color: #feeddf; }
-.bm-list-item__meta { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: #5a5550; }
-
-.bm-status {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 11px;
-    padding: 3px 8px;
-    border-radius: 4px;
+.list-row:hover { border-color: rgba(255, 97, 0, 0.2); }
+.list-row-info { flex: 1; min-width: 0; }
+.list-row-name {
+    font-size: 13px;
+    color: var(--text);
+    letter-spacing: 0.04em;
 }
-
-.bm-status--on  { background: rgba(193, 245, 39, 0.1); color: #c1f527; }
-.bm-status--off { background: rgba(90, 85, 80, 0.2);   color: #5a5550; }
-
-.bm-badge-img { width: 32px; height: 32px; border-radius: 4px; object-fit: cover; flex-shrink: 0; }
-
-.bm-upload {
-    background: #1a1c1f;
-    border: 1px dashed #2a2c2e;
-    border-radius: 4px;
-    height: 80px;
+.list-row-sub {
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+    margin-top: 3px;
+}
+.list-row-thumb {
+    width: 36px;
+    height: 36px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
+    flex-shrink: 0;
     overflow: hidden;
-    transition: border-color 0.15s;
 }
-
-.bm-upload:hover { border-color: #ff6100; }
-
-.bm-upload-preview {
+.list-row-thumb__img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
+}
+.list-row-actions {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
 }
 
-.bm-upload-placeholder {
-    font-family: 'Share Tech Mono', monospace;
+/* Status badges */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 8px;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+}
+.status-badge.active {
+    background: rgba(193, 245, 39, 0.12);
+    color: var(--accent);
+    border: 1px solid rgba(193, 245, 39, 0.3);
+}
+.status-badge.inactive {
+    background: rgba(42, 44, 46, 0.5);
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+}
+
+/* Success / empty */
+.bm-success {
+    font-size: 11px;
+    color: var(--accent);
+    margin-top: 8px;
+    letter-spacing: 0.08em;
+}
+.bm-empty {
     font-size: 12px;
-    color: #5a5550;
+    color: var(--text-dim);
+    letter-spacing: 0.06em;
+    padding: 16px 0;
 }
 
-.bm-empty { font-family: 'Share Tech Mono', monospace; font-size: 13px; color: #5a5550; padding: 16px 0; }
-
-.bm-list--scroll { max-height: 320px; overflow-y: auto; }
-
-.bm-edit-form { margin-bottom: 0; }
-
-@media (max-width: 900px) {
-    .bm-cols { grid-template-columns: 1fr; }
-    .bm-form-row { grid-template-columns: 1fr; }
+@media (max-width: 1100px) {
+    .dual-layout { grid-template-columns: 1fr; }
+}
+@media (max-width: 700px) {
+    .field-row-2 { grid-template-columns: 1fr; }
 }
 </style>

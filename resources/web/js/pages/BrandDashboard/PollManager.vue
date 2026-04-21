@@ -1,43 +1,43 @@
 <template>
     <div class="pm">
-        <div class="pm-cols">
+        <div class="dual-layout">
             <!-- Create poll -->
             <section class="pm-section">
-                <span class="bd-section-label">Create Poll</span>
-                <form class="pm-form" @submit.prevent="createPoll">
-                    <div class="pm-field">
-                        <label>Title</label>
-                        <input type="text" v-model="form.title" placeholder="Poll question" required />
+                <div class="sec-label"><span class="label-text">Create poll</span></div>
+                <form class="form-panel" @submit.prevent="createPoll">
+                    <div class="field">
+                        <label class="field-label">Title</label>
+                        <input type="text" class="field-input" v-model="form.title" placeholder="Poll question" required />
                     </div>
-                    <div class="pm-field">
-                        <label>Options</label>
+                    <div class="field">
+                        <label class="field-label">Options</label>
                         <div v-for="(opt, i) in form.options" :key="i" class="pm-option-row">
-                            <input type="text" v-model="form.options[i]" :placeholder="`Option ${i + 1}`" required />
-                            <button type="button" class="pm-btn pm-btn--ghost pm-btn--sm" @click="removeOption(i)" v-if="form.options.length > 2">✕</button>
+                            <input type="text" class="field-input" v-model="form.options[i]" :placeholder="`Option ${i + 1}`" required />
+                            <button type="button" class="btn-ghost btn-ghost--sq" @click="removeOption(i)" v-if="form.options.length > 2">✕</button>
                         </div>
-                        <button type="button" class="pm-btn pm-btn--ghost pm-btn--sm" @click="addOption">+ Add option</button>
+                        <button type="button" class="btn-ghost pm-add-option" @click="addOption">+ Add option</button>
                     </div>
-                    <div class="pm-form-row">
-                        <div class="pm-field">
-                            <label>Channel</label>
-                            <select v-model="form.channel_id" required>
+                    <div class="field-row field-row-2">
+                        <div class="field">
+                            <label class="field-label">Channel</label>
+                            <select class="field-select" v-model="form.channel_id" required>
                                 <option value="">Select channel</option>
                                 <option v-for="ch in channels" :key="ch.id" :value="ch.channel_id">{{ ch.name }}</option>
                             </select>
                         </div>
-                        <div class="pm-field">
-                            <label>Badge (optional)</label>
-                            <select v-model="form.badge_id">
+                        <div class="field">
+                            <label class="field-label">Badge (optional)</label>
+                            <select class="field-select" v-model="form.badge_id">
                                 <option value="">None</option>
                                 <option v-for="b in badges" :key="b.id" :value="b.id">{{ b.name }}</option>
                             </select>
                         </div>
                     </div>
-                    <div class="pm-field">
-                        <label>Duration (hours)</label>
-                        <input type="number" v-model.number="form.duration_hours" min="1" placeholder="24" />
+                    <div class="field">
+                        <label class="field-label">Duration (hours)</label>
+                        <input type="number" class="field-input" v-model.number="form.duration_hours" min="1" placeholder="24" />
                     </div>
-                    <button type="submit" class="pm-btn pm-btn--primary" :disabled="submitting">
+                    <button type="submit" class="btn-create" :disabled="submitting">
                         {{ submitting ? 'Creating…' : '+ Create Poll' }}
                     </button>
                 </form>
@@ -45,14 +45,14 @@
 
             <!-- Polls list -->
             <section class="pm-section">
-                <span class="bd-section-label">Polls</span>
+                <div class="sec-label"><span class="label-text">Polls</span></div>
                 <div v-if="loading" class="pm-empty">Loading…</div>
                 <div v-else-if="polls.length === 0" class="pm-empty">No polls yet.</div>
                 <ul v-else class="pm-list">
                     <li v-for="poll in polls" :key="poll.id" class="pm-card">
                         <div class="pm-card__header">
                             <span class="pm-card__title">{{ poll.title }}</span>
-                            <span class="pm-status" :class="statusClass(poll.status)">{{ poll.status }}</span>
+                            <span class="status-badge" :class="statusClass(poll.status)">{{ poll.status }}</span>
                         </div>
 
                         <!-- Results panel -->
@@ -81,22 +81,22 @@
                         </div>
 
                         <div class="pm-card__actions">
-                            <button class="pm-btn pm-btn--ghost pm-btn--sm" @click="toggleResults(poll)">
+                            <button class="btn-ghost" @click="toggleResults(poll)">
                                 {{ expanded[poll.id] ? 'Hide Results' : 'Results' }}
                             </button>
                             <button
                                 v-if="results[poll.id] && results[poll.id].total > 0"
-                                class="pm-btn pm-btn--ghost pm-btn--sm"
+                                class="btn-ghost"
                                 @click="downloadCsv(poll)"
                             >
                                 CSV
                             </button>
                             <button
                                 v-if="poll.status === 'active'"
-                                class="pm-btn pm-btn--ghost pm-btn--sm"
+                                class="btn-ghost"
                                 @click="closePoll(poll.id)"
                             >Close</button>
-                            <button class="pm-btn pm-btn--danger pm-btn--sm" @click="deletePoll(poll.id)">Delete</button>
+                            <button class="btn-danger" @click="deletePoll(poll.id)">Delete</button>
                         </div>
                     </li>
                 </ul>
@@ -213,10 +213,10 @@ export default {
 
         statusClass(status) {
             return {
-                draft:  'pm-status--draft',
-                active: 'pm-status--active',
-                closed: 'pm-status--closed',
-            }[status] ?? 'pm-status--draft';
+                draft:  'inactive',
+                active: 'active',
+                closed: 'closed',
+            }[status] ?? 'inactive';
         },
 
         downloadCsv(poll) {
@@ -241,174 +241,319 @@ export default {
 </script>
 
 <style scoped>
-.pm { display: flex; flex-direction: column; gap: 32px; }
+.pm {
+    display: flex;
+    flex-direction: column;
+    font-family: var(--mono);
+    color: var(--text);
+}
 
-.pm-cols {
+.dual-layout {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 32px;
     align-items: start;
 }
 
-.bd-section-label {
-    display: block;
-    font-family: 'Share Tech Mono', monospace;
+/* Section label */
+.sec-label {
     font-size: 11px;
-    color: #ff6100;
+    color: var(--primary);
+    letter-spacing: 0.25em;
     text-transform: uppercase;
-    letter-spacing: 0.12em;
-    margin-bottom: 16px;
-}
-
-.pm-section { display: flex; flex-direction: column; gap: 16px; }
-
-.pm-form {
-    background: #0e0f11;
-    border: 1px solid #2a2c2e;
-    border-radius: 6px;
-    padding: 20px;
+    margin-bottom: 20px;
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+}
+.sec-label::before {
+    content: '';
+    width: 20px;
+    height: 1px;
+    background: var(--primary);
+    box-shadow: 0 0 6px var(--primary);
+}
+.sec-label .label-text {
+    display: flex;
+    align-items: center;
     gap: 12px;
+    flex: 1;
+}
+.sec-label .label-text::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(255, 97, 0, 0.3), transparent);
+    margin-left: 12px;
+    min-width: 40px;
 }
 
-.pm-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.pm-section { display: flex; flex-direction: column; }
 
-.pm-field { display: flex; flex-direction: column; gap: 6px; }
+/* Form panel */
+.form-panel {
+    padding: 24px 28px;
+    background: rgba(14, 15, 17, 0.7);
+    border: 1px solid rgba(42, 44, 46, 0.7);
+}
 
-.pm-field label {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 11px;
-    color: #9a9590;
+/* Fields */
+.field { margin-bottom: 16px; }
+.field:last-child { margin-bottom: 0; }
+.field-label {
+    display: block;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.2em;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    margin-bottom: 6px;
 }
-
-.pm-field input,
-.pm-field select {
-    background: #1a1c1f;
-    border: 1px solid #2a2c2e;
-    border-radius: 4px;
-    padding: 8px 12px;
-    color: #feeddf;
-    font-family: 'Share Tech Mono', monospace;
+.field-input,
+.field-select {
+    width: 100%;
+    padding: 10px 14px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--mono);
     font-size: 13px;
+    letter-spacing: 0.03em;
+    transition: border-color 0.15s;
     outline: none;
 }
-
-.pm-field input:focus,
-.pm-field select:focus { border-color: #ff6100; }
-
-.pm-option-row { display: flex; gap: 8px; align-items: center; }
-.pm-option-row input { flex: 1; }
-
-.pm-btn {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 13px;
-    border-radius: 4px;
+.field-input:focus,
+.field-select:focus { border-color: var(--primary); }
+.field-input::placeholder { color: var(--text-dim); }
+.field-select {
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239a9590' stroke-width='2'><path d='M6 9l6 6 6-6'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 36px;
     cursor: pointer;
-    border: none;
-    padding: 8px 16px;
-    transition: opacity 0.15s;
+}
+.field-select option { background: var(--surface-2); color: var(--text); }
+
+.field-row {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+.field-row-2 { grid-template-columns: 1fr 1fr; }
+.field-row .field { margin-bottom: 0; }
+
+.pm-option-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 6px;
+}
+.pm-option-row .field-input { flex: 1; }
+.pm-add-option {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+    margin-top: 2px;
 }
 
-.pm-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-.pm-btn--primary { background: #c1f527; color: #000003; align-self: flex-start; }
-.pm-btn--ghost   { background: transparent; border: 1px solid #2a2c2e; color: #9a9590; }
-.pm-btn--danger  { background: transparent; border: 1px solid rgba(255,80,80,0.3); color: #ff5050; }
-.pm-btn--sm      { padding: 4px 10px; font-size: 11px; }
+/* Buttons */
+.btn-create {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    background: var(--accent);
+    color: var(--bg);
+    border: 1px solid var(--accent);
+    box-shadow: 0 0 12px var(--accent-glow);
+    transition: all 0.15s;
+    cursor: pointer;
+    white-space: nowrap;
+    margin-top: 8px;
+}
+.btn-create:hover:not(:disabled) {
+    background: #d4ff4a;
+    box-shadow: 0 0 22px var(--accent-glow);
+}
+.btn-create:disabled { opacity: 0.5; cursor: not-allowed; }
 
-.pm-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.btn-ghost {
+    padding: 8px 14px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    background: transparent;
+    transition: all 0.15s;
+    cursor: pointer;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.btn-ghost:hover:not(:disabled) {
+    color: var(--text);
+    border-color: var(--text-dim);
+}
+.btn-ghost:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-ghost--sq { padding: 8px 10px; }
 
+.btn-danger {
+    padding: 8px 14px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #e24b4a;
+    border: 1px solid rgba(226, 75, 74, 0.3);
+    background: transparent;
+    transition: all 0.15s;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.btn-danger:hover {
+    background: rgba(226, 75, 74, 0.1);
+    border-color: #e24b4a;
+}
+
+/* Poll list / cards */
+.pm-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
 .pm-card {
-    background: #0e0f11;
-    border: 1px solid #2a2c2e;
-    border-radius: 6px;
-    padding: 16px;
+    background: rgba(14, 15, 17, 0.6);
+    border: 1px solid rgba(42, 44, 46, 0.6);
+    padding: 16px 18px;
     display: flex;
     flex-direction: column;
     gap: 12px;
+    margin-bottom: 8px;
+    transition: border-color 0.15s;
+}
+.pm-card:hover { border-color: rgba(255, 97, 0, 0.2); }
+.pm-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+.pm-card__title {
+    font-size: 13px;
+    color: var(--text);
+    letter-spacing: 0.04em;
+    flex: 1;
+}
+.pm-card__actions {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
 }
 
-.pm-card__header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.pm-card__title  { font-family: 'Share Tech Mono', monospace; font-size: 14px; color: #feeddf; flex: 1; }
-.pm-card__actions { display: flex; gap: 8px; flex-wrap: wrap; }
-
-.pm-status {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 11px;
+/* Status badges */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
     padding: 3px 8px;
-    border-radius: 4px;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
     white-space: nowrap;
 }
-
-.pm-status--draft  { background: rgba(90, 85, 80, 0.2);   color: #5a5550; }
-.pm-status--active { background: rgba(193, 245, 39, 0.1); color: #c1f527; }
-.pm-status--closed { background: rgba(255, 97, 0, 0.1);   color: #ff6100; }
+.status-badge.active {
+    background: rgba(193, 245, 39, 0.12);
+    color: var(--accent);
+    border: 1px solid rgba(193, 245, 39, 0.3);
+}
+.status-badge.inactive {
+    background: rgba(42, 44, 46, 0.5);
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+}
+.status-badge.closed {
+    background: rgba(255, 97, 0, 0.1);
+    color: var(--primary);
+    border: 1px solid rgba(255, 97, 0, 0.3);
+}
 
 /* Results */
 .pm-results {
-    border-top: 1px solid #2a2c2e;
+    border-top: 1px solid var(--border);
     padding-top: 12px;
 }
-
 .pm-results__loading,
 .pm-results__empty {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 12px;
-    color: #5a5550;
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.06em;
 }
-
-.pm-results__rows { display: flex; flex-direction: column; gap: 8px; }
-
+.pm-results__rows {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
 .pm-result-row {
     display: grid;
     grid-template-columns: 120px 1fr 36px;
     align-items: center;
     gap: 10px;
 }
-
 .pm-result-row__label {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 12px;
-    color: #9a9590;
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.04em;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
-
 .pm-result-row__bar-wrap {
-    background: #1a1c1f;
-    border-radius: 2px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
     height: 8px;
     overflow: hidden;
 }
-
 .pm-result-row__bar {
     height: 100%;
-    background: #c1f527;
-    border-radius: 2px;
+    background: var(--accent);
+    box-shadow: 0 0 6px var(--accent-glow);
     transition: width 0.4s ease;
 }
-
 .pm-result-row__count {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 12px;
-    color: #feeddf;
+    font-size: 11px;
+    color: var(--text);
     text-align: right;
 }
-
 .pm-results__total {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 11px;
-    color: #5a5550;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
     margin-top: 4px;
+    text-transform: uppercase;
 }
 
-.pm-empty { font-family: 'Share Tech Mono', monospace; font-size: 13px; color: #5a5550; padding: 16px 0; }
+/* Empty */
+.pm-empty {
+    font-size: 12px;
+    color: var(--text-dim);
+    letter-spacing: 0.06em;
+    padding: 16px 0;
+}
 
-@media (max-width: 900px) {
-    .pm-cols { grid-template-columns: 1fr; }
-    .pm-form-row { grid-template-columns: 1fr; }
+@media (max-width: 1100px) {
+    .dual-layout { grid-template-columns: 1fr; }
+}
+@media (max-width: 700px) {
+    .field-row-2 { grid-template-columns: 1fr; }
 }
 </style>

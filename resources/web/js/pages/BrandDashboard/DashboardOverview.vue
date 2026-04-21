@@ -1,93 +1,94 @@
 <template>
-    <div class="bd-overview">
+    <div class="ap-overview">
 
         <!-- Guild selector modal (shown after OAuth callback) -->
-        <div v-if="guildModal.open" class="bd-modal-overlay" @click.self="guildModal.open = false">
-            <div class="bd-modal">
-                <span class="bd-section-label">Select Your Discord Server</span>
-                <p class="bd-modal-hint">You have admin access in these servers. Select one to connect.</p>
-                <div v-if="guildModal.guilds.length === 0" class="bd-empty">No servers found where you have Administrator permission.</div>
-                <ul v-else class="bd-guild-list">
+        <div v-if="guildModal.open" class="ap-modal-overlay" @click.self="guildModal.open = false">
+            <div class="ap-modal">
+                <div class="sec-label"><span class="label-text">Select your Discord server</span></div>
+                <p class="ap-modal-hint">You have admin access in these servers. Select one to connect.</p>
+                <div v-if="guildModal.guilds.length === 0" class="ap-empty">No servers found where you have Administrator permission.</div>
+                <ul v-else class="ap-guild-list">
                     <li
                         v-for="g in guildModal.guilds"
                         :key="g.id"
-                        class="bd-guild-option"
-                        :class="{ 'bd-guild-option--selected': guildModal.selected === g.id }"
+                        class="ap-guild-option"
+                        :class="{ 'ap-guild-option--selected': guildModal.selected === g.id }"
                         @click="guildModal.selected = g.id; guildModal.selectedName = g.name"
                     >
-                        <span class="bd-guild-option__name">{{ g.name }}</span>
-                        <span class="bd-guild-option__id">{{ g.id }}</span>
+                        <span class="ap-guild-option__name">{{ g.name }}</span>
+                        <span class="ap-guild-option__id">{{ g.id }}</span>
                     </li>
                 </ul>
-                <div class="bd-modal-actions">
+                <div class="ap-modal-actions">
                     <button
-                        class="bd-btn bd-btn--primary"
+                        class="btn-create"
                         :disabled="!guildModal.selected || guildModal.saving"
                         @click="confirmGuildSelect"
                     >
-                        {{ guildModal.saving ? 'Connecting…' : 'Connect' }}
+                        {{ guildModal.saving ? 'Connecting…' : '+ Connect' }}
                     </button>
-                    <button class="bd-btn bd-btn--ghost" @click="guildModal.open = false">Cancel</button>
+                    <button class="btn-ghost" @click="guildModal.open = false">Cancel</button>
                 </div>
-                <p v-if="guildModal.error" class="bd-modal-error">{{ guildModal.error }}</p>
+                <p v-if="guildModal.error" class="ap-modal-error">{{ guildModal.error }}</p>
             </div>
         </div>
 
-        <div class="bd-stats-grid">
-            <div class="bd-stat-card">
-                <span class="bd-stat-label">Linked Users</span>
-                <span class="bd-stat-value">{{ stats.linkedUsers }}</span>
+        <!-- Stats -->
+        <div class="stat-boxes">
+            <div class="stat-box">
+                <div class="stat-box-label">Linked users</div>
+                <div class="stat-box-val">{{ stats.linkedUsers }}</div>
             </div>
-            <div class="bd-stat-card">
-                <span class="bd-stat-label">Active Rules</span>
-                <span class="bd-stat-value">{{ stats.activeRules }}</span>
+            <div class="stat-box">
+                <div class="stat-box-label">Active rules</div>
+                <div class="stat-box-val">{{ stats.activeRules }}</div>
             </div>
-            <div class="bd-stat-card">
-                <span class="bd-stat-label">Synced Channels</span>
-                <span class="bd-stat-value">{{ stats.channels }}</span>
+            <div class="stat-box">
+                <div class="stat-box-label">Synced channels</div>
+                <div class="stat-box-val">{{ stats.channels }}</div>
             </div>
-            <div class="bd-stat-card">
-                <span class="bd-stat-label">Badges Granted</span>
-                <span class="bd-stat-value">{{ stats.badgesGranted }}</span>
+            <div class="stat-box">
+                <div class="stat-box-label">Badges granted</div>
+                <div class="stat-box-val">{{ stats.badgesGranted }}</div>
             </div>
         </div>
 
-        <div class="bd-guild-status">
-            <span class="bd-section-label">Guild Connection</span>
+        <!-- Guild connection -->
+        <div class="sec-label"><span class="label-text">Guild connection</span></div>
 
-            <div v-if="loadingGuild" class="bd-empty">Loading…</div>
+        <div v-if="loadingGuild" class="ap-empty">Loading…</div>
 
-            <div v-else-if="guild" class="bd-guild-card">
-                <div class="bd-guild-info">
-                    <span class="bd-guild-name">{{ guild.guild_name }}</span>
-                    <span class="bd-guild-badge bd-guild-badge--connected">Connected</span>
-                </div>
-                <button class="bd-btn bd-btn--ghost bd-btn--sm" :disabled="disconnecting" @click="disconnect">
+        <div v-else-if="guild" class="guild-row">
+            <span class="guild-name">{{ guild.guild_name }}</span>
+            <span class="status-badge connected">Connected</span>
+            <div class="guild-actions">
+                <button class="btn-ghost" :disabled="disconnecting" @click="disconnect">
                     {{ disconnecting ? 'Disconnecting…' : 'Disconnect' }}
                 </button>
             </div>
-
-            <div v-else class="bd-guild-connect">
-                <p class="bd-guild-connect__hint">Connect your Discord server to enable rules, polls, events, and badge granting.</p>
-                <button class="bd-btn bd-btn--primary" @click="connectDiscord">
-                    Connect Discord Server
-                </button>
-                <p v-if="guildError" class="bd-connect-error">Connection failed. Please try again.</p>
-            </div>
         </div>
 
-        <div class="bd-activity">
-            <span class="bd-section-label">Recent Activity</span>
-            <div v-if="loading" class="bd-empty">Loading…</div>
-            <div v-else-if="activity.length === 0" class="bd-empty">No recent activity.</div>
-            <ul v-else class="bd-activity-list">
-                <li v-for="(item, i) in activity" :key="i" class="bd-activity-item">
-                    <span class="bd-activity-user">{{ item.user }}</span>
-                    <span class="bd-activity-badge">{{ item.badge }}</span>
-                    <span class="bd-activity-time">{{ item.time }}</span>
-                </li>
-            </ul>
+        <div v-else class="ap-guild-connect">
+            <p class="ap-guild-connect__hint">Connect your Discord server to enable rules, polls, events, and badge granting.</p>
+            <button class="btn-create" @click="connectDiscord">
+                + Connect Discord Server
+            </button>
+            <p v-if="guildError" class="ap-connect-error">Connection failed. Please try again.</p>
         </div>
+
+        <!-- Recent activity -->
+        <div class="sec-label ap-sec-spaced"><span class="label-text">Recent activity</span></div>
+        <div v-if="loading" class="ap-empty-box">Loading…</div>
+        <div v-else-if="activity.length === 0" class="ap-empty-box">No recent activity.</div>
+        <ul v-else class="ap-activity-list">
+            <li v-for="(item, i) in activity" :key="i" class="list-row">
+                <div class="list-row-info">
+                    <div class="list-row-name">{{ item.user }}</div>
+                    <div class="list-row-sub">{{ item.badge }}</div>
+                </div>
+                <span class="ap-activity-time">{{ item.time }}</span>
+            </li>
+        </ul>
     </div>
 </template>
 
@@ -217,236 +218,326 @@ export default {
 </script>
 
 <style scoped>
-.bd-overview { display: flex; flex-direction: column; gap: 32px; }
-
-.bd-section-label {
-    display: block;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 11px;
-    color: #ff6100;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    margin-bottom: 12px;
-}
-
-/* Stats */
-.bd-stats-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-}
-
-.bd-stat-card {
-    background: #0e0f11;
-    border: 1px solid #2a2c2e;
-    border-radius: 6px;
-    padding: 20px 24px;
+.ap-overview {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    font-family: var(--mono);
+    color: var(--text);
+}
+
+/* Section labels */
+.sec-label {
+    font-size: 11px;
+    color: var(--primary);
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+.sec-label::before {
+    content: '';
+    width: 20px;
+    height: 1px;
+    background: var(--primary);
+    box-shadow: 0 0 6px var(--primary);
+}
+.sec-label .label-text {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+}
+.sec-label .label-text::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(255, 97, 0, 0.3), transparent);
+    margin-left: 12px;
+    min-width: 40px;
+}
+.ap-sec-spaced { margin-top: 40px; }
+
+/* Stat boxes */
+.stat-boxes {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 40px;
+}
+.stat-box {
+    padding: 18px 20px;
+    background: rgba(14, 15, 17, 0.7);
+    border: 1px solid rgba(42, 44, 46, 0.7);
     transition: border-color 0.15s;
 }
-
-.bd-stat-card:hover { border-color: rgba(255, 97, 0, 0.3); }
-
-.bd-stat-label {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 11px;
-    color: #9a9590;
+.stat-box:hover { border-color: rgba(255, 97, 0, 0.2); }
+.stat-box-label {
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.2em;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+}
+.stat-box-val {
+    font-family: var(--display);
+    font-size: 36px;
+    color: var(--text);
+    line-height: 1;
+    letter-spacing: 0.02em;
 }
 
-.bd-stat-value {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 28px;
-    color: #feeddf;
-}
-
-/* Guild */
-.bd-guild-card {
-    background: #0e0f11;
-    border: 1px solid #2a2c2e;
-    border-radius: 6px;
-    padding: 16px 20px;
+/* Guild row */
+.guild-row {
     display: flex;
     align-items: center;
     gap: 16px;
+    padding: 16px 20px;
+    background: rgba(14, 15, 17, 0.7);
+    border: 1px solid rgba(42, 44, 46, 0.7);
+    margin-bottom: 40px;
 }
-
-.bd-guild-info { display: flex; align-items: center; gap: 12px; flex: 1; }
-
-.bd-guild-name {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 16px;
-    color: #feeddf;
+.guild-name {
+    font-size: 14px;
+    color: var(--text);
+    letter-spacing: 0.04em;
+    flex: 1;
 }
+.guild-actions { flex-shrink: 0; }
 
-.bd-guild-badge {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 11px;
-    padding: 3px 8px;
-    border-radius: 4px;
-}
-
-.bd-guild-badge--connected { background: rgba(193, 245, 39, 0.1); color: #c1f527; }
-
-.bd-guild-connect {
-    background: #0e0f11;
-    border: 1px dashed #2a2c2e;
-    border-radius: 6px;
+/* Guild connect (no guild) */
+.ap-guild-connect {
     padding: 24px 20px;
+    background: rgba(14, 15, 17, 0.7);
+    border: 1px dashed rgba(255, 97, 0, 0.25);
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 14px;
+    margin-bottom: 40px;
+    align-items: flex-start;
 }
-
-.bd-guild-connect__hint {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 13px;
-    color: #5a5550;
-    margin: 0;
-}
-
-.bd-connect-error {
-    font-family: 'Share Tech Mono', monospace;
+.ap-guild-connect__hint {
     font-size: 12px;
-    color: #ff5050;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
     margin: 0;
+}
+.ap-connect-error {
+    font-size: 12px;
+    color: #e24b4a;
+    margin: 0;
+    letter-spacing: 0.06em;
+}
+
+/* Status badges */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 8px;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+}
+.status-badge.connected {
+    background: rgba(193, 245, 39, 0.12);
+    color: var(--accent);
+    border: 1px solid rgba(193, 245, 39, 0.3);
+}
+.status-badge.connected::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 6px var(--accent);
+    animation: ap-pulse-dot 1.4s ease-in-out infinite;
+}
+@keyframes ap-pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%      { opacity: 0.6; transform: scale(1.3); }
 }
 
 /* Buttons */
-.bd-btn {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 13px;
-    border-radius: 4px;
+.btn-create {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    background: var(--accent);
+    color: var(--bg);
+    border: 1px solid var(--accent);
+    box-shadow: 0 0 12px var(--accent-glow);
+    transition: all 0.15s;
     cursor: pointer;
-    border: none;
-    padding: 8px 18px;
-    transition: opacity 0.15s;
-    align-self: flex-start;
+}
+.btn-create:hover:not(:disabled) {
+    background: #d4ff4a;
+    box-shadow: 0 0 22px var(--accent-glow);
+}
+.btn-create:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-ghost {
+    padding: 8px 14px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    background: transparent;
+    transition: all 0.15s;
+    cursor: pointer;
+}
+.btn-ghost:hover:not(:disabled) {
+    color: var(--text);
+    border-color: var(--text-dim);
+}
+.btn-ghost:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* List rows (activity) */
+.ap-activity-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+.list-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    background: rgba(14, 15, 17, 0.6);
+    border: 1px solid rgba(42, 44, 46, 0.6);
+    margin-bottom: 8px;
+    transition: border-color 0.15s;
+}
+.list-row:hover { border-color: rgba(255, 97, 0, 0.2); }
+.list-row-info { flex: 1; min-width: 0; }
+.list-row-name {
+    font-size: 13px;
+    color: var(--text);
+    letter-spacing: 0.04em;
+}
+.list-row-sub {
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+    margin-top: 3px;
+}
+.ap-activity-time {
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+    flex-shrink: 0;
 }
 
-.bd-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-.bd-btn--primary { background: #c1f527; color: #000003; }
-.bd-btn--ghost   { background: transparent; border: 1px solid #2a2c2e; color: #9a9590; }
-.bd-btn--sm      { padding: 5px 12px; font-size: 11px; align-self: center; }
+/* Empty states */
+.ap-empty {
+    font-size: 12px;
+    color: var(--text-dim);
+    letter-spacing: 0.06em;
+    padding: 16px 0;
+    margin-bottom: 40px;
+}
+.ap-empty-box {
+    padding: 20px 24px;
+    background: rgba(14, 15, 17, 0.5);
+    border: 1px solid rgba(42, 44, 46, 0.5);
+    font-size: 12px;
+    color: var(--text-dim);
+    letter-spacing: 0.06em;
+}
 
 /* Modal */
-.bd-modal-overlay {
+.ap-modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 3, 0.8);
+    background: rgba(0, 0, 3, 0.85);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1000;
 }
-
-.bd-modal {
-    background: #0e0f11;
-    border: 1px solid #2a2c2e;
-    border-radius: 8px;
+.ap-modal {
+    background: rgba(14, 15, 17, 0.95);
+    border: 1px solid rgba(255, 97, 0, 0.2);
     padding: 28px 32px;
     width: 460px;
     max-width: 92vw;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 14px;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
 }
-
-.bd-modal-hint {
-    font-family: 'Share Tech Mono', monospace;
+.ap-modal-hint {
     font-size: 12px;
-    color: #5a5550;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
     margin: 0;
 }
-
-.bd-guild-list {
+.ap-guild-list {
     list-style: none;
     padding: 0;
     margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
     max-height: 280px;
     overflow-y: auto;
 }
-
-.bd-guild-option {
+.ap-guild-option {
     display: flex;
     flex-direction: column;
     gap: 2px;
     padding: 12px 16px;
-    background: #1a1c1f;
-    border: 1px solid #2a2c2e;
-    border-radius: 6px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
     cursor: pointer;
-    transition: border-color 0.15s;
+    transition: all 0.15s;
 }
-
-.bd-guild-option:hover { border-color: rgba(255, 97, 0, 0.4); }
-
-.bd-guild-option--selected { border-color: #ff6100; background: rgba(255, 97, 0, 0.06); }
-
-.bd-guild-option__name {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 14px;
-    color: #feeddf;
+.ap-guild-option:hover { border-color: rgba(255, 97, 0, 0.4); }
+.ap-guild-option--selected {
+    border-color: var(--primary);
+    background: rgba(255, 97, 0, 0.06);
+    box-shadow: 0 0 10px rgba(255, 97, 0, 0.15);
 }
-
-.bd-guild-option__id {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 11px;
-    color: #5a5550;
+.ap-guild-option__name {
+    font-size: 13px;
+    color: var(--text);
+    letter-spacing: 0.04em;
 }
-
-.bd-modal-actions { display: flex; gap: 12px; }
-
-.bd-modal-error {
-    font-family: 'Share Tech Mono', monospace;
+.ap-guild-option__id {
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+}
+.ap-modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 6px;
+}
+.ap-modal-error {
     font-size: 12px;
-    color: #ff5050;
+    color: #e24b4a;
     margin: 0;
+    letter-spacing: 0.06em;
 }
 
-/* Activity */
-.bd-activity-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+/* Responsive */
+@media (max-width: 1100px) {
+    .stat-boxes { grid-template-columns: repeat(2, 1fr); }
 }
-
-.bd-activity-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    background: #0e0f11;
-    border: 1px solid #2a2c2e;
-    border-radius: 6px;
-    padding: 12px 16px;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 13px;
-}
-
-.bd-activity-user  { color: #feeddf; flex: 1; }
-.bd-activity-badge { color: #c1f527; }
-.bd-activity-time  { color: #5a5550; font-size: 11px; }
-
-.bd-empty {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 13px;
-    color: #5a5550;
-    padding: 16px 0;
-}
-
-@media (max-width: 768px) {
-    .bd-stats-grid { grid-template-columns: repeat(2, 1fr); }
-}
-@media (max-width: 480px) {
-    .bd-stats-grid { grid-template-columns: 1fr; }
+@media (max-width: 700px) {
+    .stat-boxes { grid-template-columns: 1fr 1fr; }
+    .guild-row { flex-wrap: wrap; }
 }
 </style>

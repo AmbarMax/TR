@@ -1,36 +1,36 @@
 <template>
     <div class="em">
-        <div class="em-cols">
+        <div class="dual-layout">
             <!-- Create event -->
             <section class="em-section">
-                <span class="bd-section-label">Create Event</span>
-                <form class="em-form" @submit.prevent="createEvent">
-                    <div class="em-field">
-                        <label>Title</label>
-                        <input type="text" v-model="form.title" placeholder="Event name" required />
+                <div class="sec-label"><span class="label-text">Create event</span></div>
+                <form class="form-panel" @submit.prevent="createEvent">
+                    <div class="field">
+                        <label class="field-label">Title</label>
+                        <input type="text" class="field-input" v-model="form.title" placeholder="Event name" required />
                     </div>
-                    <div class="em-field">
-                        <label>Description</label>
-                        <textarea v-model="form.description" placeholder="What's this event about?" rows="3"></textarea>
+                    <div class="field">
+                        <label class="field-label">Description</label>
+                        <textarea class="field-textarea" v-model="form.description" placeholder="What's this event about?" rows="3"></textarea>
                     </div>
-                    <div class="em-field">
-                        <label>Badge (optional)</label>
-                        <select v-model="form.badge_id">
+                    <div class="field">
+                        <label class="field-label">Badge (optional)</label>
+                        <select class="field-select" v-model="form.badge_id">
                             <option value="">None</option>
                             <option v-for="b in badges" :key="b.id" :value="b.id">{{ b.name }}</option>
                         </select>
                     </div>
-                    <div class="em-form-row">
-                        <div class="em-field">
-                            <label>Start</label>
-                            <input ref="startsAtInput" type="text" readonly placeholder="Pick date & time" class="em-datepicker" required />
+                    <div class="field-row field-row-2">
+                        <div class="field">
+                            <label class="field-label">Start</label>
+                            <input ref="startsAtInput" type="text" readonly placeholder="Pick date & time" class="field-input em-datepicker" required />
                         </div>
-                        <div class="em-field">
-                            <label>End</label>
-                            <input ref="endsAtInput" type="text" readonly placeholder="Pick date & time" class="em-datepicker" required />
+                        <div class="field">
+                            <label class="field-label">End</label>
+                            <input ref="endsAtInput" type="text" readonly placeholder="Pick date & time" class="field-input em-datepicker" required />
                         </div>
                     </div>
-                    <button type="submit" class="em-btn em-btn--primary" :disabled="submitting">
+                    <button type="submit" class="btn-create" :disabled="submitting">
                         {{ submitting ? 'Creating…' : '+ Create Event' }}
                     </button>
                 </form>
@@ -38,19 +38,19 @@
 
             <!-- Pending events -->
             <section class="em-section">
-                <span class="bd-section-label">Pending Events</span>
+                <div class="sec-label"><span class="label-text">Pending events</span></div>
                 <div v-if="loading" class="em-empty">Loading…</div>
-                <div v-else-if="events.length === 0" class="em-empty">No pending events.</div>
+                <div v-else-if="events.length === 0" class="em-empty-box">No pending events.</div>
                 <ul v-else class="em-list">
                     <li v-for="event in events" :key="event.id" class="em-card">
                         <div class="em-card__header">
                             <span class="em-card__title">{{ event.title }}</span>
-                            <span class="em-status" :class="statusClass(event.status)">{{ event.status }}</span>
+                            <span class="status-badge" :class="statusClass(event.status)">{{ event.status }}</span>
                         </div>
                         <p v-if="event.description" class="em-card__desc">{{ event.description }}</p>
                         <div class="em-card__actions">
-                            <button class="em-btn em-btn--ghost em-btn--sm" @click="completeEvent(event.id)">Mark Complete</button>
-                            <button class="em-btn em-btn--danger em-btn--sm" @click="deleteEvent(event.id)">Delete</button>
+                            <button class="btn-ghost" @click="completeEvent(event.id)">Mark Complete</button>
+                            <button class="btn-danger" @click="deleteEvent(event.id)">Delete</button>
                         </div>
                     </li>
                 </ul>
@@ -166,126 +166,276 @@ export default {
         },
         statusClass(status) {
             return {
-                draft:     'em-status--draft',
-                scheduled: 'em-status--scheduled',
-                active:    'em-status--active',
-            }[status] ?? 'em-status--draft';
+                draft:     'inactive',
+                scheduled: 'scheduled',
+                active:    'active',
+            }[status] ?? 'inactive';
         },
     },
 }
 </script>
 
 <style scoped>
-.em { display: flex; flex-direction: column; gap: 32px; }
+.em {
+    display: flex;
+    flex-direction: column;
+    font-family: var(--mono);
+    color: var(--text);
+}
 
-.em-cols {
+.dual-layout {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 32px;
     align-items: start;
 }
 
-.bd-section-label {
-    display: block;
-    font-family: 'Share Tech Mono', monospace;
+/* Section label */
+.sec-label {
     font-size: 11px;
-    color: #ff6100;
+    color: var(--primary);
+    letter-spacing: 0.25em;
     text-transform: uppercase;
-    letter-spacing: 0.12em;
-    margin-bottom: 16px;
-}
-
-.em-section { display: flex; flex-direction: column; gap: 16px; }
-
-.em-form {
-    background: #0e0f11;
-    border: 1px solid #2a2c2e;
-    border-radius: 6px;
-    padding: 20px;
+    margin-bottom: 20px;
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+}
+.sec-label::before {
+    content: '';
+    width: 20px;
+    height: 1px;
+    background: var(--primary);
+    box-shadow: 0 0 6px var(--primary);
+}
+.sec-label .label-text {
+    display: flex;
+    align-items: center;
     gap: 12px;
+    flex: 1;
+}
+.sec-label .label-text::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(255, 97, 0, 0.3), transparent);
+    margin-left: 12px;
+    min-width: 40px;
 }
 
-.em-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.em-section { display: flex; flex-direction: column; }
 
-.em-field { display: flex; flex-direction: column; gap: 6px; }
+/* Form panel */
+.form-panel {
+    padding: 24px 28px;
+    background: rgba(14, 15, 17, 0.7);
+    border: 1px solid rgba(42, 44, 46, 0.7);
+}
 
-.em-field label {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 11px;
-    color: #9a9590;
+/* Fields */
+.field { margin-bottom: 16px; }
+.field:last-child { margin-bottom: 0; }
+.field-label {
+    display: block;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.2em;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    margin-bottom: 6px;
 }
-
-.em-field input,
-.em-field select,
-.em-field textarea {
-    background: #1a1c1f;
-    border: 1px solid #2a2c2e;
-    border-radius: 4px;
-    padding: 8px 12px;
-    color: #feeddf;
-    font-family: 'Share Tech Mono', monospace;
+.field-input,
+.field-select,
+.field-textarea {
+    width: 100%;
+    padding: 10px 14px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--mono);
     font-size: 13px;
+    letter-spacing: 0.03em;
+    transition: border-color 0.15s;
     outline: none;
+}
+.field-input:focus,
+.field-select:focus,
+.field-textarea:focus { border-color: var(--primary); }
+.field-input::placeholder,
+.field-textarea::placeholder { color: var(--text-dim); }
+.field-textarea {
+    min-height: 80px;
     resize: vertical;
 }
-
-.em-field input:focus,
-.em-field select:focus,
-.em-field textarea:focus { border-color: #ff6100; }
-
-.em-btn {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 13px;
-    border-radius: 4px;
+.field-select {
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239a9590' stroke-width='2'><path d='M6 9l6 6 6-6'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 36px;
     cursor: pointer;
-    border: none;
-    padding: 8px 16px;
-    transition: opacity 0.15s;
+}
+.field-select option { background: var(--surface-2); color: var(--text); }
+.em-datepicker { cursor: pointer; }
+
+.field-row {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+.field-row-2 { grid-template-columns: 1fr 1fr; }
+.field-row .field { margin-bottom: 0; }
+
+/* Buttons */
+.btn-create {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    background: var(--accent);
+    color: var(--bg);
+    border: 1px solid var(--accent);
+    box-shadow: 0 0 12px var(--accent-glow);
+    transition: all 0.15s;
+    cursor: pointer;
+    white-space: nowrap;
+    margin-top: 8px;
+}
+.btn-create:hover:not(:disabled) {
+    background: #d4ff4a;
+    box-shadow: 0 0 22px var(--accent-glow);
+}
+.btn-create:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-ghost {
+    padding: 8px 14px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    background: transparent;
+    transition: all 0.15s;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.btn-ghost:hover:not(:disabled) {
+    color: var(--text);
+    border-color: var(--text-dim);
 }
 
-.em-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-.em-btn--primary { background: #c1f527; color: #000003; align-self: flex-start; }
-.em-btn--ghost   { background: transparent; border: 1px solid #2a2c2e; color: #9a9590; }
-.em-btn--danger  { background: transparent; border: 1px solid rgba(255,80,80,0.3); color: #ff5050; }
-.em-btn--sm      { padding: 4px 10px; font-size: 11px; }
+.btn-danger {
+    padding: 8px 14px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #e24b4a;
+    border: 1px solid rgba(226, 75, 74, 0.3);
+    background: transparent;
+    transition: all 0.15s;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.btn-danger:hover {
+    background: rgba(226, 75, 74, 0.1);
+    border-color: #e24b4a;
+}
 
-.em-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
-
+/* Event cards */
+.em-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
 .em-card {
-    background: #0e0f11;
-    border: 1px solid #2a2c2e;
-    border-radius: 6px;
-    padding: 16px;
+    background: rgba(14, 15, 17, 0.6);
+    border: 1px solid rgba(42, 44, 46, 0.6);
+    padding: 14px 18px;
     display: flex;
     flex-direction: column;
     gap: 10px;
+    margin-bottom: 8px;
+    transition: border-color 0.15s;
 }
-
-.em-card__header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.em-card__title  { font-family: 'Share Tech Mono', monospace; font-size: 14px; color: #feeddf; flex: 1; }
-.em-card__desc   { font-family: 'Share Tech Mono', monospace; font-size: 12px; color: #9a9590; margin: 0; }
-.em-card__actions { display: flex; gap: 8px; }
-
-.em-status {
-    font-family: 'Share Tech Mono', monospace;
+.em-card:hover { border-color: rgba(255, 97, 0, 0.2); }
+.em-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+.em-card__title {
+    font-size: 13px;
+    color: var(--text);
+    letter-spacing: 0.04em;
+    flex: 1;
+}
+.em-card__desc {
     font-size: 11px;
-    padding: 3px 8px;
-    border-radius: 4px;
+    color: var(--text-muted);
+    letter-spacing: 0.04em;
+    margin: 0;
+}
+.em-card__actions {
+    display: flex;
+    gap: 6px;
 }
 
-.em-status--draft     { background: rgba(90, 85, 80, 0.2);   color: #5a5550; }
-.em-status--scheduled { background: rgba(255, 97, 0, 0.1);  color: #ff6100; }
-.em-status--active    { background: rgba(193, 245, 39, 0.1); color: #c1f527; }
+/* Status badges */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 8px;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+}
+.status-badge.active {
+    background: rgba(193, 245, 39, 0.12);
+    color: var(--accent);
+    border: 1px solid rgba(193, 245, 39, 0.3);
+}
+.status-badge.inactive {
+    background: rgba(42, 44, 46, 0.5);
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+}
+.status-badge.scheduled {
+    background: rgba(255, 97, 0, 0.12);
+    color: var(--primary);
+    border: 1px solid rgba(255, 97, 0, 0.3);
+}
 
-.em-empty { font-family: 'Share Tech Mono', monospace; font-size: 13px; color: #5a5550; padding: 16px 0; }
+/* Empty */
+.em-empty {
+    font-size: 12px;
+    color: var(--text-dim);
+    letter-spacing: 0.06em;
+    padding: 16px 0;
+}
+.em-empty-box {
+    padding: 20px 24px;
+    background: rgba(14, 15, 17, 0.5);
+    border: 1px solid rgba(42, 44, 46, 0.5);
+    font-size: 12px;
+    color: var(--text-dim);
+    letter-spacing: 0.06em;
+}
 
-@media (max-width: 900px) {
-    .em-cols { grid-template-columns: 1fr; }
-    .em-form-row { grid-template-columns: 1fr; }
+@media (max-width: 1100px) {
+    .dual-layout { grid-template-columns: 1fr; }
+}
+@media (max-width: 700px) {
+    .field-row-2 { grid-template-columns: 1fr; }
 }
 </style>
 
@@ -293,15 +443,15 @@ export default {
 /* flatpickr overrides — scoped doesn't reach the portal */
 .flatpickr-calendar {
     background: #0e0f11 !important;
-    border: 1px solid #2a2c2e !important;
-    border-radius: 6px !important;
+    border: 1px solid rgba(255, 97, 0, 0.2) !important;
+    border-radius: 0 !important;
     font-family: 'Share Tech Mono', monospace !important;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.6) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7) !important;
 }
-.flatpickr-day { color: #9a9590 !important; border-radius: 4px !important; }
+.flatpickr-day { color: #9a9590 !important; border-radius: 0 !important; }
 .flatpickr-day:hover,
 .flatpickr-day.prevMonthDay:hover,
-.flatpickr-day.nextMonthDay:hover { background: rgba(255,97,0,0.15) !important; border-color: transparent !important; }
+.flatpickr-day.nextMonthDay:hover { background: rgba(255, 97, 0, 0.15) !important; border-color: transparent !important; }
 .flatpickr-day.selected,
 .flatpickr-day.selected:hover { background: #ff6100 !important; border-color: #ff6100 !important; color: #000003 !important; }
 .flatpickr-day.today { border-color: #ff6100 !important; }
