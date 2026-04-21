@@ -17,6 +17,7 @@ use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 use phpcent\Client;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class DiscordController
 {
@@ -40,30 +41,46 @@ class DiscordController
             return app(BrandGuildController::class)->handleCallback($request);
         }
 
-        $sync = false;
-
-        $data = [
-            'platform' => 'Discord',
-            'result' => $sync,
-            'user' => null
-        ];
-
-        if ($this->badgeService->auth(
-            Socialite::driver('discord')->user(),
-            IntegrationType::Discord)){
-            $this->sync();
-
-            $data['result'] = true;
-            $data['user'] = Socialite::driver('discord')->user();
+        try {
+            $discordUser = Socialite::driver('discord')->user();
+        } catch (\Throwable $e) {
+            Log::warning('DiscordAuth: OAuth exchange failed', [
+                'error' => $e->getMessage(),
+            ]);
+            return redirect('/login?discord_error=oauth_failed');
         }
 
-        $client = new Client(config('broadcasting.connections.centrifugo.url'));
-        $client->setApiKey(config('broadcasting.connections.centrifugo.api_key'));
+        $email = strtolower(trim((string) $discordUser->getEmail()));
 
-        $channel = 'sync-platform';
-        $client->publish($channel, $data);
+        if ($email === '') {
+            Log::warning('DiscordAuth: Discord returned no email');
+            return redirect('/login?discord_error=no_email');
+        }
 
-        return redirect()->route('ambar', ['any' => '/trophy-room']);
+        $user = User::where('email', $email)->first();
+
+        if (!$user) {
+            $displayName = $discordUser->getName() ?: $discordUser->getNickname();
+            if (empty($displayName)) {
+                $displayName = explode('@', $email)[0];
+            }
+
+            $user = User::create([
+                'name'   => $displayName,
+                'email'  => $email,
+                'source' => 'discord',
+            ]);
+        } elseif ($user->source === 'legacy_community') {
+            $user->source = 'discord';
+            $user->save();
+        }
+
+        $token = JWTAuth::fromUser($user);
+
+        return response()->view('auth.oauth-success', [
+            'token'    => $token,
+            'redirect' => '/dashboard',
+        ]);
     }
 
     public function sync()
