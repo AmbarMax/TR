@@ -39,7 +39,7 @@ class BrandGuildController extends Controller
         $state  = 'brand_guild:' . $user->id;
         $params = http_build_query([
             'client_id'     => config('services.discord.client_id'),
-            'redirect_uri'  => 'https://app.ambar.gg/api/discord/callback',
+            'redirect_uri'  => config('services.discord.redirect'),
             'response_type' => 'code',
             'scope'         => 'guilds identify',
             'state'         => $state,
@@ -63,7 +63,7 @@ class BrandGuildController extends Controller
             'client_secret' => config('services.discord.client_secret'),
             'grant_type'    => 'authorization_code',
             'code'          => $code,
-            'redirect_uri'  => 'https://app.ambar.gg/api/discord/callback',
+            'redirect_uri'  => config('services.discord.redirect'),
         ]);
 
         if ($tokenRes->failed()) {
