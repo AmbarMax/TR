@@ -285,7 +285,7 @@ export default {
   gap: 12px;
   padding: 10px 12px;
   font-size: 11px;
-  color: var(--text-muted);
+  color: #ccc1b8;
   border-left: 2px solid transparent;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -414,7 +414,7 @@ export default {
   align-items: center;
   gap: 10px;
   font-size: 10px;
-  color: var(--text-dim);
+  color: var(--text-muted);
   letter-spacing: 0.12em;
   text-transform: uppercase;
   border-top: 1px dashed rgba(255, 97, 0, 0.1);
@@ -448,7 +448,7 @@ export default {
   border-top: 1px solid rgba(255, 97, 0, 0.08);
 }
 .social {
-  color: var(--text-dim);
+  color: var(--text-muted);
   transition: all 0.15s;
   width: 16px;
   height: 16px;

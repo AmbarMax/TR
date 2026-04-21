@@ -203,7 +203,7 @@ export default {
   align-items: center;
   gap: 10px;
   font-size: 10px;
-  color: var(--text-dim);
+  color: var(--text-muted);
   letter-spacing: 0.2em;
   text-transform: uppercase;
   white-space: nowrap;
@@ -254,7 +254,7 @@ export default {
 }
 .coin-lbl {
   font-size: 9px;
-  color: var(--text-muted);
+  color: #ccc1b8;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   margin-top: 2px;
