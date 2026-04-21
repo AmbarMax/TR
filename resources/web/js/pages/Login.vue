@@ -93,6 +93,10 @@
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.9 1.2 1.9 1.2 1.1 1.9 2.9 1.3 3.6 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.2-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>
           <span>GitHub</span>
         </div>
+        <div class="social-btn google" @click="loginGoogle">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M21.35 11.1h-9.17v2.87h5.28c-.23 1.36-1.66 3.98-5.28 3.98-3.18 0-5.77-2.63-5.77-5.87s2.59-5.87 5.77-5.87c1.81 0 3.02.77 3.71 1.43l2.53-2.44C16.82 3.62 14.76 2.7 12.18 2.7 6.98 2.7 2.77 6.91 2.77 12.1s4.21 9.4 9.41 9.4c5.43 0 9.03-3.82 9.03-9.18 0-.62-.07-1.09-.16-1.22z"/></svg>
+          <span>Google</span>
+        </div>
       </div>
 
       <div class="divider">Or continue with email</div>
@@ -295,6 +299,9 @@ export default {
         },
         loginGithub() {
             window.location.href = '/login/github';
+        },
+        loginGoogle() {
+            window.location.href = '/login/google';
         }
     }
 
@@ -500,7 +507,7 @@ export default {
 
 /* Social row */
 .social-row {
-  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
   margin-bottom: 20px;
 }
 .social-btn {
@@ -522,6 +529,7 @@ export default {
 .social-btn.discord:hover { color: #5865F2; border-color: #5865F2; }
 .social-btn.steam:hover   { color: #66c0f4; border-color: #66c0f4; }
 .social-btn.github:hover  { color: var(--text); border-color: var(--text); }
+.social-btn.google:hover  { color: #4285F4; border-color: #4285F4; }
 
 .divider {
   display: flex; align-items: center; gap: 12px;

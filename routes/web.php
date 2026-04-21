@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\Integrations\SteamController;
 use App\Http\Controllers\Api\Integrations\GithubController;
 use App\Http\Controllers\Api\Integrations\BadgeController;
 use App\Http\Controllers\Api\Integrations\DiscordController;
+use App\Http\Controllers\Api\Auth\GoogleAuthController;
 use App\Http\Controllers\Api\Brand\BrandGuildController;
 
 
@@ -23,10 +24,12 @@ use App\Http\Controllers\Api\Brand\BrandGuildController;
 Route::get('/login/steam', [SteamController::class, 'redirectToSteam']);
 Route::get('/login/github', [GithubController::class, 'redirectToGithub']);
 Route::get('/login/discord', [DiscordController::class, 'redirectToDiscord']);
+Route::get('/login/google', [GoogleAuthController::class, 'redirectToGoogle']);
 
 Route::get('/api/steam/callback', [SteamController::class, 'handleSteamCallback']);
 Route::get('/api/github/callback', [GithubController::class, 'handleGithubCallback']);
 Route::get('/api/discord/callback', [DiscordController::class, 'handleDiscordCallback']);
+Route::get('/api/google/callback', [GoogleAuthController::class, 'handleGoogleCallback']);
 
 Route::get('/badges/sync/{id}/{achievements}', [BadgeController::class, 'sync']);
 

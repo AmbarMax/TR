@@ -59,6 +59,7 @@ class User extends Authenticatable implements JWTSubject
         'social_discord_tag',
         'social_website',
         'featured_slots',
+        'source',
     ];
 
     /**
