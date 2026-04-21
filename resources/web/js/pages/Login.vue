@@ -291,14 +291,10 @@ export default {
             }
         },
         loginSteam() {
-/*
             window.location.href = '/login/steam';
-*/
         },
         loginGithub() {
-/*
             window.location.href = '/login/github';
-*/
         }
     }
 
