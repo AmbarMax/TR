@@ -7,7 +7,7 @@
       <p class="fco__text">{{ comment.body }}</p>
       <span class="fco__date">{{ comment.created_at }}</span>
     </div>
-    <button class="fco__delete" v-if="this.isModerator() === true" @click="openDeleteCommentModal(comment.id)">
+    <button class="fco__delete" v-if="isModerator" @click="openDeleteCommentModal(comment.id)">
       <img src="../../../../images/web/img/icons/trash.svg" alt="trash-icon">
     </button>
   </div>
@@ -24,29 +24,16 @@ export default {
 
         }
     },
+    computed: {
+      isModerator() {
+        const authUser = JSON.parse(localStorage.getItem('user') || 'null');
+        const roles = authUser?.roles ?? store.state.user?.roles ?? [];
+        return roles.some(role => role.name === 'Master user');
+      },
+    },
     methods: {
       navigateToVirtualHall(username) {
         window.open(`/virtual-hall/${username}`, '_blank');
-      },
-      isModerator() {
-        let authUser = JSON.parse(localStorage.getItem('user'));
-        while (!authUser) {
-          new Promise(resolve => setTimeout(resolve, 250));
-          authUser = JSON.parse(localStorage.getItem('user'));
-        }
-
-        if (authUser && authUser.roles) {
-          return authUser.roles.some(role => role.name === 'Master user');
-        }else{
-          if (store.state.user.roles && store.state.user.roles.length > 0) {
-
-            const moderatorRole = store.state.user.roles.find(role => role.name === 'Master user');
-
-            return !!moderatorRole;
-          } else {
-            return false;
-          }
-        }
       },
       openDeleteCommentModal(commentId) {
 
