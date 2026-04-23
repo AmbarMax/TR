@@ -1,10 +1,53 @@
 # TrophyRoom 2.0 — Project Status
 
-> Last updated: 2026-04-17  
+> Last updated: 2026-04-21  
 > Server: `164.92.83.95` (`/var/www/ambar`) — Apache, PHP 8.2, Laravel 10  
 > Bot: `/opt/tr-discord-bot/` — Python 3.10, discord.py 2.x, systemd `tr-bot.service`  
 > Repo: `git@github.com:AmbarMax/TR.git` (branch: `main`)  
-> Live: `https://app.ambar.gg`
+> Live: `https://app.trophyroom.gg` (migrated from `app.ambar.gg`; old domain redirects 301)
+
+---
+
+## Recently Completed (2026-04-21)
+
+**Infrastructure / Auth**
+- Domain migration `app.ambar.gg` → `app.trophyroom.gg`: SSL cert, VirtualHost, 301 redirect, Centrifugo WebSocket all switched over.
+- OAuth configured across 5 providers:
+  - **GitHub** — new app registered under the TrophyRoom domain.
+  - **Steam** — API key rotated.
+  - **Strava** — new app, redirect updated.
+  - **Google** — implemented end-to-end from scratch (Socialite + JWT handoff via Blade).
+  - **Discord** — callback URL migrated, find-or-create by email + JWT handoff (parity with Google).
+- Discord bot migrated to `app.trophyroom.gg` (`TR_API_URL` updated, systemd service restarted).
+- 11,592 legacy users imported (`source='legacy_community'` column; upgraded to `google`/`discord` on first OAuth login).
+
+**UI**
+- Admin Panel restyled — Phase 9K complete (6 components: hero, sticky tabs, shared form/list patterns).
+- Landing pública Phase 9L complete.
+- Sidebar/header text brightened (`--text-muted` bumped to `#b8b0a8` for better presence in non-hover state).
+
+**Bug fixes (commit `ec3510c`)**
+- Duplicate route names blocking `route:cache` resolved: `badges.badges`, `forge.trophies`, `forge.showcase`, `chests.index` (x5). `php artisan route:cache` succeeds for the first time — 212 routes cached.
+- `feed-comment.vue` infinite busy-loop fixed: `isModerator()` method with `while (!authUser) { new Promise(…) }` (synchronous freeze) replaced by a Vue `computed` property that falls back cleanly from localStorage to store state.
+- Discord OAuth email-verified guard added: Socialite response's `verified` flag is now checked before matching by email, closing an account-takeover vector where an attacker could register a Discord app with an unverified email that matches an existing TrophyRoom user.
+
+---
+
+## Pending
+
+**Integrations in flight**
+- **Overwolf OIDC login** — blocked on registration token from Lior/Overwolf.
+- **Overwolf extension** — UI updated, game events validated; wiring up Valorant connection in progress.
+- **Riot production API key** — waiting on Riot approval.
+
+**Infra**
+- Supervisor config for queue workers (currently none running as daemons).
+- SendGrid wiring for transactional emails (password reset, OAuth notifications, etc).
+
+**UI / Code**
+- Phase 9M — component extraction + legacy cleanup.
+- Onboarding flow after first-time OAuth signup (prompt for username, avatar, etc). Future.
+- Cross-provider account merge — Google/Discord already covered by find-by-email; Steam/GitHub/Strava are link-to-authenticated-user flows and don't need it. Future cleanup may normalize this.
 
 ---
 
@@ -100,11 +143,11 @@ Light cleanup of the legacy Blade admin at `/admin/`: fix broken trophy creation
 
 ## What Is Operational in Production
 
-All of the above is deployed on `app.ambar.gg`. The server is at the same commit as `main` (`800a5d8`). All migrations have run including `bot_poll_votes`.
+All of the above is deployed on `app.trophyroom.gg`. The server is at the head of `main`. All migrations have run including `bot_poll_votes`.
 
 **Verified working:**
 - Brand Dashboard full tab navigation
-- Guild connection OAuth (requires Discord app redirect URI `https://app.ambar.gg/api/discord/callback`)
+- Guild connection OAuth (requires Discord app redirect URI `https://app.trophyroom.gg/api/discord/callback`)
 - Badge CRUD with image upload
 - Poll creation, publishing via bot, vote reporting
 - Event creation, Discord Scheduled Event publishing via bot
@@ -123,7 +166,7 @@ All of the above is deployed on `app.ambar.gg`. The server is at the same commit
 - **Env vs config inconsistency** — `SteamApi::setUserId()` reads `env('STEAM_SECRET')` directly; other methods use `config('services.steam.*')`. Should be normalized to config.
 
 ### Discord OAuth (Guild Connect)
-- **Single redirect URI constraint** — The registered redirect URI in the Discord app is `https://app.ambar.gg/api/discord/callback`. This URI is shared between user login (Socialite) and brand guild connect (manual OAuth). The `state` parameter differentiates them. If the Discord app's redirect URI list ever changes, both flows break simultaneously.
+- **Single redirect URI constraint** — The registered redirect URI in the Discord app is `https://app.trophyroom.gg/api/discord/callback`. This URI is shared between user login (Socialite) and brand guild connect (manual OAuth). The `state` parameter differentiates them. If the Discord app's redirect URI list ever changes, both flows break simultaneously.
 - **Bot rename pending** — Discord bot username is still "Ambar Bot". Must be changed to "TrophyRoom" manually in Discord Developer Portal → app → Bot tab. (Cannot be done via API or code.)
 
 ### Brand Dashboard — Minor
