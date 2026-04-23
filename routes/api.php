@@ -130,7 +130,7 @@ Route::middleware([JwtMiddleware::class])->group(function () {
         ->name('badges.')
         ->group( function(){
             Route::get('/', [BadgeController::class, 'badges'])->name('badges');
-            Route::get('/public', [BadgeController::class, 'publicBadges'])->name('badges');
+            Route::get('/public', [BadgeController::class, 'publicBadges'])->name('public');
             Route::get('/{id}/destroy', [BadgeController::class, 'destroy'])->name('destroy');
             Route::get('/{id}/showcase', [BadgeController::class, 'showcase'])->name('showcase');
             Route::get('/{id}/remove', [BadgeController::class, 'remove'])->name('remove');
@@ -201,11 +201,11 @@ Route::middleware([JwtMiddleware::class])->group(function () {
         ->group( function(){
             Route::get('/', [ForgeController::class, 'index'])->name('index');
             Route::get('/trophies', [ForgeController::class, 'trophies'])->name('trophies');
-            Route::get('/available-trophies', [ForgeController::class, 'availableTrophies'])->name('trophies');
+            Route::get('/available-trophies', [ForgeController::class, 'availableTrophies'])->name('available');
             Route::post('/vouchers/sign', [ForgeController::class, 'voucherSign'])->name('voucher.sign');
             Route::post('/claim/{id}', [ForgeController::class, 'claim'])->name('claim');
             Route::get('/{id}/showcase', [ForgeController::class, 'showcase'])->name('showcase');
-            Route::get('/{id}/getBalance', [ForgeController::class, 'getBalance'])->name('showcase');
+            Route::get('/{id}/getBalance', [ForgeController::class, 'getBalance'])->name('balance');
             Route::get('/{id}/remove', [ForgeController::class, 'remove'])->name('remove');
         });
 
@@ -213,10 +213,10 @@ Route::middleware([JwtMiddleware::class])->group(function () {
         ->name('chests.')
         ->group( function(){
             Route::get('/', [ChestController::class, 'index'])->name('index');
-            Route::get('/user', [ChestController::class, 'userChests'])->name('index');
-            Route::post('/{id}/get', [ChestController::class, 'get'])->name('index');
-            Route::get('/{id}/open', [ChestController::class, 'open'])->name('index');
-            Route::get('/{id}/view', [ChestController::class, 'view'])->name('index');
+            Route::get('/user', [ChestController::class, 'userChests'])->name('user');
+            Route::post('/{id}/get', [ChestController::class, 'get'])->name('get');
+            Route::get('/{id}/open', [ChestController::class, 'open'])->name('open');
+            Route::get('/{id}/view', [ChestController::class, 'view'])->name('view');
         });
 
     Route::prefix('keys')

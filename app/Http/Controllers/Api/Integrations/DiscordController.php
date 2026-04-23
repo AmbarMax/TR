@@ -57,6 +57,15 @@ class DiscordController
             return redirect('/login?discord_error=no_email');
         }
 
+        // Discord allows unverified emails; matching an existing account by an
+        // unverified email would let anyone claim another user's account just
+        // by registering a Discord app with their address.
+        $emailVerified = (bool) ($discordUser->user['verified'] ?? false);
+        if (!$emailVerified) {
+            Log::warning('DiscordAuth: Discord email not verified', ['email' => $email]);
+            return redirect('/login?discord_error=email_unverified');
+        }
+
         $user = User::where('email', $email)->first();
 
         if (!$user) {
