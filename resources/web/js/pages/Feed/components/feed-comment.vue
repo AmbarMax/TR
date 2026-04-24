@@ -7,7 +7,7 @@
       <p class="fco__text">{{ comment.body }}</p>
       <span class="fco__date">{{ comment.created_at }}</span>
     </div>
-    <button class="fco__delete" v-if="isModerator" @click="openDeleteCommentModal(comment.id)">
+    <button class="fco__delete" v-if="isStaff" @click="openDeleteCommentModal(comment.id)">
       <img src="../../../../images/web/img/icons/trash.svg" alt="trash-icon">
     </button>
   </div>
@@ -25,10 +25,16 @@ export default {
         }
     },
     computed: {
-      isModerator() {
-        const authUser = JSON.parse(localStorage.getItem('user') || 'null');
-        const roles = authUser?.roles ?? store.state.user?.roles ?? [];
-        return roles.some(role => role.name === 'Master user');
+      isStaff() {
+        if (this.$store.state.user?.roles?.length > 0) {
+          return this.$store.getters.isStaff;
+        }
+        try {
+          const stored = JSON.parse(localStorage.getItem('user') || '{}');
+          return !!stored.is_staff_legacy;
+        } catch {
+          return false;
+        }
       },
     },
     methods: {

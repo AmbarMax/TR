@@ -11,7 +11,7 @@
         <div class="post-username" @click="navigateToVirtualHall(item.creator.username)">{{ item.creator.username }}</div>
         <div class="post-timestamp">{{ item.created_at }}</div>
       </div>
-      <button class="post-delete" v-if="myFeed || this.isModerator() === true" @click="openDeletePostModal(item.id)">
+      <button class="post-delete" v-if="myFeed || isStaff" @click="openDeletePostModal(item.id)">
         Delete
       </button>
     </div>
@@ -118,6 +118,17 @@ export default {
       deletePost() {
         return deletePost;
       },
+      isStaff() {
+        if (this.$store.state.user?.roles?.length > 0) {
+          return this.$store.getters.isStaff;
+        }
+        try {
+          const stored = JSON.parse(localStorage.getItem('user') || '{}');
+          return !!stored.is_staff_legacy;
+        } catch {
+          return false;
+        }
+      },
   },
     components: {
         buttonWhite,
@@ -195,27 +206,6 @@ export default {
           post_id: postId,
           show: true
         }
-      },
-       isModerator() {
-        let authUser = JSON.parse(localStorage.getItem('user'));
-        while (!authUser) {
-           new Promise(resolve => setTimeout(resolve, 250));
-          authUser = JSON.parse(localStorage.getItem('user'));
-        }
-
-         if (authUser && authUser.roles) {
-           return authUser.roles.some(role => role.name === 'Master user');
-         }else{
-           if (store.state.user.roles && store.state.user.roles.length > 0) {
-
-             const moderatorRole = store.state.user.roles.find(role => role.name === 'Master user');
-
-             return !!moderatorRole;
-           } else {
-             return false;
-
-           }
-         }
       },
         increaseDecreaseAmbars(operator) {
             if (operator === '+') {

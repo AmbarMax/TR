@@ -28,35 +28,25 @@ export default {
   components: {
     buttonWhite
   },
+  computed: {
+    isStaff() {
+      if (this.$store.state.user?.roles?.length > 0) {
+        return this.$store.getters.isStaff;
+      }
+      try {
+        const stored = JSON.parse(localStorage.getItem('user') || '{}');
+        return !!stored.is_staff_legacy;
+      } catch {
+        return false;
+      }
+    },
+  },
   methods: {
     closeModal() {
       store.state.deletePostModal.show = false;
     },
     async deletePostRequest() {
-
-      console.log()
-
-      let authUser = JSON.parse(localStorage.getItem('user'));
-      while (!authUser) {
-        new Promise(resolve => setTimeout(resolve, 250));
-        authUser = JSON.parse(localStorage.getItem('user'));
-      }
-
-      let isModerator = false;
-      if (authUser && authUser.roles) {
-        isModerator = authUser.roles.some(role => role.name === 'Master user');
-      }else{
-        if (store.state.user.roles && store.state.user.roles.length > 0) {
-
-          isModerator = store.state.user.roles.find(role => role.name === 'Master user');
-
-        } else {
-          isModerator = null;
-        }
-      }
-
-      if (isModerator) {
-        console.log(isModerator, "is");
+      if (this.isStaff) {
         await api.post('/api/feed/destroy', {'id': store.state.deletePostModal.post_id}).then(response => {
           if (response && response.data) {
             const post = store.state.posts.findIndex((obj) => obj.id === store.state.deletePostModal.post_id);
