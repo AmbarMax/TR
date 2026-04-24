@@ -26,6 +26,12 @@ class EventServiceProvider extends ServiceProvider
             \SocialiteProviders\Discord\DiscordExtendSocialite::class.'@handle',
             \SocialiteProviders\Steam\SteamExtendSocialite::class.'@handle',
         ],
+        \Spatie\Permission\Events\RoleAttached::class => [
+            \App\Listeners\LogRoleChange::class.'@handleAttached',
+        ],
+        \Spatie\Permission\Events\RoleDetached::class => [
+            \App\Listeners\LogRoleChange::class.'@handleDetached',
+        ],
     ];
 
     /**
