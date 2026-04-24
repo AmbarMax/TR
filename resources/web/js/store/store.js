@@ -140,6 +140,30 @@ const store = createStore({
             contract: null,
         }
     },
+    getters: {
+        isLoggedIn: (state) => !!state.authorized,
+        isPlayer:   (state) => state.user?.account_type === 'player',
+        isBrand:    (state) => state.user?.account_type === 'brand',
+
+        // Parameterized getters — return a function. Use in components as
+        // `$store.getters.can('brand.manage_hall')` or mapGetters + the
+        // same syntax. Null-safe against a user that has not been hydrated.
+        can: (state) => (permission) =>
+            Array.isArray(state.user?.permissions) &&
+            state.user.permissions.includes(permission),
+        hasRole: (state) => (role) =>
+            Array.isArray(state.user?.roles) &&
+            state.user.roles.includes(role),
+
+        // Role shortcuts — cheaper in template than calling hasRole()
+        // with a literal argument everywhere.
+        isMember:     (state, getters) => getters.hasRole('member'),
+        isBrandOwner: (state, getters) => getters.hasRole('brand_admin'),
+        isModerator:  (state, getters) => getters.hasRole('tr_moderator'),
+        isAdmin:      (state, getters) => getters.hasRole('tr_admin') || getters.hasRole('tr_superadmin'),
+        isSuperAdmin: (state, getters) => getters.hasRole('tr_superadmin'),
+        isStaff:      (state, getters) => getters.isModerator || getters.isAdmin,
+    },
     mutations: {
         updateHeaderData () {
             store.state.updateHeaderData = !store.state.updateHeaderData;
