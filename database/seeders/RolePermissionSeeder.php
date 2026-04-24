@@ -14,7 +14,10 @@ class RolePermissionSeeder extends Seeder
         // Reset Spatie's cache so repeated runs pick up new permissions.
         Artisan::call('permission:cache-reset');
 
-        $guard = 'web';
+        // This project uses JWT with default guard 'api' (see config/auth.php).
+        // Roles/permissions must live on this guard or hasRole() from the JWT
+        // flow never finds them.
+        $guard = 'api';
 
         // ---------------------------------------------------------------
         // Permissions
