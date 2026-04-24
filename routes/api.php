@@ -47,7 +47,7 @@ use App\Http\Controllers\Api\Brand\BrandGuildController;
 */
 
 // Brand Dashboard API — JWT + admin role required
-Route::prefix('brand')->middleware([JwtMiddleware::class, 'brand.admin'])->group(function () {
+Route::prefix('brand')->middleware([JwtMiddleware::class, 'role:brand_admin|tr_admin|tr_superadmin'])->group(function () {
     Route::get('/guild', [BrandGuildController::class, 'index']);
     Route::post('/guild/select', [BrandGuildController::class, 'select']);
     Route::delete('/guild', [BrandGuildController::class, 'disconnect']);

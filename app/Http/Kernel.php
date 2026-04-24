@@ -68,6 +68,8 @@ class Kernel extends HttpKernel
         'auth.superAdmin' => \App\Http\Middleware\AuthSuperAdminCheck::class,
         'bot.api'         => \App\Http\Middleware\BotApiMiddleware::class,
         'brand.admin'     => \App\Http\Middleware\AdminMiddleware::class,
+        'role'            => \Spatie\Permission\Middleware\RoleMiddleware::class,
+        'permission'      => \Spatie\Permission\Middleware\PermissionMiddleware::class,
 
     ];
 }

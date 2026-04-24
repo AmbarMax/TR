@@ -11,7 +11,6 @@ use App\Http\Resources\CommentResource;
 use App\Http\Resources\PostResource;
 use App\Models\Comment;
 use App\Models\Post;
-use App\Models\Role;
 use App\Models\User;
 use App\Repositories\Api\UserRepository;
 use App\Services\Api\BalanceService;
@@ -74,7 +73,7 @@ class FeedController extends Controller
         /** @var User $user */
         $user = User::where('id', $request->user()->id)->with('roles')->first();
 
-        if ($user->hasRole(Role::MODERATOR)) {
+        if ($user->hasPermissionTo('tr.moderate_feed')) {
             $posts = Post::orderBy('created_at', 'desc')->paginate(10, ['*'], 'page', $request->input('page', 1));
         } else {
             $posts = $this->feedService->getPosts($request);
@@ -160,7 +159,7 @@ class FeedController extends Controller
         /** @var User $user */
         $user = User::where('id', $request->user()->id)->with('roles')->first();
 
-        if ($user->hasRole(Role::MODERATOR)) {
+        if ($user->hasPermissionTo('tr.moderate_feed')) {
 
             if (!$request->input('id')) {
                return response()->json([
@@ -195,7 +194,7 @@ class FeedController extends Controller
         /** @var User $user */
         $user = User::where('id', $request->user()->id)->with('roles')->first();
 
-        if ($user->hasRole(Role::MODERATOR)) {
+        if ($user->hasPermissionTo('tr.moderate_feed')) {
 
             if (!$request->input('id')) {
                 return response()->json([
