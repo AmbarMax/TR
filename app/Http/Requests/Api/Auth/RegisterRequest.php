@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Api\Auth;
 
+use App\Rules\UsernameNotReserved;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -28,7 +29,7 @@ class RegisterRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string'],
-            'username' => ['required', 'string', 'unique:users'],
+            'username' => ['required', 'string', 'min:3', 'max:30', 'regex:/^[a-zA-Z0-9_-]+$/', 'unique:users', new UsernameNotReserved()],
             'email' => ['required', 'string', 'email', 'unique:users'],
             'password' => ['required', 'string'],
             'confirm_password' => ['required', 'string', 'same:password'],

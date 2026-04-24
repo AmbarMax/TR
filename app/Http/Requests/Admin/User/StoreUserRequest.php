@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin\User;
 
+use App\Rules\UsernameNotReserved;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -28,7 +29,7 @@ class StoreUserRequest extends FormRequest
         return [
             'name' => 'required|string',
             'email' => 'required|email|string|unique:users,email',
-            'username' => 'string|unique:users,username',
+            'username' => ['sometimes', 'string', 'min:3', 'max:30', 'regex:/^[a-zA-Z0-9_-]+$/', 'unique:users,username', new UsernameNotReserved()],
             'phone_number' => 'nullable|string|unique:users,phone_number',
             'date_of_birth' => 'nullable|date',
             'email_verified_at' => 'nullable|date',
