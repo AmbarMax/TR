@@ -312,6 +312,10 @@ Route::post('reset-password', [ResetPasswordController::class, 'passwordReset'])
 
 Route::get('/virtual-hall/{username}', [VirtualHallController::class, 'show']);
 
+// Polymorphic Hall endpoint — player or brand resolved via account_type on the user row
+Route::get('/users/{username}', [App\Http\Controllers\Api\HallController::class, 'show'])
+    ->name('users.show');
+
 Route::post('sendDisableAuthMail', [ResetPasswordController::class, 'sendDisableAuthMail']);
 Route::post('reset-2fa', [ResetPasswordController::class, 'ResetTwoFactorAuth']);
 

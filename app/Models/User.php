@@ -84,6 +84,8 @@ class User extends Authenticatable implements JWTSubject
     protected $casts = [
         'password' => 'hashed',
         'featured_slots' => 'array',
+        'is_featured' => 'boolean',
+        'verified_at' => 'datetime',
     ];
 
     /**
@@ -285,5 +287,38 @@ class User extends Authenticatable implements JWTSubject
     public function shopPurchases()
     {
         return $this->hasMany(ShopPurchase::class);
+    }
+
+    public function getPlayerStats(): array
+    {
+        return [
+            'badges'           => $this->badges()->count(),
+            'trophies'         => $this->trophies()->count(),
+            'achievements'     => $this->achievements()->count(),
+            'platforms_count'  => \DB::table('auth_integrations')
+                ->where('user_id', $this->id)
+                ->whereNull('deleted_at')
+                ->count(),
+        ];
+    }
+
+    public function getBrandStats(): array
+    {
+        return [
+            // TODO Step 10: count of users currently online/active in the brand's
+            //      guild. Requires a live presence source (Centrifugo or DB flag).
+            'active_now'    => 0,
+
+            'issued_total'  => \DB::table('trophies')
+                ->where('user_id', $this->id)
+                ->whereNull('deleted_at')
+                ->count(),
+
+            // TODO Step 10: count of distinct users who own at least one trophy
+            //      issued by this brand. Join trophy_user + trophies on user_id.
+            'conquerors'    => 0,
+
+            'followers'     => $this->followers()->count(),
+        ];
     }
 }
