@@ -323,20 +323,26 @@ class User extends Authenticatable implements JWTSubject
     public function getBrandStats(): array
     {
         return [
-            // TODO Step 10: count of users currently online/active in the brand's
-            //      guild. Requires a live presence source (Centrifugo or DB flag).
-            'active_now'    => 0,
-
-            'issued_total'  => \DB::table('trophies')
+            // "Active now" on a brand Hall means live items the brand has
+            // published — matches the list returned by /api/users/{u}/active-items.
+            'active_now'    => \DB::table('trophies')
                 ->where('user_id', $this->id)
                 ->whereNull('deleted_at')
                 ->count(),
 
-            // TODO Step 10: count of distinct users who own at least one trophy
-            //      issued by this brand. Join trophy_user + trophies on user_id.
-            'conquerors'    => 0,
+            'issued_total'  => \DB::table('trophies')
+                ->where('user_id', $this->id)
+                ->count(),
 
-            'followers'     => $this->followers()->count(),
+            'conquerors'    => \DB::table('trophy_user')
+                ->join('trophies', 'trophies.id', '=', 'trophy_user.trophy_id')
+                ->where('trophies.user_id', $this->id)
+                ->whereNull('trophy_user.deleted_at')
+                ->whereNull('trophies.deleted_at')
+                ->distinct('trophy_user.user_id')
+                ->count('trophy_user.user_id'),
+
+            'followers'     => $this->hallFollowers()->count(),
         ];
     }
 }
