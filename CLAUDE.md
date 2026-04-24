@@ -162,6 +162,27 @@ Items no resueltos durante Brief 9N-B (Halls + Forge v2). Bloquean trabajo futur
 
 ---
 
+## Deuda técnica para Brief 9N-C (cleanup)
+
+Items acumulados durante Brief 9N-B que se atienden en el cleanup posterior, junto con la eliminación de `AdminMiddleware` custom, `Role.php` custom, el shim `ProfileResource.is_staff_legacy` y dead code como el import sin uso en `UserController.php:9`.
+
+1. **Busy-loops sync contra localStorage en 6 archivos.** Mismo antipatrón que se fixeó en Step 18 del Brief 9N-B (componentes de moderación del feed) pero con propósito de identidad de user general (donations, notifications, follows), no role check.
+
+   Archivos:
+   - `resources/web/js/components/main-header.vue:127`
+   - `resources/web/js/pages/Notifications.vue:102`
+   - `resources/web/js/pages/Network/Followers.vue:71`
+   - `resources/web/js/pages/Network/Followings.vue:69`
+   - `resources/web/js/pages/Feed/components/feed-card.vue:222` (sendAmbars)
+   - `resources/web/js/pages/Feed/components/feed-card.vue:249` (sendMessage)
+
+   Patrón a aplicar (mismo que Step 18 del Brief 9N-B):
+   - Reemplazar busy-loop con `computed`.
+   - Fallback a `localStorage` sin `while`.
+   - Si la lógica usa `user.id` (no role), leer de `this.$store.state.user.id` con fallback a `JSON.parse(localStorage.getItem('user'))?.id`.
+
+---
+
 ## Gotchas del stack
 
 Comportamientos no obvios que ya nos mordieron. Primera cosa a chequear si algo "debería funcionar y no funciona".
