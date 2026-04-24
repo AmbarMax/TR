@@ -23,9 +23,7 @@ class HallResource extends JsonResource
             'is_featured'  => (bool) $this->is_featured,
             'accent_color' => $this->accent_color,
 
-            // `tagline` is the Hall-facing name for the existing `description`
-            // column. No separate column is needed.
-            'tagline'      => $this->description,
+            'tagline'      => $this->tagline,
 
             'social' => [
                 'twitter'   => $this->social_twitter,

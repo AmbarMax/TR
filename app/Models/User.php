@@ -64,6 +64,7 @@ class User extends Authenticatable implements JWTSubject
         'featured_slots',
         'source',
         'account_type',
+        'tagline',
     ];
 
     /**
