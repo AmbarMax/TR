@@ -158,9 +158,10 @@ export default {
             return this.windowWidth <= 968;
         },
         isAdmin() {
-            const roles = store.state.user?.roles;
-            if (!Array.isArray(roles) || roles.length === 0) return false;
-            return roles.some(r => r?.name === 'Master user');
+            return this.$store.getters.isAdmin;
+        },
+        isStaff() {
+            return this.$store.getters.isStaff;
         },
     },
     methods: {
