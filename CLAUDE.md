@@ -159,3 +159,11 @@ Items no resueltos durante Brief 9N-B (Halls + Forge v2). Bloquean trabajo futur
 2. **`chests.user_id` missing.** `chests` no tiene FK al brand owner, solo `key_id` → `keys`. Imposible filtrar chests por brand Hall. El endpoint `GET /api/users/{username}/active-items` devuelve solo trophies hasta que se agregue esa FK (con su backfill correspondiente).
 
 3. **Dos conceptos paralelos de follow.** `followers` (user-user legacy, generic social graph) coexiste con `hall_followers` (nuevo, específico para subscribe a un Hall). Brand stats leen de `hall_followers`. Queda pendiente la decisión para Player Hall del Step 22: ¿mostrar `followers_count` genérico, `hall_followers_count` nuevo, o ambos? Definir antes de empezar Player Hall UI.
+
+---
+
+## Gotchas del stack
+
+Comportamientos no obvios que ya nos mordieron. Primera cosa a chequear si algo "debería funcionar y no funciona".
+
+- **Spatie Permission events.** `config/permission.php` trae `'events_enabled' => false` por default. Con eso apagado, `RoleAttached` / `RoleDetached` / `PermissionAttached` / `PermissionDetached` **no se disparan** — cualquier listener nuestro recibe cero. Ya está activado en este repo (commit Step 11) pero si aparece un listener nuevo y no se ejecuta, esto es lo primero que hay que chequear.
