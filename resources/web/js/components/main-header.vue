@@ -111,7 +111,9 @@ export default {
             store.state.user.balances[balance.currency.name] = Math.floor(balance.amount);
           }
           store.state.unread_notifications_count = resp.data.user.data.unread_notifications_count;
-          store.state.user.roles = resp.data.user.data.roles;
+          store.state.user.roles = resp.data.user.data.roles ?? [];
+          store.state.user.account_type = resp.data.user.data.account_type ?? null;
+          store.state.user.permissions = resp.data.user.data.permissions ?? [];
         }
       }).catch(error => {
         console.log('api profile error: ', error)

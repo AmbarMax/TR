@@ -15,11 +15,16 @@ export default function getProfileData()
                 avatar: user.avatar,
                 background: user.background,
                 balances: user.balances,
-                roles: user.roles
+                roles: user.roles ?? [],
+                account_type: user.account_type ?? null,
+                permissions: user.permissions ?? [],
+                is_staff_legacy: user.is_staff_legacy ?? false,
             }));
 
             store.state.user.balances = user.balances;
-            store.state.user.roles = user.roles;
+            store.state.user.roles = user.roles ?? [];
+            store.state.user.account_type = user.account_type ?? null;
+            store.state.user.permissions = user.permissions ?? [];
             if (user.avatar === '/images/avatar/default-profile-img.png') {
                 store.state.userAvatar = '';
             } else {

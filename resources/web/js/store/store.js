@@ -127,7 +127,9 @@ const store = createStore({
                     ambar: 0,
                     rune: 0
                 },
-                roles: []
+                roles: [],
+                account_type: null,
+                permissions: [],
             },
             refreshTokenPromise: null,
             contractAddress: contractAddress,
