@@ -14,6 +14,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 /**
@@ -30,7 +33,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  */
 class User extends Authenticatable implements JWTSubject
 {
-    use HasApiTokens, HasFactory, Notifiable, SoftDeletes, GettersTrait, UUID;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes, GettersTrait, UUID, HasRoles, LogsActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -60,6 +63,7 @@ class User extends Authenticatable implements JWTSubject
         'social_website',
         'featured_slots',
         'source',
+        'account_type',
     ];
 
     /**
@@ -230,18 +234,13 @@ class User extends Authenticatable implements JWTSubject
             return $value;
         }
     }
-    public function roles(): BelongsToMany
+    public function getActivitylogOptions(): LogOptions
     {
-        return $this->belongsToMany(Role::class, 'user_role', 'user_id', 'role_id');
-    }
-
-    public function hasRole($role): bool
-    {
-        if (is_array($role)) {
-            return count(array_intersect($role, $this->roles->pluck('name')->toArray())) > 0;
-        }
-
-        return $this->roles->pluck('name')->contains($role);
+        return LogOptions::defaults()
+            ->logOnly(['account_type', 'username'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->useLogName('user');
     }
 
     protected static function boot()
