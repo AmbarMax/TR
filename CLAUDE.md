@@ -147,3 +147,15 @@ See TASKS.md for detailed autonomous task definitions.
 - **Do NOT modify** auth system (JWT/Sanctum) unless specifically tasked
 - **PHP warnings** about curl/mbstring modules are harmless — ignore them
 - **Test on server** after every change — no local dev environment currently set up
+
+---
+
+## Deuda técnica para Brief 9N-D
+
+Items no resueltos durante Brief 9N-B (Halls + Forge v2). Bloquean trabajo futuro y no se pueden ignorar al planear 9N-D.
+
+1. **`trophies.is_active` + `starts_at` / `ends_at` missing.** El campaign lifecycle real no existe en el schema. Brand Halls muestran trophies "activos" usando `deleted_at IS NULL` como proxy — no hay ventana temporal. Blocker para scheduled campaigns / time-limited drops.
+
+2. **`chests.user_id` missing.** `chests` no tiene FK al brand owner, solo `key_id` → `keys`. Imposible filtrar chests por brand Hall. El endpoint `GET /api/users/{username}/active-items` devuelve solo trophies hasta que se agregue esa FK (con su backfill correspondiente).
+
+3. **Dos conceptos paralelos de follow.** `followers` (user-user legacy, generic social graph) coexiste con `hall_followers` (nuevo, específico para subscribe a un Hall). Brand stats leen de `hall_followers`. Queda pendiente la decisión para Player Hall del Step 22: ¿mostrar `followers_count` genérico, `hall_followers_count` nuevo, o ambos? Definir antes de empezar Player Hall UI.
