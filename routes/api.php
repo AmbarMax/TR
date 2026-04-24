@@ -304,6 +304,13 @@ Route::middleware([JwtMiddleware::class])->group(function () {
     Route::post('2fa-deactivate', [UserAuthenticateController::class, 'twoFaDeactivate']);
     Route::get('generate-secret-key', [UserAuthenticateController::class, 'generateSecretKey']);
 
+    // Hall — pursuits and follow (JWT-protected)
+    Route::get('/pursuits', [App\Http\Controllers\Api\PursuitController::class, 'index'])->name('pursuits.index');
+    Route::post('/pursuits', [App\Http\Controllers\Api\PursuitController::class, 'store'])->name('pursuits.store');
+    Route::delete('/pursuits/{trophyId}', [App\Http\Controllers\Api\PursuitController::class, 'destroy'])->name('pursuits.destroy');
+    Route::post('/users/{username}/follow', [App\Http\Controllers\Api\HallController::class, 'follow'])->name('users.follow');
+    Route::delete('/users/{username}/follow', [App\Http\Controllers\Api\HallController::class, 'unfollow'])->name('users.unfollow');
+
 });
 
 Route::get('/storage/{path}', [StorageController::class, 'getImage']);
@@ -315,6 +322,10 @@ Route::get('/virtual-hall/{username}', [VirtualHallController::class, 'show']);
 // Polymorphic Hall endpoint — player or brand resolved via account_type on the user row
 Route::get('/users/{username}', [App\Http\Controllers\Api\HallController::class, 'show'])
     ->name('users.show');
+Route::get('/users/{username}/conquerors', [App\Http\Controllers\Api\HallController::class, 'conquerors'])
+    ->name('users.conquerors');
+Route::get('/users/{username}/active-items', [App\Http\Controllers\Api\HallController::class, 'activeItems'])
+    ->name('users.active-items');
 
 Route::post('sendDisableAuthMail', [ResetPasswordController::class, 'sendDisableAuthMail']);
 Route::post('reset-2fa', [ResetPasswordController::class, 'ResetTwoFactorAuth']);
