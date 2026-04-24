@@ -34,6 +34,10 @@ class ProfileResource extends JsonResource
             'account_type' => $this->account_type,
             'roles' => $this->getRoleNames(),
             'permissions' => $this->getAllPermissions()->pluck('name'),
+            // Temporary backward-compat shim — remove in Brief 9N-C cleanup (post frontend refactor).
+            // This keeps the staff moderation UI working in Vue components that still check
+            // the legacy `Master user` role until the composable refactor (Steps 16-19) ships.
+            'is_staff_legacy' => $this->hasAnyRole(['tr_moderator', 'tr_admin', 'tr_superadmin']),
             'social_twitter'     => $this->social_twitter,
             'social_twitch'      => $this->social_twitch,
             'social_youtube'     => $this->social_youtube,

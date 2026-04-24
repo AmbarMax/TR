@@ -167,3 +167,11 @@ Items no resueltos durante Brief 9N-B (Halls + Forge v2). Bloquean trabajo futur
 Comportamientos no obvios que ya nos mordieron. Primera cosa a chequear si algo "debería funcionar y no funciona".
 
 - **Spatie Permission events.** `config/permission.php` trae `'events_enabled' => false` por default. Con eso apagado, `RoleAttached` / `RoleDetached` / `PermissionAttached` / `PermissionDetached` **no se disparan** — cualquier listener nuestro recibe cero. Ya está activado en este repo (commit Step 11) pero si aparece un listener nuevo y no se ejecuta, esto es lo primero que hay que chequear.
+
+---
+
+## Shims temporales
+
+Campos / comportamientos puestos a propósito para puentear transiciones. Cada uno lista cuándo se elimina.
+
+- **`ProfileResource.is_staff_legacy`.** Propósito: mantener la moderación del feed y los checks de staff del sidebar funcionando entre el deploy backend (Step 15 del Brief 9N-B) y el deploy frontend (Step 27). Los 8 lugares del frontend que leían `user.roles.some(r => r.name === 'Master user')` empiezan a devolver `false` después del Step 12 porque `roles` ahora es una lista de strings. El shim `is_staff_legacy = hasAnyRole(['tr_moderator','tr_admin','tr_superadmin'])` permite migrar el frontend en dos saltos: primero de `role.name` → `user.is_staff_legacy`, después de ahí → `$store.getters.isStaff` (composable). **Cuándo se borra:** Brief 9N-C cleanup, junto con `AdminMiddleware` custom y `Role.php` custom, una vez verificado que el composable cubre todos los casos.
