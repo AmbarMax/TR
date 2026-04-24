@@ -290,6 +290,23 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(ShopPurchase::class);
     }
 
+    public function pursuits(): HasMany
+    {
+        return $this->hasMany(Pursuit::class);
+    }
+
+    public function followingHalls(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'hall_followers', 'follower_id', 'hall_user_id')
+            ->withTimestamps();
+    }
+
+    public function hallFollowers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'hall_followers', 'hall_user_id', 'follower_id')
+            ->withTimestamps();
+    }
+
     public function getPlayerStats(): array
     {
         return [
