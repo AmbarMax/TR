@@ -5,10 +5,12 @@ namespace App\Models;
 use App\Http\Traits\UUID;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class GuildConnection extends Model
 {
-    use HasFactory, UUID;
+    use HasFactory, UUID, LogsActivity;
 
     protected $fillable = [
         'guild_id',
@@ -49,5 +51,15 @@ class GuildConnection extends Model
     public function events()
     {
         return $this->hasMany(BotEvent::class, 'guild_id', 'guild_id');
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        // Schema uses `bot_connected_at` (not `bot_joined_at`).
+        return LogOptions::defaults()
+            ->logOnly(['guild_id', 'guild_name', 'bot_connected_at', 'active'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->useLogName('guild');
     }
 }

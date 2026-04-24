@@ -6,6 +6,8 @@ use App\Http\Traits\UUID;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
  * @property string $id
@@ -19,7 +21,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Badge extends Model
 {
-    use HasFactory, UUID, SoftDeletes;
+    use HasFactory, UUID, SoftDeletes, LogsActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -65,5 +67,14 @@ class Badge extends Model
     public function post()
     {
         return $this->morphOne(Post::class, 'postable');
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['name', 'description', 'image', 'deleted_at'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->useLogName('badge');
     }
 }

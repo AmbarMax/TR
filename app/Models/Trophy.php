@@ -6,6 +6,8 @@ use App\Http\Traits\UUID;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
  * @property string $id
@@ -17,7 +19,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Trophy extends Model
 {
-    use HasFactory, UUID, SoftDeletes;
+    use HasFactory, UUID, SoftDeletes, LogsActivity;
 
     public const FILE_PATH = 'app/public/trophies';
 
@@ -67,4 +69,12 @@ class Trophy extends Model
         return $this->morphMany(Post::class, 'postable');
     }
 
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['name', 'description', 'price', 'receive', 'image', 'deleted_at'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->useLogName('trophy');
+    }
 }

@@ -5,10 +5,12 @@ namespace App\Models;
 use App\Http\Traits\UUID;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class BotPoll extends Model
 {
-    use HasFactory, UUID;
+    use HasFactory, UUID, LogsActivity;
 
     protected $fillable = [
         'guild_id',
@@ -35,5 +37,15 @@ class BotPoll extends Model
     public function badgeRule()
     {
         return $this->belongsTo(BadgeRule::class);
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        // Schema uses `title` + `duration_hours` (no starts_at / ends_at on polls).
+        return LogOptions::defaults()
+            ->logOnly(['title', 'status', 'duration_hours'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->useLogName('poll');
     }
 }
