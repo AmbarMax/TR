@@ -166,7 +166,11 @@ Items no resueltos durante Brief 9N-B (Halls + Forge v2). Bloquean trabajo futur
 
 Items acumulados durante Brief 9N-B que se atienden en el cleanup posterior, junto con la eliminación de `AdminMiddleware` custom, `Role.php` custom, el shim `ProfileResource.is_staff_legacy` y dead code como el import sin uso en `UserController.php:9`.
 
-1. **Busy-loops sync contra localStorage en 6 archivos.** Mismo antipatrón que se fixeó en Step 18 del Brief 9N-B (componentes de moderación del feed) pero con propósito de identidad de user general (donations, notifications, follows), no role check.
+1. **Endpoint `/api/users/{username}/follow-status` faltante.** `BrandHallView.vue` arranca con `isFollowing = false` siempre porque no hay forma de saber si el current user ya sigue al Hall. Un user autenticado que ya sigue ve el botón como "Follow" hasta que lo clickea. Crear endpoint nuevo `GET /api/users/{username}/follow-status` que devuelva `{is_following: bool}` o agregar la flag al response del `/api/users/{username}` cuando hay JWT presente.
+
+2. **`HallController::activeItems` select muy angosto.** El query select solo trae `id, name, image, description, type, created_at`. El UI espera `receive` (XP) y un campo de pursuing/conquerors count. Las cards renderizan `"+0 XP"` y `"0 pursuing"` para todo. Ampliar el select o cambiar la response shape para incluir esos campos.
+
+3. **Busy-loops sync contra localStorage en 6 archivos.** Mismo antipatrón que se fixeó en Step 18 del Brief 9N-B (componentes de moderación del feed) pero con propósito de identidad de user general (donations, notifications, follows), no role check.
 
    Archivos:
    - `resources/web/js/components/main-header.vue:127`
