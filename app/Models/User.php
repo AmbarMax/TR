@@ -65,6 +65,9 @@ class User extends Authenticatable implements JWTSubject
         'source',
         'account_type',
         'tagline',
+        'accent_color',
+        'is_featured',
+        'verified_at',
     ];
 
     /**
