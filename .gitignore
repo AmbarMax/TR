@@ -21,3 +21,11 @@ yarn-error.log
 /.idea
 /.vscode
 centrifugo
+
+# Visual reference HTMLs (Brief 9N-B brand-hall + forge-v2 mockups)
+brand-hall.html
+forge-v2.html
+admin-panel.html
+CLAUDE_PHASE_*.md
+AUDIT_*.md
+CLAUDE_DOMAIN_*.md
