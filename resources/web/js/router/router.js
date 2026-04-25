@@ -45,7 +45,7 @@ router.beforeEach( (to, from, next) => {
 
 function publicPages(name) {
     const pages = [
-        'login', 'sign-up', 'forgot-password', 'reset-password','virtual-hall', 'reset-2fa'
+        'login', 'sign-up', 'forgot-password', 'reset-password','virtual-hall', 'hall', 'reset-2fa'
     ];
 
     if(pages.includes(name)){ return true }

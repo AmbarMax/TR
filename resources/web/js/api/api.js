@@ -26,7 +26,8 @@ api.interceptors.response.use(config => {
             localStorage.removeItem('access_token');
             localStorage.removeItem('user');
             store.state.authorized = false;
-            if (!router.currentRoute.value.path.includes('virtual-hall')) {
+            const currentName = router.currentRoute.value.name;
+            if (currentName !== 'virtual-hall' && currentName !== 'hall') {
                 router.push('/login');
             }
         }

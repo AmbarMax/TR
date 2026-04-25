@@ -16,6 +16,7 @@ import Feed from "../pages/Feed/Feed.vue";
 import ResetTwoFactorAuth from "../pages/ResetTwoFactorAuth.vue";
 import Rewards from "../pages/Rewards.vue";
 import LinkDiscord from "../pages/LinkDiscord.vue";
+import Hall from "../pages/Hall/Hall.vue";
 
 const routes = [
     {
@@ -119,13 +120,17 @@ const routes = [
         children: [
             {
                 path: `/virtual-hall/:username`,
-                component: VirtualHall,
-                name: 'virtual-hall'
+                redirect: to => ({ name: 'hall', params: { username: to.params.username } })
             },
             {
                 path: '/link-discord',
                 component: LinkDiscord,
                 name: 'link-discord'
+            },
+            {
+                path: '/:username',
+                component: Hall,
+                name: 'hall'
             },
         ]
     },
