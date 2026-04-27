@@ -12,7 +12,7 @@
         <!-- TABS -->
         <div class="tabs-bar">
             <button
-                v-for="tab in visibleTabs"
+                v-for="tab in tabs"
                 :key="tab.id"
                 class="tab"
                 :class="{ 'tab--active': activeTab === tab.id }"
@@ -59,11 +59,6 @@ export default {
                 { id: 'events',   label: 'Events'   },
             ],
         };
-    },
-    computed: {
-        visibleTabs() {
-            return this.tabs;
-        },
     },
 }
 </script>

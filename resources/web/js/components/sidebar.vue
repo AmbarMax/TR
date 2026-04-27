@@ -92,8 +92,8 @@
         <span class="nav-label">Achievements</span>
       </router-link>
 
-      <!-- Admin Panel (guarded by isAdmin) -->
-      <router-link v-if="isAdmin" to="/brand-dashboard" class="nav-item" :class="{ active_item: $route.path === '/brand-dashboard' }">
+      <!-- Admin Panel (guarded by isAdmin — TR staff only) -->
+      <router-link v-if="isAdmin" to="/admin" class="nav-item" :class="{ active_item: $route.path.startsWith('/admin') }">
         <span class="nav-icon">
           <span class="nav-icon-svg">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round">
