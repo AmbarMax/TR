@@ -332,6 +332,20 @@ Route::get('/halls/featured', [App\Http\Controllers\Api\HallController::class, '
 Route::get('/halls/discover', [App\Http\Controllers\Api\HallController::class, 'discover'])
     ->name('halls.discover');
 
+// Admin — Manage Brands (TR staff only)
+Route::prefix('admin')->middleware([JwtMiddleware::class, 'role:tr_admin|tr_superadmin'])->group(function () {
+    Route::get('/brands', [App\Http\Controllers\Api\Admin\AdminBrandsController::class, 'index'])
+        ->name('admin.brands.index');
+    Route::post('/brands/promote', [App\Http\Controllers\Api\Admin\AdminBrandsController::class, 'promote'])
+        ->name('admin.brands.promote');
+    Route::patch('/brands/{username}', [App\Http\Controllers\Api\Admin\AdminBrandsController::class, 'update'])
+        ->name('admin.brands.update');
+    Route::delete('/brands/{username}/demote', [App\Http\Controllers\Api\Admin\AdminBrandsController::class, 'demote'])
+        ->name('admin.brands.demote');
+    Route::get('/users/searchable', [App\Http\Controllers\Api\Admin\AdminBrandsController::class, 'searchablePlayers'])
+        ->name('admin.users.searchable');
+});
+
 Route::post('sendDisableAuthMail', [ResetPasswordController::class, 'sendDisableAuthMail']);
 Route::post('reset-2fa', [ResetPasswordController::class, 'ResetTwoFactorAuth']);
 
