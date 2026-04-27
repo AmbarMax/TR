@@ -9,6 +9,12 @@
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
+    # Force bare /admin (and /admin/) through Laravel for SPA routing.
+    # public/admin/ exists as a physical directory (Blade legacy assets)
+    # which would normally trigger the !-d skip below. This rule must come
+    # BEFORE the !-d block.
+    RewriteRule ^admin/?$ index.php [L]
+
     # Redirect Trailing Slashes If Not A Folder...
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_URI} (.+)/$
