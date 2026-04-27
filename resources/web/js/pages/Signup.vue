@@ -156,6 +156,7 @@ import store from "../store/store.js";
 import router from "../router/router.js";
 import api from "../api/api.js";
 import getProfileData from "../services/profile-data.js";
+import { consumePendingIntent } from "../services/pending-intent.js";
 import trexHero from '../../../web/images/web/img/mascot/trex-voxel-hero.png';
 
 export default {
@@ -201,7 +202,9 @@ export default {
                     getProfileData();
                     if (localStorage.getItem('access_token')) {
                         store.state.showTestData = false;
-                        router.push('/dashboard');
+                        consumePendingIntent(api, router).then(consumed => {
+                            if (!consumed) router.push('/dashboard');
+                        });
                     }
                 }
             })

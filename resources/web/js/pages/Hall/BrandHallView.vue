@@ -102,6 +102,15 @@
         <div>{{ activeStatus }}</div>
       </div>
     </div>
+
+    <SignupIntentModal
+      :show="signupIntentVisible"
+      :intent="signupIntentType"
+      :payload="signupIntentPayload"
+      :hall-context="hallContextForModal"
+      @close="closeSignupIntent"
+      @proceed="closeSignupIntent"
+    />
   </div>
 </template>
 
@@ -112,10 +121,11 @@ import FeaturedTrophy from "./components/FeaturedTrophy.vue";
 import ActiveItemsGrid from "./components/ActiveItemsGrid.vue";
 import WallOfConquerors from "./components/WallOfConquerors.vue";
 import AboutHall from "./components/AboutHall.vue";
+import SignupIntentModal from "../../components/SignupIntentModal.vue";
 
 export default {
   name: "BrandHallView",
-  components: { HallHero, FeaturedTrophy, ActiveItemsGrid, WallOfConquerors, AboutHall },
+  components: { HallHero, FeaturedTrophy, ActiveItemsGrid, WallOfConquerors, AboutHall, SignupIntentModal },
   props: {
     user: { type: Object, required: true },
   },
@@ -128,6 +138,9 @@ export default {
       conqueredIds: [],
       isFollowing: false,
       sharing: false,
+      signupIntentVisible: false,
+      signupIntentType: null,
+      signupIntentPayload: null,
     };
   },
   computed: {
@@ -181,6 +194,13 @@ export default {
     },
     ctaLabel() {
       return this.isLoggedIn ? "Dashboard" : "Create your own";
+    },
+    hallContextForModal() {
+      return {
+        username: this.user.username,
+        name: this.user.name,
+        accent_color: this.user.accent_color,
+      };
     },
   },
   watch: {
@@ -247,8 +267,7 @@ export default {
     async onPursuit(item) {
       if (!item) return;
       if (!this.isLoggedIn) {
-        // TODO Step 23: open SignupIntentModal with intent='pursuit', payload={trophyId, hallUsername}
-        console.log("TODO Step 23: signup intent modal", { item, hall: this.user.username });
+        this.openSignupIntent("pursuit", { trophyId: item.id, hallUsername: this.user.username });
         return;
       }
       if (this.pursuingIds.includes(item.id) || this.conqueredIds.includes(item.id)) {
@@ -266,8 +285,7 @@ export default {
 
     async onToggleFollow() {
       if (!this.isLoggedIn) {
-        // TODO Step 23: open SignupIntentModal with intent='follow', payload={hallUsername}
-        console.log("TODO Step 23: signup intent modal (follow)", { hall: this.user.username });
+        this.openSignupIntent("follow", { hallUsername: this.user.username });
         return;
       }
       const username = this.user.username;
@@ -283,6 +301,16 @@ export default {
         this.isFollowing = was;
         console.error("Follow toggle failed", e);
       }
+    },
+
+    openSignupIntent(type, payload) {
+      this.signupIntentType = type;
+      this.signupIntentPayload = payload;
+      this.signupIntentVisible = true;
+    },
+
+    closeSignupIntent() {
+      this.signupIntentVisible = false;
     },
 
     async onShare() {
