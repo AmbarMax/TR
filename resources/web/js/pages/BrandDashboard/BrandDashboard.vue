@@ -12,7 +12,7 @@
         <!-- TABS -->
         <div class="tabs-bar">
             <button
-                v-for="tab in tabs"
+                v-for="tab in visibleTabs"
                 :key="tab.id"
                 class="tab"
                 :class="{ 'tab--active': activeTab === tab.id }"
@@ -29,6 +29,7 @@
             <badge-manager     v-if="activeTab === 'badges'" />
             <poll-manager      v-if="activeTab === 'polls'" />
             <event-manager     v-if="activeTab === 'events'" />
+            <manage-brands     v-if="activeTab === 'admin-brands'" />
 
             <!-- TERMINAL -->
             <div class="terminal-strip">
@@ -45,20 +46,30 @@ import TrophyManager     from './TrophyManager.vue';
 import BadgeManager      from './BadgeManager.vue';
 import PollManager       from './PollManager.vue';
 import EventManager      from './EventManager.vue';
+import ManageBrands      from '../Admin/ManageBrands.vue';
 
 export default {
-    components: { DashboardOverview, TrophyManager, BadgeManager, PollManager, EventManager },
+    components: { DashboardOverview, TrophyManager, BadgeManager, PollManager, EventManager, ManageBrands },
     data() {
         return {
             activeTab: 'overview',
             tabs: [
-                { id: 'overview',  label: 'Overview'  },
-                { id: 'trophies',  label: 'Trophies'  },
-                { id: 'badges',    label: 'Badges'    },
-                { id: 'polls',     label: 'Polls'     },
-                { id: 'events',    label: 'Events'    },
+                { id: 'overview',     label: 'Overview',  staffOnly: false },
+                { id: 'trophies',     label: 'Trophies',  staffOnly: false },
+                { id: 'badges',       label: 'Badges',    staffOnly: false },
+                { id: 'polls',        label: 'Polls',     staffOnly: false },
+                { id: 'events',       label: 'Events',    staffOnly: false },
+                { id: 'admin-brands', label: 'Brands',    staffOnly: true  },
             ],
         };
+    },
+    computed: {
+        isStaff() {
+            return this.$store?.getters?.isStaff ?? false;
+        },
+        visibleTabs() {
+            return this.tabs.filter(t => !t.staffOnly || this.isStaff);
+        },
     },
 }
 </script>
