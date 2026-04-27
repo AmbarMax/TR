@@ -34,6 +34,9 @@
       </div>
     </section>
 
+    <!-- FEATURED HALLS — curated weekly carousel -->
+    <FeaturedHallsStrip :halls="featuredHalls" />
+
     <!-- FILTER BAR -->
     <div class="filter-bar">
       <span class="filter-bar-label">Filter</span>
@@ -41,9 +44,13 @@
         v-for="filter in filterOptions"
         :key="filter.key"
         class="filter-pill"
-        :class="{ 'filter-pill--active': activeFilter === filter.key }"
+        :class="{
+          'filter-pill--active': activeFilter === filter.key,
+          'filter-pill--pursuing': filter.isPursuing
+        }"
         @click="activeFilter = filter.key"
       >
+        <span v-if="filter.isPursuing" class="filter-pill-dot" aria-hidden="true"></span>
         {{ filter.label }}
         <span class="filter-count">{{ filter.count }}</span>
       </button>
@@ -194,9 +201,12 @@
       </section>
 
       <div v-if="!visibleSections.length" class="forge-empty">
-        <p>No trophies match this filter.</p>
+        <p v-if="activeFilter === 'pursuing'">You're not pursuing any trophies yet. Visit a Brand Hall and click "Add to pursuits" on a trophy.</p>
+        <p v-else>No trophies match this filter.</p>
         <button class="forge-empty-cta" @click="activeFilter = 'all'">Show all</button>
       </div>
+
+      <DiscoverHallsGrid :halls="discoverHalls" :meta="discoverMeta" />
 
     </div>
 
@@ -278,22 +288,31 @@
 <script>
 import api from '../api/api.js';
 import store from '../store/store.js';
+import FeaturedHallsStrip from './Forge/components/FeaturedHallsStrip.vue';
+import DiscoverHallsGrid from './Forge/components/DiscoverHallsGrid.vue';
 
 const FILTER_KEYS = {
   ALL: 'all',
   READY: 'ready',
   ALMOST: 'almost',
   IN_PROGRESS: 'in_progress',
-  FORGED: 'forged'
+  FORGED: 'forged',
+  PURSUING: 'pursuing'
 };
 
 export default {
   name: 'Forge',
+  components: { FeaturedHallsStrip, DiscoverHallsGrid },
   data() {
     return {
       allTrophies: [],
       userBadgeIds: new Set(),
       userForgedIds: new Set(),
+
+      featuredHalls: [],
+      discoverHalls: [],
+      discoverMeta: null,
+      pursuingTrophyIds: new Set(),
 
       loading: true,
       activeFilter: FILTER_KEYS.ALL,
@@ -365,29 +384,45 @@ export default {
     forgedCount() {
       return this.enrichedTrophies.filter(t => t._status === 'forged').length;
     },
+    pursuingCount() {
+      return this.enrichedTrophies.filter(t => this.pursuingTrophyIds.has(t.id)).length;
+    },
+    isLoggedIn() {
+      return this.$store?.getters?.isLoggedIn ?? !!localStorage.getItem('access_token');
+    },
 
     filterOptions() {
-      return [
+      const base = [
         { key: FILTER_KEYS.ALL, label: 'All', count: this.allTrophies.length },
         { key: FILTER_KEYS.READY, label: 'Ready to forge', count: this.readyCount },
         { key: FILTER_KEYS.ALMOST, label: 'Almost ready', count: this.almostCount },
         { key: FILTER_KEYS.IN_PROGRESS, label: 'In progress', count: this.inProgressCount },
         { key: FILTER_KEYS.FORGED, label: 'Forged', count: this.forgedCount }
       ].filter(f => f.count > 0 || f.key === FILTER_KEYS.ALL);
+
+      if (this.isLoggedIn) {
+        base.push({ key: FILTER_KEYS.PURSUING, label: 'Pursuing', count: this.pursuingCount, isPursuing: true });
+      }
+      return base;
     },
 
     visibleSections() {
       const sections = [];
       const include = (key) => {
         if (this.activeFilter === FILTER_KEYS.ALL) return true;
+        if (this.activeFilter === FILTER_KEYS.PURSUING) return true;
         return this.activeFilter === key;
       };
 
-      const ready = this.enrichedTrophies.filter(t => t._status === 'ready');
-      const almost = this.enrichedTrophies.filter(t => t._status === 'almost');
-      const inProgress = this.enrichedTrophies.filter(t => t._status === 'in_progress');
-      const locked = this.enrichedTrophies.filter(t => t._status === 'locked');
-      const forged = this.enrichedTrophies.filter(t => t._status === 'forged');
+      const universe = this.activeFilter === FILTER_KEYS.PURSUING
+        ? this.enrichedTrophies.filter(t => this.pursuingTrophyIds.has(t.id))
+        : this.enrichedTrophies;
+
+      const ready = universe.filter(t => t._status === 'ready');
+      const almost = universe.filter(t => t._status === 'almost');
+      const inProgress = universe.filter(t => t._status === 'in_progress');
+      const locked = universe.filter(t => t._status === 'locked');
+      const forged = universe.filter(t => t._status === 'forged');
 
       if (include(FILTER_KEYS.READY) && ready.length) {
         sections.push({ key: 'ready', title: 'Ready to forge', trophies: ready, metaSuffix: ' awaiting' });
@@ -398,7 +433,7 @@ export default {
       if (include(FILTER_KEYS.IN_PROGRESS) && inProgress.length) {
         sections.push({ key: 'in_progress', title: 'In progress', trophies: inProgress });
       }
-      if (this.activeFilter === FILTER_KEYS.ALL && locked.length) {
+      if ((this.activeFilter === FILTER_KEYS.ALL || this.activeFilter === FILTER_KEYS.PURSUING) && locked.length) {
         sections.push({ key: 'locked', title: 'Locked', trophies: locked });
       }
       if (include(FILTER_KEYS.FORGED) && forged.length) {
@@ -425,10 +460,12 @@ export default {
     async loadData() {
       this.loading = true;
       try {
-        const [forgeRes, badgesRes, trophiesRes] = await Promise.all([
+        const [forgeRes, badgesRes, trophiesRes, featuredRes, discoverRes] = await Promise.all([
           api.get('/api/forge').catch(() => ({ data: { trophies: [] } })),
           api.get('/api/badges').catch(() => ({ data: { data: [] } })),
-          api.get('/api/forge/available-trophies').catch(() => ({ data: { trophies: [] } }))
+          api.get('/api/forge/available-trophies').catch(() => ({ data: { trophies: [] } })),
+          api.get('/api/halls/featured').catch(() => ({ data: { data: [] } })),
+          api.get('/api/halls/discover').catch(() => ({ data: { data: [], meta: null } }))
         ]);
 
         this.allTrophies = forgeRes.data?.trophies || [];
@@ -437,11 +474,29 @@ export default {
 
         const forgedTrophies = trophiesRes.data?.trophies || [];
         this.userForgedIds = new Set(forgedTrophies.map(t => t.id));
+
+        this.featuredHalls = featuredRes.data?.data || [];
+        this.discoverHalls = discoverRes.data?.data || [];
+        this.discoverMeta = discoverRes.data?.meta || null;
+
+        if (this.isLoggedIn) {
+          await this.loadPursuits();
+        }
       } catch (err) {
         console.error('[Forge] Load failed', err);
         this.showToast('Failed to load forge catalog', 'error');
       } finally {
         this.loading = false;
+      }
+    },
+
+    async loadPursuits() {
+      try {
+        const { data } = await api.get('/api/pursuits');
+        const list = Array.isArray(data?.data) ? data.data : [];
+        this.pursuingTrophyIds = new Set(list.map(p => p.trophy_id).filter(Boolean));
+      } catch (e) {
+        this.pursuingTrophyIds = new Set();
       }
     },
 
@@ -722,6 +777,37 @@ export default {
   font-weight: bold;
 }
 .filter-pill:not(.filter-pill--active) .filter-count { background: var(--surface-2); }
+
+/* Pursuing pill — chartreuse dot, accent border when idle */
+.filter-pill--pursuing {
+  border-color: rgba(193, 245, 39, 0.35);
+  color: var(--accent);
+}
+.filter-pill--pursuing:hover { border-color: var(--accent); color: var(--accent); }
+.filter-pill--pursuing.filter-pill--active {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+}
+.filter-pill-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--accent);
+  display: inline-block;
+  vertical-align: middle;
+  animation: forgePulseDot 2s ease-in-out infinite;
+}
+.filter-pill--pursuing.filter-pill--active .filter-pill-dot {
+  background: var(--bg);
+  box-shadow: none;
+  animation: none;
+}
+@keyframes forgePulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.2); }
+}
 
 /* ========== LOADING ========== */
 .forge-loading { padding: 80px 48px; text-align: center; }
