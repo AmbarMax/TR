@@ -327,6 +327,11 @@ Route::get('/users/{username}/conquerors', [App\Http\Controllers\Api\HallControl
 Route::get('/users/{username}/active-items', [App\Http\Controllers\Api\HallController::class, 'activeItems'])
     ->name('users.active-items');
 
+Route::get('/halls/featured', [App\Http\Controllers\Api\HallController::class, 'featured'])
+    ->name('halls.featured');
+Route::get('/halls/discover', [App\Http\Controllers\Api\HallController::class, 'discover'])
+    ->name('halls.discover');
+
 Route::post('sendDisableAuthMail', [ResetPasswordController::class, 'sendDisableAuthMail']);
 Route::post('reset-2fa', [ResetPasswordController::class, 'ResetTwoFactorAuth']);
 

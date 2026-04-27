@@ -110,6 +110,66 @@ class HallController extends Controller
         return response()->json(['data' => $items]);
     }
 
+    public function featured(): JsonResponse
+    {
+        $halls = User::query()
+            ->where('account_type', 'brand')
+            ->where('is_featured', true)
+            ->orderByDesc('created_at')
+            ->limit(4)
+            ->get();
+
+        return response()->json([
+            'data' => $halls->map(fn ($u) => $this->cardPayload($u))->values(),
+        ]);
+    }
+
+    public function discover(): JsonResponse
+    {
+        $halls = User::query()
+            ->where('account_type', 'brand')
+            ->where(function ($q) {
+                $q->where('is_featured', false)->orWhereNull('is_featured');
+            })
+            ->orderByDesc('created_at')
+            ->paginate(8);
+
+        return response()->json([
+            'data' => collect($halls->items())->map(fn ($u) => $this->cardPayload($u))->values(),
+            'meta' => [
+                'current_page' => $halls->currentPage(),
+                'last_page'    => $halls->lastPage(),
+                'per_page'     => $halls->perPage(),
+                'total'        => $halls->total(),
+            ],
+        ]);
+    }
+
+    private function cardPayload(User $user): array
+    {
+        $liveTrophies = DB::table('trophies')
+            ->where('user_id', $user->id)
+            ->whereNull('deleted_at')
+            ->count();
+
+        $pursuingNow = DB::table('pursuits')
+            ->join('trophies', 'trophies.id', '=', 'pursuits.trophy_id')
+            ->where('trophies.user_id', $user->id)
+            ->whereNull('trophies.deleted_at')
+            ->count();
+
+        return [
+            'username'     => $user->username,
+            'name'         => $user->name,
+            'accent_color' => $user->accent_color,
+            'verified_at'  => optional($user->verified_at)->toIso8601String(),
+            'is_verified'  => (bool) $user->verified_at,
+            'avatar'       => $user->avatar,
+            'live_trophies' => $liveTrophies,
+            'pursuing_now'  => $pursuingNow,
+        ];
+    }
+
     public function follow(string $username): JsonResponse
     {
         $target = User::where('username', $username)->firstOrFail();
