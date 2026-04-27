@@ -344,6 +344,18 @@ Route::prefix('admin')->middleware([JwtMiddleware::class, 'role:tr_admin|tr_supe
         ->name('admin.brands.demote');
     Route::get('/users/searchable', [App\Http\Controllers\Api\Admin\AdminBrandsController::class, 'searchablePlayers'])
         ->name('admin.users.searchable');
+
+    // Manage Roles
+    Route::get('/users/search-for-role', [App\Http\Controllers\Api\Admin\AdminRolesController::class, 'searchForRole'])
+        ->name('admin.users.search-for-role');
+    Route::post('/users/{username}/roles', [App\Http\Controllers\Api\Admin\AdminRolesController::class, 'assignRole'])
+        ->name('admin.users.roles.assign');
+    Route::delete('/users/{username}/roles/{role}', [App\Http\Controllers\Api\Admin\AdminRolesController::class, 'revokeRole'])
+        ->name('admin.users.roles.revoke');
+
+    // Audit Log
+    Route::get('/audit-log', [App\Http\Controllers\Api\Admin\AdminAuditLogController::class, 'index'])
+        ->name('admin.audit-log');
 });
 
 Route::post('sendDisableAuthMail', [ResetPasswordController::class, 'sendDisableAuthMail']);
