@@ -92,7 +92,24 @@
         <span class="nav-label">Achievements</span>
       </router-link>
 
-      <!-- Admin Panel (guarded by isAdmin — TR staff only) -->
+      <!-- Studio (visible for brand owners + TR staff) -->
+      <router-link v-if="isBrand || isStaff" to="/brand-dashboard" class="nav-item" :class="{ active_item: $route.path.startsWith('/brand-dashboard') }">
+        <span class="nav-icon">
+          <span class="nav-icon-svg">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="13" rx="1" fill="rgba(255,97,0,0.15)"/>
+              <path d="M6 9 L18 9" stroke="#c1f527" stroke-width="2"/>
+              <path d="M6 13 L14 13"/>
+              <path d="M9 20 L15 20"/>
+              <path d="M12 17 L12 20"/>
+            </svg>
+          </span>
+          <span class="nav-icon-pixel" :style="pixelStyle('raptor-trophy')"></span>
+        </span>
+        <span class="nav-label">Studio</span>
+      </router-link>
+
+      <!-- Admin (guarded by isAdmin — TR staff only) -->
       <router-link v-if="isAdmin" to="/admin" class="nav-item" :class="{ active_item: $route.path.startsWith('/admin') }">
         <span class="nav-icon">
           <span class="nav-icon-svg">
@@ -103,7 +120,7 @@
           </span>
           <span class="nav-icon-pixel" :style="pixelStyle('raptor-admin')"></span>
         </span>
-        <span class="nav-label">Admin Panel</span>
+        <span class="nav-label">Admin</span>
       </router-link>
     </nav>
 
@@ -162,6 +179,9 @@ export default {
         },
         isStaff() {
             return this.$store.getters.isStaff;
+        },
+        isBrand() {
+            return this.$store.getters.isBrand;
         },
     },
     methods: {
