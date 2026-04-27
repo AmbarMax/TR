@@ -17,6 +17,10 @@ import ResetTwoFactorAuth from "../pages/ResetTwoFactorAuth.vue";
 import Rewards from "../pages/Rewards.vue";
 import LinkDiscord from "../pages/LinkDiscord.vue";
 import Hall from "../pages/Hall/Hall.vue";
+import Admin from "../pages/Admin/Admin.vue";
+import ManageBrands from "../pages/Admin/ManageBrands.vue";
+import ManageRoles from "../pages/Admin/ManageRoles.vue";
+import AuditLog from "../pages/Admin/AuditLog.vue";
 
 const routes = [
     {
@@ -80,6 +84,17 @@ const routes = [
                 component: () => import('../pages/BrandDashboard/BrandDashboard.vue'),
                 name: 'brand-dashboard',
                 meta: { requiresAuth: true }
+            },
+            {
+                path: '/admin',
+                component: Admin,
+                meta: { requiresAdmin: true },
+                children: [
+                    { path: '', redirect: '/admin/brands' },
+                    { path: 'brands', component: ManageBrands, name: 'admin.brands', meta: { requiresAdmin: true } },
+                    { path: 'roles',  component: ManageRoles,  name: 'admin.roles',  meta: { requiresAdmin: true } },
+                    { path: 'audit',  component: AuditLog,     name: 'admin.audit',  meta: { requiresAdmin: true } },
+                ]
             }
         ]
     },

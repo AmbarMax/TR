@@ -40,8 +40,22 @@ router.beforeEach( (to, from, next) => {
         })
     }
 
+    if (to.meta?.requiresAdmin && !isAdminFromLocalStorage()) {
+        return next({ name: 'dashboard' });
+    }
+
     next();
 });
+
+function isAdminFromLocalStorage() {
+    try {
+        const user = JSON.parse(localStorage.getItem('user') || 'null');
+        const roles = user?.roles || [];
+        return roles.includes('tr_admin') || roles.includes('tr_superadmin');
+    } catch (e) {
+        return false;
+    }
+}
 
 function publicPages(name) {
     const pages = [
