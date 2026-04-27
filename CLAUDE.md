@@ -170,11 +170,9 @@ Items acumulados durante Brief 9N-B que se atienden en el cleanup posterior, jun
 
 2. **`HallController::activeItems` select muy angosto.** El query select solo trae `id, name, image, description, type, created_at`. El UI espera `receive` (XP) y un campo de pursuing/conquerors count. Las cards renderizan `"+0 XP"` y `"0 pursuing"` para todo. Ampliar el select o cambiar la response shape para incluir esos campos.
 
-3. **Validation rules en User model.** Los nuevos fillable `accent_color`, `is_featured`, `verified_at`, `tagline` se aceptan sin validar — strings arbitrarios pasan. Casts ya existen para `is_featured` (boolean) y `verified_at` (datetime), pero falta validation request: `accent_color` regex hex `/^#[0-9a-fA-F]{6}$/`, `tagline` `max:80`, `is_featured` boolean. Agregar al request del Step 25 (Manage Brands) o crear FormRequest dedicado.
+3. **`PlayerHallView.vue` depende del endpoint legacy `/api/virtual-hall/{username}`.** El nuevo `HallResource` (`/api/users/{username}`) no expone las collections ricas (`badges`, `trophies`, `achievements`) que el Player Hall necesita. Step 22 reusó el endpoint viejo `VirtualHallController::show` para esa data. Bloquea borrar `app/Http/Controllers/Api/User/VirtualHallController.php` y la ruta `/api/virtual-hall/{username}` en el cleanup. Opciones: (a) ampliar `HallResource` con esas collections vía `whenLoaded()`, (b) crear endpoint dedicado `/api/users/{username}/profile-data`. Decidir antes de borrar el legacy controller.
 
-4. **`PlayerHallView.vue` depende del endpoint legacy `/api/virtual-hall/{username}`.** El nuevo `HallResource` (`/api/users/{username}`) no expone las collections ricas (`badges`, `trophies`, `achievements`) que el Player Hall necesita. Step 22 reusó el endpoint viejo `VirtualHallController::show` para esa data. Bloquea borrar `app/Http/Controllers/Api/User/VirtualHallController.php` y la ruta `/api/virtual-hall/{username}` en el cleanup. Opciones: (a) ampliar `HallResource` con esas collections vía `whenLoaded()`, (b) crear endpoint dedicado `/api/users/{username}/profile-data`. Decidir antes de borrar el legacy controller.
-
-5. **Busy-loops sync contra localStorage en 6 archivos.** Mismo antipatrón que se fixeó en Step 18 del Brief 9N-B (componentes de moderación del feed) pero con propósito de identidad de user general (donations, notifications, follows), no role check.
+4. **Busy-loops sync contra localStorage en 6 archivos.** Mismo antipatrón que se fixeó en Step 18 del Brief 9N-B (componentes de moderación del feed) pero con propósito de identidad de user general (donations, notifications, follows), no role check.
 
    Archivos:
    - `resources/web/js/components/main-header.vue:127`
