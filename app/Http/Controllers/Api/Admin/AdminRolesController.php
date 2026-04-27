@@ -16,9 +16,11 @@ class AdminRolesController extends Controller
 
     public function searchForRole(Request $request): JsonResponse
     {
-        $q = trim((string) $request->query('q', ''));
+        $q    = trim((string) $request->query('q', ''));
+        $role = (string) $request->query('role', '');
 
         $query = User::query();
+
         if ($q !== '') {
             $query->where(function ($w) use ($q) {
                 $w->where('username', 'like', "%{$q}%")
@@ -27,7 +29,17 @@ class AdminRolesController extends Controller
             });
         }
 
-        $users = $query->orderBy('username')->limit(20)->get();
+        if ($role === 'staff') {
+            $query->role(self::ASSIGNABLE_ROLES);
+        } elseif (in_array($role, self::ASSIGNABLE_ROLES, true)) {
+            $query->role($role);
+        }
+
+        // Larger cap when filtering to staff so the Manage Roles table
+        // does not silently truncate the staff list.
+        $limit = $role ? 100 : 20;
+
+        $users = $query->orderBy('username')->limit($limit)->get();
 
         return response()->json([
             'data' => $users->map(fn (User $u) => $this->serialize($u))->values(),
