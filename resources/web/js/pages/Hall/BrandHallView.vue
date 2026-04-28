@@ -641,15 +641,15 @@ export default {
 .brand-hall .showcase-empty { padding: 40px 0; text-align: center; color: var(--text-muted); font-size: 12px; }
 
 /* Scroll cue */
-.brand-hall .scroll-cue {
+.brand-hall :deep(.scroll-cue) {
   position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
-  font-size: 10px; color: var(--text-dim);
+  font-size: 10px; color: var(--text-muted);
   letter-spacing: 0.3em; text-transform: uppercase;
   display: flex; flex-direction: column; align-items: center; gap: 10px;
   animation: brandHallBounce 2.5s ease-in-out infinite;
   z-index: 3;
 }
-.brand-hall .scroll-cue-line { width: 1px; height: 30px; background: linear-gradient(180deg, var(--primary), transparent); }
+.brand-hall :deep(.scroll-cue-line) { width: 1px; height: 30px; background: linear-gradient(180deg, var(--primary), transparent); }
 @keyframes brandHallBounce {
   0%, 100% { transform: translate(-50%, 0); }
   50% { transform: translate(-50%, 6px); }
