@@ -473,7 +473,7 @@ export default {
 }
 
 /* MAIN */
-.brand-hall .vh { position: relative; z-index: 1; padding-top: 64px; min-height: 100vh; }
+.brand-hall .vh { position: relative; z-index: 1; padding-top: 0; min-height: 100vh; }
 
 /* HERO */
 .brand-hall .hero { position: relative; min-height: calc(100vh - 64px); max-height: 900px; padding: 48px 56px 48px; display: flex; align-items: center; overflow: hidden; }
