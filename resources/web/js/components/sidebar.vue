@@ -51,10 +51,11 @@
         <span class="nav-icon">
           <span class="nav-icon-svg">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round">
-              <path d="M15 4 L22 7 L18 10 L15 7 Z" fill="rgba(255,97,0,0.15)"/>
-              <path d="M4 14 L18 14 L20 16 L16 18 L4 18 Z" fill="rgba(255,97,0,0.15)"/>
-              <path d="M8 18 L8 21 M14 18 L14 21"/>
-              <circle cx="17" cy="8" r="1.5" fill="#c1f527" stroke="none"/>
+              <path d="M6 8 Q6 5 12 5 Q18 5 18 8 L18 10 L6 10 Z" fill="rgba(255,97,0,0.15)"/>
+              <path d="M4 10 L20 10 L20 13 L18 15 L6 15 L4 13 Z" fill="rgba(255,97,0,0.15)"/>
+              <path d="M8 15 L8 19 L16 19 L16 15"/>
+              <path d="M8 19 L6 21 M16 19 L18 21"/>
+              <circle cx="15" cy="7" r="1" fill="#c1f527" stroke="none"/>
             </svg>
           </span>
           <span class="nav-icon-pixel" :style="pixelStyle('raptor-forge')"></span>
