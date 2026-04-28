@@ -326,6 +326,9 @@ export default {
   border: 1px solid rgba(42,44,46,0.8);
   box-shadow: 0 30px 80px rgba(0,0,0,0.6), inset 0 1px 0 rgba(254,237,223,0.03);
   overflow: hidden;
+  padding: 0;
+  border-radius: 0;
+  backdrop-filter: none;
 }
 
 /* ═══ LEFT SIDE ═══ */
@@ -337,7 +340,7 @@ export default {
     linear-gradient(135deg, rgba(255,97,0,0.04), transparent 50%),
     rgba(14,15,17,0.6);
   overflow: hidden;
-  min-height: 600px;
+  min-height: 480px;
   display: flex; flex-direction: column;
 }
 .auth-left-glow {
@@ -680,7 +683,7 @@ export default {
     max-width: 560px;
   }
   .auth-left {
-    min-height: 360px;
+    min-height: 300px;
     padding: 36px 28px;
     border-right: none;
     border-bottom: 1px solid rgba(42,44,46,0.6);

@@ -2442,6 +2442,7 @@ h3 {
 // TrophyRoom 2.0 — Auth Pages
 // ============================================
 
+/* LEGACY REMOVED — now scoped in Login.vue/Signup.vue
 .auth-logo-block {
   text-align: center;
   margin-bottom: 28px;
@@ -2474,6 +2475,7 @@ h3 {
   letter-spacing: 0.05em;
   margin: 0;
 }
+*/
 
 .auth-tagline {
   color: $text-dim;
@@ -2483,6 +2485,7 @@ h3 {
   margin-top: 6px;
 }
 
+/* LEGACY REMOVED — now scoped in Login.vue/Signup.vue
 .auth-card {
   background: rgba($surface, 0.85);
   backdrop-filter: blur(8px);
@@ -2490,6 +2493,7 @@ h3 {
   border-radius: 6px;
   padding: 28px 24px;
 }
+*/
 
 .auth-field {
   margin-bottom: 16px;
@@ -2731,9 +2735,11 @@ h3 {
 }
 
 @media (max-width: 480px) {
+  /* LEGACY REMOVED — now scoped in Login.vue/Signup.vue
   .auth-card {
     padding: 24px 16px;
   }
+  */
 
   .auth-social-buttons {
     flex-direction: column;
