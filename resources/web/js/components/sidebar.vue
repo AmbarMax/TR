@@ -8,7 +8,7 @@
         <img src="../../../web/images/web/img/tr-isologo.png" alt="TrophyRoom">
       </router-link>
       <button v-if="isMobile" class="sidebar-close" @click="closeSideBar" aria-label="Close menu">
-        <img src="../../../web/images/web/img/icons/close.svg" alt="Close">
+        <span class="bars"></span>
       </button>
     </div>
 
@@ -140,7 +140,7 @@
         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
       </a>
       <a href="https://discord.gg/3sGk8uGQBT" target="_blank" rel="noopener" class="social" aria-label="Discord">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4C2.9 4 2 4.9 2 6v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zM9.5 16c-1.4 0-2.5-1.1-2.5-2.5S8.1 11 9.5 11s2.5 1.1 2.5 2.5S10.9 16 9.5 16zm5 0c-1.4 0-2.5-1.1-2.5-2.5S13.1 11 14.5 11s2.5 1.1 2.5 2.5S15.9 16 14.5 16z"/></svg>
+        <svg width="16" height="16" viewBox="0 0 127.14 96.36" fill="currentColor"><path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/></svg>
       </a>
     </div>
   </aside>
@@ -277,18 +277,42 @@ export default {
   filter: drop-shadow(0 0 14px rgba(255, 97, 0, 0.4));
 }
 .sidebar-close {
-  position: absolute;
-  right: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  padding: 6px;
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--primary);
+  background: rgba(13, 13, 15, 0.85);
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  flex-shrink: 0;
 }
-.sidebar-close img {
+.sidebar-close:hover {
+  background: rgba(255, 97, 0, 0.12);
+}
+.sidebar-close .bars {
   width: 18px;
-  height: 18px;
+  height: 2px;
+  background: transparent;
+  position: relative;
+  display: block;
+}
+.sidebar-close .bars::before,
+.sidebar-close .bars::after {
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 2px;
+  background: var(--primary);
+  left: 0;
+  top: 0;
+}
+.sidebar-close .bars::before {
+  transform: rotate(45deg);
+}
+.sidebar-close .bars::after {
+  transform: rotate(-45deg);
 }
 
 /* Nav menu */
@@ -507,10 +531,18 @@ export default {
   }
 
   /* Center nav items (icon + label as a centered block) */
+  .sidebar_menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
   .sidebar_menu .nav-item {
     justify-content: center;
     padding: 18px 24px;
     gap: 14px;
+    width: auto;
+    min-width: 240px;
   }
 
   /* Active item indicator stays on the left as accent — adjust if it conflicts */
