@@ -2,14 +2,14 @@
   <div>
     <div v-if="sideBarStatus && isMobile" class="sidebar-backdrop" @click="closeSideBar"></div>
     <aside class="front-sidebar" v-if="sideBarStatus || !isMobile">
+    <button v-if="isMobile" class="sidebar-close" @click="closeSideBar" aria-label="Close menu">
+      <span class="bars"></span>
+    </button>
     <!-- Logo -->
     <div class="front-sidebar_logo">
       <router-link to="/trophy-room">
         <img src="../../../web/images/web/img/tr-isologo.png" alt="TrophyRoom">
       </router-link>
-      <button v-if="isMobile" class="sidebar-close" @click="closeSideBar" aria-label="Close menu">
-        <span class="bars"></span>
-      </button>
     </div>
 
     <!-- Nav -->
@@ -277,6 +277,10 @@ export default {
   filter: drop-shadow(0 0 14px rgba(255, 97, 0, 0.4));
 }
 .sidebar-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  z-index: 2;
   width: 40px;
   height: 40px;
   border: 2px solid var(--primary);
