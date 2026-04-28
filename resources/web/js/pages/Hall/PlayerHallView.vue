@@ -10,6 +10,9 @@
     <div class="bg-flicker"></div>
 
     <header class="public-chrome">
+      <button class="chrome-back" @click="$router.go(-1)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </button>
       <router-link to="/" class="chrome-brand">
         <svg class="chrome-logo" viewBox="0 0 100 100">
           <polygon points="50,5 93,30 93,75 50,95 7,75 7,30" fill="#000003" stroke="#ff6100" stroke-width="1.5" opacity="0.8"/>
@@ -336,6 +339,24 @@ export default {
   transition: all 0.15s;
 }
 .player-hall .chrome-cta:hover { background: var(--primary); color: var(--bg); box-shadow: 0 0 18px rgba(255,97,0,0.4); }
+.chrome-back {
+  background: rgba(14, 15, 17, 0.6);
+  border: 1px solid rgba(255, 97, 0, 0.2);
+  color: var(--text-muted);
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.chrome-back:hover {
+  color: var(--primary);
+  border-color: var(--primary);
+  background: rgba(255, 97, 0, 0.08);
+}
 
 /* MAIN */
 .player-hall .vh { position: relative; z-index: 1; padding-top: 64px; min-height: 100vh; }
