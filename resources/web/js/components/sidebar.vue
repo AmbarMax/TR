@@ -106,7 +106,7 @@
               <path d="M12 17 L12 20"/>
             </svg>
           </span>
-          <span class="nav-icon-pixel" :style="pixelStyle('raptor-trophy')"></span>
+          <span class="nav-icon-pixel" :style="pixelStyle('raptor-admin')"></span>
         </span>
         <span class="nav-label">Studio</span>
       </router-link>
