@@ -267,7 +267,7 @@ export default defineComponent({
 /* Content area */
 .content {
   padding: 48px;
-  max-width: 1100px;
+  max-width: 1280px;
 }
 
 /* Terminal Strip */

@@ -131,7 +131,9 @@ export default defineComponent({
 <style lang="scss" scoped>
 .feed-page {
   min-width: 0;
-  max-width: 100%;
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* Page Hero */

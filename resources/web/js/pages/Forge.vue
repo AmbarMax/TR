@@ -649,7 +649,9 @@ export default {
 <style lang="scss" scoped>
 .forge-page {
   min-width: 0;
-  max-width: 100%;
+  max-width: 1600px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* ========== HERO ========== */

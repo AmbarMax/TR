@@ -171,7 +171,7 @@ export default {
 /* CONTENT */
 .admin-panel .ap-content {
   padding: 40px 48px 80px;
-  max-width: 1400px;
+  max-width: 1600px;
   flex: 1;
 }
 

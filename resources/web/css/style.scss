@@ -16,6 +16,20 @@
   --display: 'VT323', monospace;
 }
 
+/* ========== LAYOUT WIDTH MODES ========== */
+.tr-layout-standard {
+  width: 100%;
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.tr-layout-wide {
+  width: 100%;
+  max-width: 1600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 /* ========== BASE RESET & TYPOGRAPHY ========== */
 *, *::before, *::after { box-sizing: border-box; }
 html, body { height: 100%; }
