@@ -1,5 +1,7 @@
 <template>
-  <aside class="front-sidebar" v-if="sideBarStatus || !isMobile">
+  <div>
+    <div v-if="sideBarStatus && isMobile" class="sidebar-backdrop" @click="closeSideBar"></div>
+    <aside class="front-sidebar" v-if="sideBarStatus || !isMobile">
     <!-- Logo -->
     <div class="front-sidebar_logo">
       <router-link to="/trophy-room">
@@ -142,6 +144,7 @@
       </a>
     </div>
   </aside>
+  </div>
 </template>
 
 <script>
@@ -172,7 +175,7 @@ export default {
             return store.state.activeSideBar;
         },
         isMobile() {
-            return this.windowWidth <= 968;
+            return this.windowWidth <= 1024;
         },
         isAdmin() {
             return this.$store.getters.isAdmin;
@@ -483,7 +486,7 @@ export default {
 }
 
 /* ========== MOBILE ========== */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .front-sidebar {
     width: 100%;
     min-width: 0;
@@ -491,6 +494,16 @@ export default {
     top: 0;
     left: 0;
     z-index: 100;
+    overflow-y: auto;
+  }
+
+  /* Tap outside (handled via backdrop element added below) */
+  .sidebar-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(2px);
+    z-index: 99;
   }
 }
 </style>

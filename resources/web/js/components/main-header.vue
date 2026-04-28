@@ -1,6 +1,11 @@
 <template>
   <header class="main-header">
     <div class="header-left">
+      <button class="mobile-burger" @click="openSideBar" aria-label="Open menu">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M3 6h18M3 12h18M3 18h18"/>
+        </svg>
+      </button>
       <div class="breadcrumb">
         <span>TrophyRoom</span>
         <span class="breadcrumb-dot"></span>
@@ -96,6 +101,9 @@ export default {
     onBellClick() {
       this.$router.push('/dashboard');
       this.$emit('bell-click');
+    },
+    openSideBar() {
+      this.$store.state.activeSideBar = true;
     },
     getUserBalances() {
       api.get('/api/profile').then(resp => {
@@ -318,15 +326,28 @@ export default {
   letter-spacing: 0.05em;
 }
 
-@media (max-width: 768px) {
-  .main-header { left: 0; }
+.mobile-burger {
+  display: none;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px;
+  cursor: pointer;
+  color: var(--text);
 }
+.mobile-burger:hover { background: rgba(255, 255, 255, 0.05); }
 
-@media (max-width: 768px) {
-  .main-header { padding: 12px 20px; gap: 10px; flex-wrap: wrap; }
+@media (max-width: 1024px) {
+  .main-header { left: 0; padding: 12px 20px; gap: 10px; flex-wrap: nowrap; }
+  .mobile-burger { display: flex; align-items: center; justify-content: center; }
   .wallet-rail { gap: 6px; }
   .coin { padding: 6px 10px; }
   .coin-val { font-size: 18px; }
   .avatar-name { display: none; }
+  .breadcrumb { font-size: 11px; }
+}
+
+@media (max-width: 540px) {
+  .breadcrumb { display: none; }
 }
 </style>
