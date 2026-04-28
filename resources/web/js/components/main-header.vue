@@ -1,11 +1,6 @@
 <template>
   <header class="main-header">
     <div class="header-left">
-      <button class="mobile-burger" @click="openSideBar" aria-label="Open menu">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-          <path d="M3 6h18M3 12h18M3 18h18"/>
-        </svg>
-      </button>
       <div class="breadcrumb">
         <span>TrophyRoom</span>
         <span class="breadcrumb-dot"></span>
@@ -42,6 +37,9 @@
         <span class="avatar-img">{{ avatarInitial }}</span>
         <span class="avatar-name">{{ username }}</span>
       </router-link>
+      <button class="mobile-burger" @click="openSideBar" aria-label="Open menu">
+        <span class="bars"></span>
+      </button>
     </div>
   </header>
 </template>
@@ -328,14 +326,37 @@ export default {
 
 .mobile-burger {
   display: none;
-  background: transparent;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 6px;
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--primary);
+  background: rgba(13, 13, 15, 0.85);
   cursor: pointer;
-  color: var(--text);
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  flex-shrink: 0;
 }
-.mobile-burger:hover { background: rgba(255, 255, 255, 0.05); }
+.mobile-burger:hover {
+  background: rgba(255, 97, 0, 0.12);
+}
+.mobile-burger .bars {
+  width: 18px;
+  height: 2px;
+  background: var(--primary);
+  position: relative;
+  display: block;
+}
+.mobile-burger .bars::before,
+.mobile-burger .bars::after {
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 2px;
+  background: var(--primary);
+  left: 0;
+}
+.mobile-burger .bars::before { top: -6px; }
+.mobile-burger .bars::after { top: 6px; }
 
 @media (max-width: 1024px) {
   .main-header { left: 0; padding: 12px 20px; gap: 10px; flex-wrap: nowrap; }

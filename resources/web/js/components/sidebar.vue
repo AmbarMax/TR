@@ -505,5 +505,27 @@ export default {
     backdrop-filter: blur(2px);
     z-index: 99;
   }
+
+  /* Center nav items (icon + label as a centered block) */
+  .sidebar_menu .nav-item {
+    justify-content: center;
+    padding: 18px 24px;
+    gap: 14px;
+  }
+
+  /* Active item indicator stays on the left as accent — adjust if it conflicts */
+  .nav-item.active_item::before {
+    left: 0;
+  }
+
+  /* Logout also centered */
+  .sidebar-logout {
+    justify-content: center;
+  }
+
+  /* Bigger touch targets and slightly larger label on mobile */
+  .nav-label {
+    font-size: 14px;
+  }
 }
 </style>
