@@ -22,6 +22,7 @@ export default {}
 
 <style lang="scss" scoped>
 .auth-layout {
+  width: 100%;
   min-height: 100vh;
   position: relative;
   background: var(--bg);
