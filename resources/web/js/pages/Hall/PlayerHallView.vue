@@ -368,8 +368,8 @@ export default {
 
 /* HERO */
 .player-hall .hero { position: relative; min-height: calc(100vh - 64px); max-height: 900px; padding: 48px 56px 48px; display: flex; align-items: center; overflow: hidden; }
-.player-hall :deep(.hero-banner) { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
-.player-hall :deep(.hero-banner-img) {
+.player-hall .hero-banner { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
+.player-hall .hero-banner-img {
   position: absolute; inset: 0;
   background:
     linear-gradient(180deg, rgba(0,0,3,0.3) 0%, rgba(0,0,3,0.85) 60%, rgba(0,0,3,1) 100%),
@@ -377,21 +377,21 @@ export default {
     radial-gradient(ellipse 800px 600px at 70% 40%, #4a1468 0%, #1e0824 40%, #000003 80%);
   filter: saturate(1.1) contrast(1.05);
 }
-.player-hall :deep(.hero-banner-asset-slot) {
+.player-hall .hero-banner-asset-slot {
   position: absolute; top: 0; right: 0; bottom: 0; width: 65%;
   opacity: 0.4;
   mask-image: linear-gradient(270deg, black 20%, transparent 80%);
   -webkit-mask-image: linear-gradient(270deg, black 20%, transparent 80%);
 }
-.player-hall :deep(.hero-content) { position: relative; z-index: 2; display: grid; grid-template-columns: 1.3fr 1fr; gap: 64px; width: 100%; max-width: 1400px; margin: 0 auto; align-items: center; }
-.player-hall :deep(.hero-left) { min-width: 0; }
-.player-hall :deep(.hero-tag) { display: inline-flex; align-items: center; gap: 10px; font-size: 10px; color: var(--primary); letter-spacing: 0.32em; text-transform: uppercase; margin-bottom: 24px; }
-.player-hall :deep(.hero-tag::before) { content: ''; width: 32px; height: 1px; background: var(--primary); box-shadow: 0 0 6px var(--primary); }
-.player-hall :deep(.identity) { display: flex; align-items: center; gap: 24px; margin-bottom: 28px; }
+.player-hall .hero-content { position: relative; z-index: 2; display: grid; grid-template-columns: 1.3fr 1fr; gap: 64px; width: 100%; max-width: 1400px; margin: 0 auto; align-items: center; }
+.player-hall .hero-left { min-width: 0; }
+.player-hall .hero-tag { display: inline-flex; align-items: center; gap: 10px; font-size: 10px; color: var(--primary); letter-spacing: 0.32em; text-transform: uppercase; margin-bottom: 24px; }
+.player-hall .hero-tag::before { content: ''; width: 32px; height: 1px; background: var(--primary); box-shadow: 0 0 6px var(--primary); }
+.player-hall .identity { display: flex; align-items: center; gap: 24px; margin-bottom: 28px; }
 
 /* Player avatar — circular */
-.player-hall :deep(.avatar-ring) { position: relative; width: 120px; height: 120px; flex-shrink: 0; }
-.player-hall :deep(.avatar-ring::before) {
+.player-hall .avatar-ring { position: relative; width: 120px; height: 120px; flex-shrink: 0; }
+.player-hall .avatar-ring::before {
   content: ''; position: absolute; inset: -4px;
   border: 2px solid var(--primary);
   border-radius: 50%;
@@ -402,7 +402,7 @@ export default {
   0%, 100% { box-shadow: 0 0 20px var(--primary-glow), inset 0 0 20px rgba(255,97,0,0.2); }
   50% { box-shadow: 0 0 34px var(--primary-glow), inset 0 0 24px rgba(255,97,0,0.35); }
 }
-.player-hall :deep(.avatar-img) {
+.player-hall .avatar-img {
   position: relative; width: 100%; height: 100%;
   border-radius: 50%;
   background: linear-gradient(135deg, #f5c547 0%, #d98c3a 60%, #8b5a2b 100%);
@@ -412,31 +412,31 @@ export default {
   color: var(--bg);
   overflow: hidden;
 }
-.player-hall :deep(.avatar-img.avatar-photo) { background: transparent; object-fit: cover; }
+.player-hall .avatar-img.avatar-photo { background: transparent; object-fit: cover; }
 
-.player-hall :deep(.identity-meta) { flex: 1; min-width: 0; }
-.player-hall :deep(.hero-name) { font-family: var(--display); font-size: 92px; line-height: 0.9; letter-spacing: 0.015em; color: var(--text); margin-bottom: 6px; text-shadow: 0 0 36px rgba(255,97,0,0.25); }
-.player-hall :deep(.hero-handle) { display: flex; align-items: center; gap: 12px; font-size: 12px; color: var(--text-muted); letter-spacing: 0.08em; margin-bottom: 14px; flex-wrap: wrap; }
-.player-hall :deep(.hero-handle .platforms) { display: flex; gap: 8px; }
-.player-hall :deep(.hero-handle .plat-icon) { color: var(--text); opacity: 0.8; transition: opacity 0.15s; display: inline-flex; }
-.player-hall :deep(.hero-handle .plat-icon:hover) { opacity: 1; }
-.player-hall :deep(.hero-handle-sep) { opacity: 0.4; }
-.player-hall :deep(.hero-tagline) { font-size: 15px; color: var(--text); line-height: 1.6; max-width: 520px; font-style: italic; letter-spacing: 0.01em; }
-.player-hall :deep(.hero-tagline::before) { content: '"'; color: var(--primary); margin-right: 4px; }
-.player-hall :deep(.hero-tagline::after) { content: '"'; color: var(--primary); margin-left: 4px; }
+.player-hall .identity-meta { flex: 1; min-width: 0; }
+.player-hall .hero-name { font-family: var(--display); font-size: 92px; line-height: 0.9; letter-spacing: 0.015em; color: var(--text); margin-bottom: 6px; text-shadow: 0 0 36px rgba(255,97,0,0.25); }
+.player-hall .hero-handle { display: flex; align-items: center; gap: 12px; font-size: 12px; color: var(--text-muted); letter-spacing: 0.08em; margin-bottom: 14px; flex-wrap: wrap; }
+.player-hall .hero-handle .platforms { display: flex; gap: 8px; }
+.player-hall .hero-handle .plat-icon { color: var(--text); opacity: 0.8; transition: opacity 0.15s; display: inline-flex; }
+.player-hall .hero-handle .plat-icon:hover { opacity: 1; }
+.player-hall .hero-handle-sep { opacity: 0.4; }
+.player-hall .hero-tagline { font-size: 15px; color: var(--text); line-height: 1.6; max-width: 520px; font-style: italic; letter-spacing: 0.01em; }
+.player-hall .hero-tagline::before { content: '"'; color: var(--primary); margin-right: 4px; }
+.player-hall .hero-tagline::after { content: '"'; color: var(--primary); margin-left: 4px; }
 
 /* Stats bar */
-.player-hall :deep(.hero-stats) {
+.player-hall .hero-stats {
   display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px;
   background: rgba(42,44,46,0.5);
   border: 1px solid rgba(255,97,0,0.2);
   margin-top: 36px; max-width: 680px;
 }
-.player-hall :deep(.stat-cell) { padding: 18px 16px; background: rgba(14,15,17,0.85); text-align: left; position: relative; }
-.player-hall :deep(.stat-cell.highlight) { background: rgba(255,97,0,0.06); }
-.player-hall :deep(.stat-cell-num) { font-family: var(--display); font-size: 42px; line-height: 0.95; color: var(--text); letter-spacing: 0.02em; }
-.player-hall :deep(.stat-cell.highlight .stat-cell-num) { color: var(--primary); text-shadow: 0 0 16px var(--primary-glow); }
-.player-hall :deep(.stat-cell-lbl) { font-size: 9px; color: var(--text-dim); letter-spacing: 0.22em; text-transform: uppercase; margin-top: 4px; }
+.player-hall .stat-cell { padding: 18px 16px; background: rgba(14,15,17,0.85); text-align: left; position: relative; }
+.player-hall .stat-cell.highlight { background: rgba(255,97,0,0.06); }
+.player-hall .stat-cell-num { font-family: var(--display); font-size: 42px; line-height: 0.95; color: var(--text); letter-spacing: 0.02em; }
+.player-hall .stat-cell.highlight .stat-cell-num { color: var(--primary); text-shadow: 0 0 16px var(--primary-glow); }
+.player-hall .stat-cell-lbl { font-size: 9px; color: var(--text-dim); letter-spacing: 0.22em; text-transform: uppercase; margin-top: 4px; }
 
 /* Showcase card */
 .player-hall .showcase-card {
@@ -486,15 +486,15 @@ export default {
 .player-hall .showcase-empty { padding: 40px 0; text-align: center; color: var(--text-muted); font-size: 12px; }
 
 /* Scroll cue */
-.player-hall :deep(.scroll-cue) {
+.player-hall .scroll-cue {
   position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
-  font-size: 10px; color: var(--text-muted);
+  font-size: 10px; color: var(--text-dim);
   letter-spacing: 0.3em; text-transform: uppercase;
   display: flex; flex-direction: column; align-items: center; gap: 10px;
   animation: playerHallBounce 2.5s ease-in-out infinite;
   z-index: 3;
 }
-.player-hall :deep(.scroll-cue-line) { width: 1px; height: 30px; background: linear-gradient(180deg, var(--primary), transparent); }
+.player-hall .scroll-cue-line { width: 1px; height: 30px; background: linear-gradient(180deg, var(--primary), transparent); }
 @keyframes playerHallBounce {
   0%, 100% { transform: translate(-50%, 0); }
   50% { transform: translate(-50%, 6px); }
@@ -626,25 +626,25 @@ export default {
 /* RESPONSIVE */
 @media (max-width: 1100px) {
   .player-hall .hero { padding: 36px 32px; min-height: auto; max-height: none; }
-  .player-hall :deep(.hero-content) { grid-template-columns: 1fr; gap: 40px; }
+  .player-hall .hero-content { grid-template-columns: 1fr; gap: 40px; }
   .player-hall .showcase-card { max-width: 480px; }
   .player-hall .trophies-featured { grid-template-columns: repeat(2, 1fr); }
   .player-hall .platforms-section { grid-template-columns: 1fr; }
   .player-hall .narrative { padding: 56px 32px 80px; }
   .player-hall .section-title { font-size: 42px; }
-  .player-hall :deep(.hero-stats) { max-width: 100%; }
+  .player-hall .hero-stats { max-width: 100%; }
 }
 @media (max-width: 700px) {
   .player-hall .public-chrome { padding: 12px 16px; }
   .player-hall .chrome-share { display: none; }
   .player-hall .chrome-name { font-size: 18px; }
   .player-hall .hero { padding: 28px 16px 48px; }
-  .player-hall :deep(.identity) { flex-direction: column; align-items: flex-start; gap: 16px; }
-  .player-hall :deep(.avatar-ring) { width: 88px; height: 88px; }
-  .player-hall :deep(.avatar-img) { font-size: 38px; }
-  .player-hall :deep(.hero-name) { font-size: 58px; }
-  .player-hall :deep(.hero-stats) { grid-template-columns: repeat(2, 1fr); }
-  .player-hall :deep(.stat-cell-num) { font-size: 32px; }
+  .player-hall .identity { flex-direction: column; align-items: flex-start; gap: 16px; }
+  .player-hall .avatar-ring { width: 88px; height: 88px; }
+  .player-hall .avatar-img { font-size: 38px; }
+  .player-hall .hero-name { font-size: 58px; }
+  .player-hall .hero-stats { grid-template-columns: repeat(2, 1fr); }
+  .player-hall .stat-cell-num { font-size: 32px; }
   .player-hall .showcase-card { padding: 22px; }
   .player-hall .narrative { padding: 40px 16px 60px; }
   .player-hall .section { margin-bottom: 60px; }
@@ -658,6 +658,6 @@ export default {
   .player-hall .vh-footer-actions { width: 100%; flex-direction: column; }
   .player-hall .footer-btn { justify-content: center; width: 100%; }
   .player-hall .terminal-strip { padding: 16px; flex-direction: column; gap: 8px; text-align: left; }
-  .player-hall :deep(.scroll-cue) { display: none; }
+  .player-hall .scroll-cue { display: none; }
 }
 </style>
