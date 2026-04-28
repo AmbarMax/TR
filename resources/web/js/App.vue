@@ -22,6 +22,7 @@ export default { name: 'App' };
 
 <style lang="scss" scoped>
 .app-root {
+  width: 100%;
   position: relative;
   min-height: 100vh;
 }
