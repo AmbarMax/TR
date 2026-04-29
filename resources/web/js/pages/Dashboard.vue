@@ -7,9 +7,9 @@
       <div class="dash-hero-content">
         <!-- LEFT: copy + stats + CTAs -->
         <div class="dash-hero-left">
-          <div class="hero-tag">System online · Player profile</div>
+          <div class="hero-tag">System online · {{ profileLabel }}</div>
           <h1 class="hero-name">
-            Welcome back,<br>
+            {{ welcomeText }},<br>
             <span class="hero-name-accent">{{ username }}</span>
           </h1>
           <p class="hero-tagline">{{ tagline }}</p>
@@ -320,6 +320,17 @@ export default {
   computed: {
     username() {
       return this.$store?.state?.userUsername || 'User';
+    },
+    profileLabel() {
+      return this.$store.getters.isBrand ? 'Brand profile' : 'Player profile';
+    },
+    welcomeText() {
+      const hasReturned = localStorage.getItem('tr_has_returned');
+      if (!hasReturned) {
+        localStorage.setItem('tr_has_returned', '1');
+        return 'Welcome';
+      }
+      return 'Welcome back';
     },
     tagline() {
       const badges = this.userBadges.length;
