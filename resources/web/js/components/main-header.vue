@@ -34,7 +34,8 @@
       </button>
 
       <router-link :to="{ path: '/profile' }" class="avatar-pill">
-        <span class="avatar-img">{{ avatarInitial }}</span>
+        <img v-if="hasCustomAvatar" :src="avatarUrl" :alt="username" class="avatar-img avatar-photo" />
+        <span v-else class="avatar-img">{{ avatarInitial }}</span>
         <span class="avatar-name">{{ username }}</span>
       </router-link>
       <button class="mobile-burger" @click="openSideBar" aria-label="Open menu">
@@ -70,6 +71,13 @@ export default {
     },
     avatarInitial() {
       return (store.state.userUsername || 'U').charAt(0).toUpperCase();
+    },
+    hasCustomAvatar() {
+      const a = store.state.userAvatar;
+      return !!a && !a.includes("default-profile-img");
+    },
+    avatarUrl() {
+      return store.state.userAvatar;
     },
     hasNotifications() {
       return !!store.state.unread_notifications_count;
@@ -317,6 +325,11 @@ export default {
   color: var(--bg);
   font-weight: bold;
   flex-shrink: 0;
+}
+.avatar-img.avatar-photo {
+  background: transparent;
+  object-fit: cover;
+  padding: 0;
 }
 .avatar-name {
   font-size: 12px;
