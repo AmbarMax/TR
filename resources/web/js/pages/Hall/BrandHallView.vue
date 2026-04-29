@@ -340,20 +340,6 @@ export default {
    prefixed so styles do not leak to other pages. Share Tech Mono and
    VT323 are already preloaded by the root Blade layout. */
 .brand-hall {
-  --bg: #000003;
-  --surface: #0e0f11;
-  --surface-2: #1a1c1f;
-  --surface-3: #252729;
-  --primary: #ff6100;
-  --primary-glow: rgba(255, 97, 0, 0.45);
-  --accent: #c1f527;
-  --accent-glow: rgba(193, 245, 39, 0.35);
-  --text: #feeddf;
-  --text-muted: #9a9590;
-  --text-dim: #5a5550;
-  --border: #2a2c2e;
-  --mono: 'Share Tech Mono', monospace;
-  --display: 'VT323', monospace;
   font-family: var(--mono);
   font-size: 14px;
   line-height: 1.55;
