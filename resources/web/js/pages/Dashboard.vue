@@ -1122,14 +1122,14 @@ export default {
 }
 .platform-cell:hover { border-color: rgba(255, 97, 0, 0.3); }
 .platform-logo {
-  width: 36px;
-  height: 36px;
+  width: 56px;
+  height: 56px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--text-muted);
 }
-.platform-logo svg { width: 28px; height: 28px; }
+.platform-logo svg { width: 40px; height: 40px; }
 .platform-cell--synced .platform-logo { color: var(--primary); }
 .platform-cell--off .platform-logo { color: var(--text-dim); }
 
