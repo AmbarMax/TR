@@ -406,7 +406,7 @@ export default {
 .brand-hall .public-chrome {
   position: fixed; top: 0; left: 0; right: 0; z-index: 50;
   padding: 16px 32px;
-  background: rgba(0,0,3,0.7);
+  background: rgba(0,0,3,0.45);
   backdrop-filter: blur(12px) saturate(1.3);
   -webkit-backdrop-filter: blur(12px) saturate(1.3);
   border-bottom: 1px solid rgba(255,97,0,0.12);
@@ -462,8 +462,8 @@ export default {
 .brand-hall .vh { position: relative; z-index: 1; padding-top: 0; min-height: 100vh; }
 
 /* HERO */
-.brand-hall .hero { position: relative; min-height: calc(100vh - 64px); max-height: 900px; padding: 48px 56px 48px; display: flex; align-items: center; overflow: hidden; }
-.brand-hall .hero-banner { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
+.brand-hall .hero { position: relative; min-height: 100vh; max-height: 900px; padding: 48px 56px 48px; display: flex; align-items: center; overflow: hidden; }
+.brand-hall .hero-banner { position: absolute; top: -80px; left: 0; right: 0; bottom: 0; z-index: 0; overflow: hidden; }
 .brand-hall .hero-banner-img {
   position: absolute; inset: 0;
   background:
