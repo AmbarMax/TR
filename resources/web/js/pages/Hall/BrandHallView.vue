@@ -629,7 +629,7 @@ export default {
 /* Scroll cue */
 .brand-hall .scroll-cue {
   position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
-  font-size: 10px; color: var(--text-dim);
+  font-size: 10px; color: var(--primary);
   letter-spacing: 0.3em; text-transform: uppercase;
   display: flex; flex-direction: column; align-items: center; gap: 10px;
   animation: brandHallBounce 2.5s ease-in-out infinite;
