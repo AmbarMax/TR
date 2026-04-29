@@ -621,6 +621,9 @@ export default {
   .player-hall .section-title { font-size: 42px; }
   .player-hall .hero-stats { max-width: 100%; }
 }
+@media (max-width: 1024px) {
+  .hall-back { left: auto; right: 16px; }
+}
 @media (max-width: 700px) {
   .player-hall .public-chrome { padding: 12px 16px; }
   .player-hall .chrome-share { display: none; }
@@ -646,6 +649,5 @@ export default {
   .player-hall .footer-btn { justify-content: center; width: 100%; }
   .player-hall .terminal-strip { padding: 16px; flex-direction: column; gap: 8px; text-align: left; }
   .player-hall .scroll-cue { display: none; }
-  .hall-back { left: auto; right: 16px; }
 }
 </style>

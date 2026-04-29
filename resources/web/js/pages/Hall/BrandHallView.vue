@@ -814,6 +814,9 @@ export default {
   .brand-hall .btn-share { align-self: auto; }
   .brand-hall .identity { flex-wrap: wrap; }
 }
+@media (max-width: 1024px) {
+  .hall-back { left: auto; right: 16px; }
+}
 @media (max-width: 700px) {
   .brand-hall .public-chrome { padding: 12px 16px; }
   .brand-hall .chrome-share { display: none; }
@@ -835,7 +838,6 @@ export default {
   .brand-hall .footer-btn { justify-content: center; width: 100%; }
   .brand-hall .terminal-strip { padding: 16px; flex-direction: column; gap: 8px; text-align: left; }
   .brand-hall .scroll-cue { display: none; }
-  .hall-back { left: auto; right: 16px; }
 }
 @media (max-width: 480px) {
   .brand-hall .active-grid { grid-template-columns: 1fr; }
