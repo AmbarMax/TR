@@ -358,7 +358,7 @@ export default {
 .player-hall .hero-banner-img {
   position: absolute; inset: 0;
   background:
-    linear-gradient(180deg, rgba(0,0,3,0.3) 0%, rgba(0,0,3,0.85) 60%, rgba(0,0,3,1) 100%),
+    linear-gradient(180deg, rgba(0,0,3,0) 0%, rgba(0,0,3,0) 40%, rgba(0,0,3,0.7) 80%, rgba(0,0,3,1) 100%),
     linear-gradient(90deg, rgba(0,0,3,0.5) 0%, rgba(0,0,3,0) 50%, rgba(0,0,3,0.3) 100%),
     radial-gradient(ellipse 800px 600px at 70% 40%, #4a1468 0%, #1e0824 40%, #000003 80%);
   filter: saturate(1.1) contrast(1.05);
