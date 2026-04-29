@@ -231,6 +231,7 @@ export default {
    prefixed so styles do not leak to other pages. Share Tech Mono and
    VT323 are already preloaded by the root Blade layout. */
 .player-hall {
+  margin-top: -90px;
   font-family: var(--mono);
   font-size: 14px;
   line-height: 1.55;
