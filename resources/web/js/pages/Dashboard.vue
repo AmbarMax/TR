@@ -273,6 +273,19 @@
 <script>
 import trexHero from '../../../web/images/web/img/mascot/trex-voxel-hero.png';
 import api from '../api/api.js';
+import { PLATFORM_ICONS } from '../constants/platform-icons.js';
+
+// Dashboard's platformsConfig is shaped { key, name, svg } (a list,
+// not a keyed map). Build it from the shared PLATFORM_ICONS plus a
+// local GitHub entry. The .platform-logo wrapper sizes child SVGs to
+// 28px via CSS so the constants' default 14px doesn't shrink the cells.
+const DASHBOARD_PLATFORMS_CONFIG = [
+  { key: 'discord', name: PLATFORM_ICONS.discord.name, svg: PLATFORM_ICONS.discord.icon },
+  { key: 'steam',   name: PLATFORM_ICONS.steam.name,   svg: PLATFORM_ICONS.steam.icon },
+  { key: 'github',  name: 'GitHub', svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.9 1.2 1.9 1.2 1.1 1.9 2.9 1.3 3.6 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.2-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>' },
+  { key: 'riot',    name: PLATFORM_ICONS.riot.name,    svg: PLATFORM_ICONS.riot.icon },
+  { key: 'strava',  name: PLATFORM_ICONS.strava.name,  svg: PLATFORM_ICONS.strava.icon },
+];
 
 export default {
   name: 'Dashboard',
@@ -299,13 +312,7 @@ export default {
       ],
 
       // Platforms — placeholder config; sync counts derived from userBadges.integration
-      platformsConfig: [
-        { key: 'discord', name: 'Discord', svg: '<svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4C2.9 4 2 4.9 2 6v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zM9.5 16c-1.4 0-2.5-1.1-2.5-2.5S8.1 11 9.5 11s2.5 1.1 2.5 2.5S10.9 16 9.5 16zm5 0c-1.4 0-2.5-1.1-2.5-2.5S13.1 11 14.5 11s2.5 1.1 2.5 2.5S15.9 16 14.5 16z"/></svg>' },
-        { key: 'steam', name: 'Steam', svg: '<svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 .1 5 0 11.3l6.4 2.6c.5-.4 1.2-.6 1.8-.6h.2l2.8-4.1v-.1c0-2.5 2-4.5 4.5-4.5S20.3 6.6 20.3 9.1 18.3 13.6 15.8 13.6h-.1l-4.1 2.9v.2c0 1.9-1.5 3.4-3.4 3.4-1.6 0-3-1.2-3.3-2.8L.4 15.4C1.8 20.4 6.5 24 12 24c6.6 0 12-5.4 12-12S18.6 0 12 0z"/></svg>' },
-        { key: 'github', name: 'GitHub', svg: '<svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.9 1.2 1.9 1.2 1.1 1.9 2.9 1.3 3.6 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.2-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>' },
-        { key: 'riot', name: 'Riot Games', svg: '<svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm0 22C6.48 22 2 17.52 2 12S6.48 2 12 2s10 4.48 10 10-4.48 10-10 10zm-1-16v4H7v2h4v4h2v-4h4v-2h-4V6h-2z"/></svg>' },
-        { key: 'strava', name: 'Strava', svg: '<svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M15.4 17.9l-2.1-4.1-3.1 6.1c-.3.6-.9 1.1-1.6 1.1H4.5c-.35 0-.7-.1-1-.3-.6-.3-.9-.9-.9-1.5 0-.25.05-.5.2-.75L11.6.7C11.85.05 12.5-.4 13.2-.4c.7 0 1.3.45 1.6 1.1l6.8 13.75c.1.25.2.5.2.75 0 .6-.35 1.2-.9 1.5-.3.2-.65.3-1 .3l-4.5-.1z"/></svg>' }
-      ],
+      platformsConfig: DASHBOARD_PLATFORMS_CONFIG,
 
       // Session tracking
       sessionStart: Date.now(),
@@ -1122,6 +1129,7 @@ export default {
   justify-content: center;
   color: var(--text-muted);
 }
+.platform-logo svg { width: 28px; height: 28px; }
 .platform-cell--synced .platform-logo { color: var(--primary); }
 .platform-cell--off .platform-logo { color: var(--text-dim); }
 

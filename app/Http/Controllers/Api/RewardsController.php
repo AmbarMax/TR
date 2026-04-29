@@ -15,8 +15,18 @@ class RewardsController extends Controller
 
     public function battlePass(): JsonResponse
     {
-        $data = $this->rewardsService->getBattlePass(Auth::user());
-        return response()->json($data);
+        try {
+            $data = $this->rewardsService->getBattlePass(Auth::user());
+            return response()->json($data);
+        } catch (\Throwable $e) {
+            // Battle Pass not available for this user — return empty array
+            // so the frontend renders an empty state instead of a 500.
+            \Illuminate\Support\Facades\Log::info('BattlePass unavailable', [
+                'user_id' => Auth::id(),
+                'error'   => $e->getMessage(),
+            ]);
+            return response()->json([]);
+        }
     }
 
     public function buyLevel(Request $request): JsonResponse

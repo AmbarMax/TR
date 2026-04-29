@@ -18,7 +18,13 @@
       <div class="settings-banner" @click="openInputBackground">
         <img v-if="background !== null" :src="getBackground()" alt="background" class="settings-banner-img" />
         <div v-else class="settings-banner-placeholder">
-          <span>Click to change background</span>
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+            <circle cx="9" cy="9" r="2"/>
+            <path d="M21 15l-5-5L5 21"/>
+          </svg>
+          <span class="settings-banner-placeholder-title">Add a banner</span>
+          <span class="settings-banner-placeholder-hint">Click to upload your custom hero image</span>
         </div>
         <input accept=".jpg, .jpeg, .png" name="background" ref="fileInputBackground" type="file" @change="uploadBackground" style="display: none" />
       </div>
@@ -672,10 +678,43 @@ export default {
 .settings-banner:hover { border-color: var(--primary); }
 .settings-banner-img { width: 100%; height: 100%; object-fit: cover; }
 .settings-banner-placeholder {
-  width: 100%; height: 100%;
-  display: flex; align-items: center; justify-content: center;
-  background: linear-gradient(135deg, rgba(255,97,0,0.08), rgba(193,245,39,0.04));
-  font-size: 12px; color: var(--text-dim); letter-spacing: 0.1em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  height: 100%;
+  min-height: 180px;
+  color: var(--text-muted);
+  background: linear-gradient(180deg, rgba(255, 97, 0, 0.04) 0%, rgba(255, 97, 0, 0.08) 100%);
+  border: 1.5px dashed rgba(255, 97, 0, 0.3);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.settings-banner:hover .settings-banner-placeholder {
+  border-color: var(--primary);
+  background: linear-gradient(180deg, rgba(255, 97, 0, 0.08) 0%, rgba(255, 97, 0, 0.15) 100%);
+  color: var(--text);
+}
+.settings-banner-placeholder svg {
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+.settings-banner:hover .settings-banner-placeholder svg {
+  opacity: 1;
+}
+.settings-banner-placeholder-title {
+  font-family: var(--display, 'VT323', monospace);
+  font-size: 22px;
+  letter-spacing: 0.04em;
+  color: var(--text);
+}
+.settings-banner-placeholder-hint {
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-dim);
 }
 
 .settings-avatar-row {
