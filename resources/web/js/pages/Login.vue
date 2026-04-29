@@ -89,9 +89,11 @@
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 .1 5 0 11.3l6.4 2.6c.5-.4 1.2-.6 1.8-.6h.2l2.8-4.1v-.1c0-2.5 2-4.5 4.5-4.5S20.3 6.6 20.3 9.1 18.3 13.6 15.8 13.6h-.1l-4.1 2.9v.2c0 1.9-1.5 3.4-3.4 3.4-1.6 0-3-1.2-3.3-2.8L.4 15.4C1.8 20.4 6.5 24 12 24c6.6 0 12-5.4 12-12S18.6 0 12 0z"/></svg>
           <span>Steam</span>
         </div>
-        <div class="social-btn github" v-if="false" @click="loginGithub">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.9 1.2 1.9 1.2 1.1 1.9 2.9 1.3 3.6 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.2-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>
-          <span>GitHub</span>
+        <div class="social-btn overwolf" @click="loginOverwolf">
+          <svg width="22" height="22" viewBox="0 0 32 32" fill="currentColor">
+            <path d="M16 2L4 8v10c0 7.5 5.4 13 12 14 6.6-1 12-6.5 12-14V8L16 2zm0 4.5L24 10v6.5c0 4.5-3.5 8-8 8.5-4.5-.5-8-4-8-8.5V10l8-3.5z"/>
+          </svg>
+          <span>Continue with Overwolf</span>
         </div>
         <div class="social-btn google" @click="loginGoogle">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M21.35 11.1h-9.17v2.87h5.28c-.23 1.36-1.66 3.98-5.28 3.98-3.18 0-5.77-2.63-5.77-5.87s2.59-5.87 5.77-5.87c1.81 0 3.02.77 3.71 1.43l2.53-2.44C16.82 3.62 14.76 2.7 12.18 2.7 6.98 2.7 2.77 6.91 2.77 12.1s4.21 9.4 9.41 9.4c5.43 0 9.03-3.82 9.03-9.18 0-.62-.07-1.09-.16-1.22z"/></svg>
@@ -310,6 +312,9 @@ export default {
         },
         loginDiscord() {
             window.location.href = '/login/discord';
+        },
+        loginOverwolf() {
+            window.location.href = '/login/overwolf';
         }
     }
 
@@ -541,6 +546,7 @@ export default {
 .social-btn.steam:hover   { color: #66c0f4; border-color: #66c0f4; }
 .social-btn.github:hover  { color: var(--text); border-color: var(--text); }
 .social-btn.google:hover  { color: #4285F4; border-color: #4285F4; }
+.social-btn.overwolf:hover { color: #ff7e2e; border-color: #ff7e2e; }
 
 .divider {
   display: flex; align-items: center; gap: 12px;

@@ -69,4 +69,13 @@ return [
         'allow_gif_avatars' => (bool)env('DISCORD_AVATAR_GIF', true),
         'avatar_default_extension' => env('DISCORD_EXTENSION_DEFAULT', 'jpg'), // only pick from jpg, png, webp
     ],
+
+    'overwolf' => [
+        'client_id'         => env('OVERWOLF_CLIENT_ID'),
+        'client_secret'     => env('OVERWOLF_CLIENT_SECRET'),
+        'redirect'          => env('OVERWOLF_REDIRECT_URI', 'https://app.trophyroom.gg/api/overwolf/callback'),
+        'authorize_endpoint'=> 'https://id.overwolf.com/oidc/auth',
+        'token_endpoint'    => 'https://id.overwolf.com/oidc/token',
+        'userinfo_endpoint' => 'https://id.overwolf.com/oidc/me',
+    ],
 ];

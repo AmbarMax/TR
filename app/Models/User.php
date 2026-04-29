@@ -63,6 +63,8 @@ class User extends Authenticatable implements JWTSubject
         'social_website',
         'featured_slots',
         'source',
+        'overwolf_id',
+        'overwolf_username',
         'account_type',
         'tagline',
         'accent_color',
