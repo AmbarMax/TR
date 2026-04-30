@@ -267,6 +267,15 @@
       </div>
 
     </div>
+
+    <OnboardingWizard
+      :open="onboardingWizardOpen"
+      :user-avatar="currentUserAvatar"
+      :user-banner="currentUserBanner"
+      :connected-platforms="connectedPlatformKeys"
+      @close="onboardingWizardOpen = false"
+      @completed="onboardingWizardOpen = false"
+    />
   </div>
 </template>
 
@@ -274,6 +283,7 @@
 import trexHero from '../../../web/images/web/img/mascot/trex-voxel-hero.png';
 import api from '../api/api.js';
 import { PLATFORM_ICONS } from '../constants/platform-icons.js';
+import OnboardingWizard from '../components/modals/OnboardingWizard.vue';
 
 // Dashboard's platformsConfig is shaped { key, name, svg } (a list,
 // not a keyed map). Build it from the shared PLATFORM_ICONS plus a
@@ -289,9 +299,14 @@ const DASHBOARD_PLATFORMS_CONFIG = [
 
 export default {
   name: 'Dashboard',
+  components: {
+    OnboardingWizard,
+  },
   data() {
     return {
       trexHero,
+      onboardingWizardOpen: false,
+      onboardingState: null,
 
       // Real data from APIs
       readyTrophy: null,
@@ -380,6 +395,15 @@ export default {
         ...this.availablePlatforms.map(p => ({ ...p, synced: false, count: 0 }))
       ];
     },
+    currentUserAvatar() {
+      return this.$store.state.user?.avatar || this.$store.state.userAvatar || null;
+    },
+    currentUserBanner() {
+      return this.$store.state.user?.background || null;
+    },
+    connectedPlatformKeys() {
+      return this.syncedPlatforms.map(p => p.key);
+    },
     completedMissions() {
       return this.missions.filter(m => m.done).length;
     },
@@ -396,12 +420,32 @@ export default {
     this.loadDashboardData();
     this.startSessionTimer();
     this.startResetCountdown();
+    this.checkOnboardingState();
   },
   beforeUnmount() {
     if (this.sessionTimer) clearInterval(this.sessionTimer);
     if (this.resetTimer) clearInterval(this.resetTimer);
   },
   methods: {
+    async checkOnboardingState() {
+      try {
+        const response = await api.get('/api/onboarding/state');
+        this.onboardingState = response.data;
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const hasResumeMarker = urlParams.has('onboarding_step');
+
+        // Auto-trigger wizard for new users (created < 24h, not completed)
+        // OR for any user with a resume marker in the URL (came back from OAuth).
+        if ((this.onboardingState.is_new_user && !this.onboardingState.completed) || hasResumeMarker) {
+          this.onboardingWizardOpen = true;
+        }
+      } catch (e) {
+        // Silent fail — onboarding is non-critical, dashboard still works
+        console.warn('Could not load onboarding state:', e);
+      }
+    },
+
     async loadDashboardData() {
       try {
         // Real endpoints use /api/ prefix (see Forge.vue/TrophyRoom.vue patterns).

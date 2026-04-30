@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             IntegrationSeeder::class,
             CountrySeeder::class,
+            WelcomeTrophySeeder::class,
         ]);
     }
 }

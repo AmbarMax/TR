@@ -9,7 +9,7 @@
       <div class="hero-left">
         <div class="hero-tag">Public profile · trophyroom.gg/{{ user.username }}</div>
 
-        <div class="identity">
+        <div class="identity" data-tour="step-1">
           <div class="avatar-ring">
             <img v-if="hasCustomAvatar" :src="user.avatar" :alt="user.username" class="avatar-img avatar-photo" />
             <div v-else class="avatar-img">{{ initials }}</div>
@@ -36,7 +36,7 @@
           </div>
         </div>
 
-        <div class="hero-stats">
+        <div class="hero-stats" data-tour="step-2">
           <div class="stat-cell highlight">
             <div class="stat-cell-num">{{ stats.badges ?? 0 }}</div>
             <div class="stat-cell-lbl">Badges</div>

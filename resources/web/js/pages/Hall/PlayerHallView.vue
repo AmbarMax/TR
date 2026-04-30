@@ -61,7 +61,7 @@
           <CustomAchievements :achievements="achievements" />
         </div>
 
-        <div class="section">
+        <div class="section" data-tour="step-3">
           <div class="section-header">
             <h2 class="section-title">Platform <span class="accent-word">badges</span></h2>
             <div class="section-meta">{{ badges.length }} earned · {{ connectedPlatforms.length }} {{ connectedPlatforms.length === 1 ? 'platform' : 'platforms' }}</div>
@@ -91,16 +91,25 @@
         <div>{{ syncStatus }}</div>
       </div>
     </div>
+
+    <WelcomeTrophyClaim
+      :open="welcomeTrophyOpen"
+      @close="welcomeTrophyOpen = false"
+      @finished="welcomeTrophyOpen = false"
+    />
   </div>
 </template>
 
 <script>
 import api from "../../api/api.js";
+import { driver } from "driver.js";
+import "driver.js/dist/driver.css";
 import PlayerHallHero from "./components/PlayerHallHero.vue";
 import SignatureTrophy from "./components/SignatureTrophy.vue";
 import ForgedTrophies from "./components/ForgedTrophies.vue";
 import CustomAchievements from "./components/CustomAchievements.vue";
 import PlatformBadges from "./components/PlatformBadges.vue";
+import WelcomeTrophyClaim from "../../components/modals/WelcomeTrophyClaim.vue";
 import { PLATFORM_ICONS } from "../../constants/platform-icons.js";
 
 // GitHub stays inline — it's an active integration but not in the
@@ -112,7 +121,7 @@ const PLATFORM_HANDLES = {
 
 export default {
   name: "PlayerHallView",
-  components: { PlayerHallHero, SignatureTrophy, ForgedTrophies, CustomAchievements, PlatformBadges },
+  components: { PlayerHallHero, SignatureTrophy, ForgedTrophies, CustomAchievements, PlatformBadges, WelcomeTrophyClaim },
   props: {
     user: { type: Object, required: true },
   },
@@ -123,6 +132,7 @@ export default {
       achievements: [],
       sharing: false,
       shareToast: "",
+      welcomeTrophyOpen: false,
     };
   },
   computed: {
@@ -182,8 +192,69 @@ export default {
   },
   mounted() {
     this.loadHallData();
+
+    // If returning from the onboarding wizard with the highlights flag,
+    // run the Driver.js tour after a short tick so PlayerHallHero has rendered.
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('onboarding') === 'highlights') {
+      window.history.replaceState({}, '', window.location.pathname);
+      setTimeout(() => this.startOnboardingTour(), 600);
+    }
   },
   methods: {
+    startOnboardingTour() {
+      const driverObj = driver({
+        showProgress: true,
+        progressText: 'Step {{current}} of {{total}}',
+        nextBtnText: 'Got it →',
+        prevBtnText: '← Back',
+        doneBtnText: 'Claim my first trophy →',
+        steps: [
+          {
+            element: '[data-tour="step-1"]',
+            popover: {
+              title: 'This is your hall',
+              description: 'Your public identity in TrophyRoom. Anyone can find you at trophyroom.gg/yourname.',
+              side: 'bottom',
+            },
+          },
+          {
+            element: '[data-tour="step-2"]',
+            popover: {
+              title: 'Everything lives here',
+              description: 'Badges sync from your platforms. Trophies and achievements are earned by participating. Scroll to explore your collection.',
+              side: 'bottom',
+            },
+          },
+          {
+            element: '[data-tour="step-3"]',
+            popover: {
+              title: 'Your trophies live here too',
+              description: "Let's claim your first one — it's already waiting.",
+              side: 'top',
+            },
+          },
+        ],
+        onDestroyed: () => {
+          // If user reached the last step (clicked "Claim..."), open the modal.
+          // Otherwise mark the step as explored without showing the modal.
+          if (driverObj.isLastStep && driverObj.isLastStep()) {
+            this.welcomeTrophyOpen = true;
+          } else {
+            this.markHallExplored();
+          }
+        },
+      });
+
+      driverObj.drive();
+    },
+
+    async markHallExplored() {
+      try {
+        await api.post('/api/onboarding/step', { step: 'hall_explored' });
+      } catch (e) { /* silent */ }
+    },
+
     async loadHallData() {
       try {
         const { data } = await api.get(`/api/virtual-hall/${encodeURIComponent(this.user.username)}`);
@@ -652,5 +723,48 @@ export default {
   .player-hall .footer-btn { justify-content: center; width: 100%; }
   .player-hall .terminal-strip { padding: 16px; flex-direction: column; gap: 8px; text-align: left; }
   .player-hall .scroll-cue { display: none; }
+}
+
+/* Driver.js theme overrides — driver popovers render at body level
+   (outside the .player-hall scope) so we use global selectors here. */
+.driver-popover {
+  background: var(--surface, #0e0f11);
+  border: 1px solid var(--border, #2a2c2e);
+  color: var(--text, #feeddf);
+  font-family: var(--mono, 'Share Tech Mono', monospace);
+  border-radius: 0;
+  box-shadow: 0 0 40px rgba(255, 97, 0, 0.3);
+}
+.driver-popover-title {
+  font-family: var(--display, 'VT323', monospace);
+  font-size: 22px;
+  color: var(--primary, #ff6100);
+}
+.driver-popover-description {
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+.driver-popover-progress-text {
+  color: var(--text-dim);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+.driver-popover-prev-btn,
+.driver-popover-next-btn {
+  background: var(--primary, #ff6100);
+  color: #000;
+  border: none;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 8px 14px;
+  border-radius: 0;
+  text-shadow: none;
+}
+.driver-popover-close-btn {
+  color: var(--text-muted);
 }
 </style>

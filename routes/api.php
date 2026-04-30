@@ -131,6 +131,7 @@ Route::middleware([JwtMiddleware::class])->group(function () {
         Route::post('/step', [App\Http\Controllers\Api\OnboardingController::class, 'step']);
         Route::post('/complete', [App\Http\Controllers\Api\OnboardingController::class, 'complete']);
         Route::post('/skip', [App\Http\Controllers\Api\OnboardingController::class, 'skip']);
+        Route::post('/claim-welcome-trophy', [App\Http\Controllers\Api\OnboardingController::class, 'claimWelcomeTrophy']);
     });
 
 
