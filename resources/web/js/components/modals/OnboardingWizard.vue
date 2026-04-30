@@ -39,21 +39,32 @@
                 @connect="handlePlatformClick"
               />
             </div>
-            <p class="ow-required-note">⚠ At least one platform is required.</p>
+            <div class="ow-step-footer">
+              <p class="ow-required-note">⚠ At least one platform is recommended.</p>
+              <button class="ow-skip-provisional" @click="skipStep2">
+                Skip for now →
+              </button>
+            </div>
           </div>
 
           <!-- STEP 3: Sync result -->
           <div v-if="currentStep === 3" class="ow-step">
-            <h2 class="ow-step-title">
+            <h2 v-if="lastConnectedPlatform !== 'No platform'" class="ow-step-title">
               <span class="ow-check">✓</span> {{ lastConnectedPlatform }} connected
+            </h2>
+            <h2 v-else class="ow-step-title">
+              Skipped for now
             </h2>
             <p v-if="syncing" class="ow-step-desc">
               <span class="ow-spinner"></span>
               Importing your achievements...
             </p>
             <div v-else class="ow-sync-result">
-              <p class="ow-step-desc">
+              <p v-if="lastConnectedPlatform !== 'No platform'" class="ow-step-desc">
                 <strong>{{ achievementCount }}</strong> achievements imported.
+              </p>
+              <p v-else class="ow-step-desc">
+                You can connect a platform anytime from your profile settings.
               </p>
               <p class="ow-hint">You're ready for the next step.</p>
             </div>
@@ -135,6 +146,22 @@ export default {
   methods: {
     goToStep(n) {
       this.currentStep = n;
+    },
+
+    async skipStep2() {
+      // Provisional skip — marks step as skipped in backend so wizard
+      // doesn't loop back here, then advances to STEP 3 (sync result placeholder).
+      // Proper fix coming: OAuth callbacks should preserve wizard return URL.
+      try {
+        await api.post('/api/onboarding/step', { step: 'platform_connected_skipped' });
+      } catch (e) {
+        console.warn('Could not mark skip:', e);
+      }
+
+      this.lastConnectedPlatform = 'No platform';
+      this.achievementCount = 0;
+      this.syncing = false;
+      this.currentStep = 3;
     },
 
     handlePlatformClick(platformKey) {
@@ -319,6 +346,33 @@ export default {
   color: var(--text-dim);
   margin-top: 16px;
   text-align: right;
+}
+
+.ow-step-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+}
+.ow-step-footer .ow-required-note {
+  margin: 0;
+  text-align: left;
+}
+.ow-skip-provisional {
+  background: none;
+  border: 1px solid var(--border, #2a2c2e);
+  color: var(--text-dim, #7a7570);
+  padding: 6px 14px;
+  font-family: var(--mono, 'Share Tech Mono', monospace);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.ow-skip-provisional:hover {
+  border-color: var(--text-muted);
+  color: var(--text);
 }
 
 .ow-check {
