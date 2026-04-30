@@ -125,6 +125,14 @@ Route::middleware([JwtMiddleware::class])->group(function () {
 
     Route::post('logout', [UserAuthenticateController::class, 'destroy'])->name('logout');
 
+    // Onboarding state tracking — used by the wizard and persistent cards
+    Route::prefix('onboarding')->group(function () {
+        Route::get('/state', [App\Http\Controllers\Api\OnboardingController::class, 'state']);
+        Route::post('/step', [App\Http\Controllers\Api\OnboardingController::class, 'step']);
+        Route::post('/complete', [App\Http\Controllers\Api\OnboardingController::class, 'complete']);
+        Route::post('/skip', [App\Http\Controllers\Api\OnboardingController::class, 'skip']);
+    });
+
 
     Route::prefix('badges')
         ->name('badges.')

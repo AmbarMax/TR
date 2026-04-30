@@ -66,6 +66,9 @@ class User extends Authenticatable implements JWTSubject
         'overwolf_id',
         'overwolf_username',
         'account_type',
+        'onboarding_steps',
+        'onboarding_completed',
+        'onboarding_skipped_at',
         'tagline',
         'accent_color',
         'is_featured',
@@ -92,6 +95,9 @@ class User extends Authenticatable implements JWTSubject
         'featured_slots' => 'array',
         'is_featured' => 'boolean',
         'verified_at' => 'datetime',
+        'onboarding_steps' => 'array',
+        'onboarding_completed' => 'boolean',
+        'onboarding_skipped_at' => 'datetime',
     ];
 
     /**

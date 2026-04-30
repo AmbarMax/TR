@@ -238,7 +238,7 @@
 
         <div v-else class="empty-section">
           <p>No platform badges yet. Connect your gaming accounts to start importing.</p>
-          <router-link to="/profile" class="empty-cta">→ Connect platforms</router-link>
+          <button class="empty-cta empty-cta--btn" @click="connectModalOpen = true">→ Connect platforms</button>
         </div>
 
         <div v-if="availablePlatforms.length" class="promo-hint">
@@ -246,10 +246,10 @@
             <strong>Connect more platforms to grow your vault.</strong>
             {{ availablePlatforms.join(', ') }} {{ availablePlatforms.length === 1 ? 'is' : 'are' }} waiting — each connection earns Ambar per imported badge.
           </div>
-          <router-link to="/profile" class="promo-cta">
+          <button class="promo-cta promo-cta--btn" @click="connectModalOpen = true">
             <span>Connect platforms</span>
             <span>→</span>
-          </router-link>
+          </button>
         </div>
       </section>
 
@@ -262,17 +262,29 @@
       </div>
       <div>last indexed · now · nominal</div>
     </div>
+
+    <ConnectPlatformsModal
+      :open="connectModalOpen"
+      :connected-platforms="userConnectedPlatforms"
+      @close="connectModalOpen = false"
+      @connect="onPlatformConnect"
+    />
   </div>
 </template>
 
 <script>
 import api from '../api/api.js';
 import { PLATFORM_ICONS } from '../constants/platform-icons.js';
+import ConnectPlatformsModal from '../components/modals/ConnectPlatformsModal.vue';
 
 export default {
   name: 'TrophyRoom',
+  components: {
+    ConnectPlatformsModal,
+  },
   data() {
     return {
+      connectModalOpen: false,
       badges: [],
       // User's forged trophies (from /api/forge/trophies — includes pivot.display)
       userTrophies: [],
@@ -382,6 +394,12 @@ export default {
 
     totalItems() {
       return this.badges.length + this.forgedTrophies.length + this.customAchievements.length;
+    },
+
+    // Derived from platformGroups, which already groups badges by integration key.
+    // Used by ConnectPlatformsModal to show which platforms are already linked.
+    userConnectedPlatforms() {
+      return this.platformGroups.map(g => g.key);
     }
   },
   mounted() {
@@ -404,6 +422,12 @@ export default {
       } catch (err) {
         console.error('[TrophyRoom] Failed to load data', err);
       }
+    },
+
+    onPlatformConnect(/* platformKey */) {
+      // The modal triggers window.location to OAuth — when the user comes
+      // back, the page reloads and platformGroups updates. Session 2 will
+      // mark the onboarding step done here via POST /api/onboarding/step.
     },
 
     async toggleShowcase(type, item) {
@@ -881,6 +905,11 @@ export default {
   text-decoration: none;
   border-radius: 3px;
 }
+.promo-cta--btn {
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
+}
 
 /* ========== ACHIEVEMENTS LIST ========== */
 .achievements-list {
@@ -1084,6 +1113,14 @@ export default {
   text-decoration: none;
   border-bottom: 1px solid var(--primary);
   padding-bottom: 2px;
+}
+.empty-cta--btn {
+  background: transparent;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  font-family: inherit;
+  cursor: pointer;
 }
 
 /* ========== TERMINAL ========== */
