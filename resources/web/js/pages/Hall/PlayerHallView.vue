@@ -209,7 +209,11 @@ export default {
       // (skip, X-close, etc.) and never reliably triggered the modal.
       const driverObj = driver({
         showProgress: false,
-        allowClose: true,
+        // Sticky during onboarding: clicking outside the popover or pressing
+        // Esc must NOT abort the tour — users have to follow it through
+        // (or click "Got it →" to advance, or "Claim my first trophy" on
+        // the last step which routes into WelcomeTrophyClaim).
+        allowClose: false,
         prevBtnText: '← Back',
         nextBtnText: 'Got it →',
         steps: [
@@ -730,46 +734,116 @@ export default {
   .player-hall .scroll-cue { display: none; }
 }
 
-/* Driver.js theme overrides — driver popovers render at body level
-   (outside the .player-hall scope) so we use global selectors here. */
+/* ============================================================
+   Driver.js theme — popovers render at body level so global
+   selectors (no .player-hall scope) and !important to win against
+   the lib's bundled rules. Mockup: docs/mockups/onboarding-mockup-cinematic-ritual.html
+   ============================================================ */
 .driver-popover {
-  background: var(--surface, #0e0f11);
-  border: 1px solid var(--border, #2a2c2e);
-  color: var(--text, #feeddf);
-  font-family: var(--mono, 'Share Tech Mono', monospace);
-  border-radius: 0;
-  box-shadow: 0 0 40px rgba(255, 97, 0, 0.3);
+  background: linear-gradient(180deg, #0c0d0f 0%, #14161a 100%) !important;
+  border: 1px solid var(--primary, #ff6100) !important;
+  border-radius: 0 !important;
+  padding: 24px 28px !important;
+  width: 380px !important;
+  max-width: calc(100vw - 32px) !important;
+  color: var(--text, #feeddf) !important;
+  font-family: 'Share Tech Mono', monospace !important;
+  box-shadow:
+    0 0 80px rgba(255,97,0,0.3),
+    0 0 0 1px rgba(255,97,0,0.1),
+    0 0 0 4px rgba(0,0,0,0.5) !important;
+  position: relative;
 }
+
+/* Corner brackets via the popover's pseudo-elements */
+.driver-popover::before,
+.driver-popover::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--primary, #ff6100);
+}
+.driver-popover::before {
+  top: -2px; left: -2px;
+  border-right: none;
+  border-bottom: none;
+}
+.driver-popover::after {
+  bottom: -2px; right: -2px;
+  border-left: none;
+  border-top: none;
+}
+
 .driver-popover-title {
-  font-family: var(--display, 'VT323', monospace);
-  font-size: 22px;
-  color: var(--primary, #ff6100);
+  font-family: 'VT323', monospace !important;
+  font-size: 28px !important;
+  color: var(--text, #feeddf) !important;
+  line-height: 1.1 !important;
+  margin: 0 0 8px !important;
+  text-shadow: 0 0 20px rgba(255,97,0,0.3) !important;
 }
+
 .driver-popover-description {
-  color: var(--text-muted);
-  font-size: 13px;
-  line-height: 1.6;
+  font-family: 'Share Tech Mono', monospace !important;
+  font-size: 13px !important;
+  line-height: 1.55 !important;
+  color: #b8b0a8 !important;
+  margin: 0 0 16px !important;
 }
+
 .driver-popover-progress-text {
-  color: var(--text-dim);
-  font-size: 10px;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
+  font-family: 'Share Tech Mono', monospace !important;
+  font-size: 9px !important;
+  letter-spacing: 0.2em !important;
+  color: #7a7570 !important;
+  text-transform: uppercase !important;
 }
-.driver-popover-prev-btn,
+
+.driver-popover-footer button {
+  background: transparent !important;
+  border: 1px solid #2a2e34 !important;
+  color: var(--text, #feeddf) !important;
+  padding: 7px 14px !important;
+  font-family: 'Share Tech Mono', monospace !important;
+  font-size: 10px !important;
+  letter-spacing: 0.15em !important;
+  text-transform: uppercase !important;
+  text-shadow: none !important;
+  border-radius: 0 !important;
+}
+.driver-popover-footer button:hover {
+  border-color: #b8b0a8 !important;
+  color: var(--text, #feeddf) !important;
+}
+
 .driver-popover-next-btn {
-  background: var(--primary, #ff6100);
-  color: #000;
-  border: none;
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  padding: 8px 14px;
-  border-radius: 0;
-  text-shadow: none;
+  background: var(--primary, #ff6100) !important;
+  color: #000 !important;
+  border-color: var(--primary, #ff6100) !important;
+  font-weight: 700 !important;
 }
+.driver-popover-next-btn:hover {
+  background: #ff7e2e !important;
+  border-color: #ff7e2e !important;
+  color: #000 !important;
+  box-shadow: 0 0 16px rgba(255,97,0,0.5) !important;
+}
+
 .driver-popover-close-btn {
-  color: var(--text-muted);
+  color: #7a7570 !important;
+  font-size: 16px !important;
+}
+.driver-popover-close-btn:hover {
+  color: var(--text, #feeddf) !important;
+}
+
+/* Highlighted target: brand-tinted overlay instead of default white */
+.driver-overlay {
+  background: rgba(0,0,0,0.75) !important;
+}
+.driver-active-element {
+  box-shadow: 0 0 0 4px rgba(255,97,0,0.3),
+              0 0 40px rgba(255,97,0,0.4) !important;
 }
 </style>
