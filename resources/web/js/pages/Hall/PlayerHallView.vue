@@ -216,26 +216,47 @@ export default {
       // (skip, X-close, etc.) and never reliably triggered the modal.
       const driverObj = driver({
         showProgress: false,
-        // smoothScroll is INTENTIONALLY false (the default).
-        //
-        // With smoothScroll: true, driver.js calls
-        //   element.scrollIntoView({ behavior: 'smooth' })
-        // and then IMMEDIATELY positions the popover via
-        // element.getBoundingClientRect() — but the smooth scroll is async
-        // (200-500ms browser animation) so the rect is still pre-scroll.
-        // Driver re-measures once around the ~200ms mark, but if the scroll
-        // outlasts that window, the popover ends up anchored to obsolete
-        // coords. Result: popover floats far from its target (e.g. step-1
-        // popover ends up near the "Forged trophies" section instead of
-        // beside the avatar). See driver.js.mjs:180-191 + :50-61.
-        //
-        // With smoothScroll: false, scroll uses behavior:'auto' — instant,
-        // synchronous — and getBoundingClientRect() returns the final
-        // position. No race, popover lines up.
         smoothScroll: false,
         stagePadding: 12,
         stageRadius: 8,
         disableActiveInteraction: true,
+        // Diagnostic logger: prints the exact rect + popover inset on each
+        // step so we can verify positioning math against the visual result
+        // in production. Remove once the bug is closed for good.
+        onHighlightStarted: (el, step) => {
+          const rect = el ? el.getBoundingClientRect() : null;
+          const popover = document.querySelector('.driver-popover');
+          const popRect = popover ? popover.getBoundingClientRect() : null;
+          // eslint-disable-next-line no-console
+          console.log('[onboarding-tour]', {
+            step: step?.element,
+            target: rect && {
+              top: rect.top, bottom: rect.bottom, left: rect.left,
+              width: rect.width, height: rect.height,
+            },
+            popover: popRect && {
+              top: popRect.top, bottom: popRect.bottom, left: popRect.left,
+              width: popRect.width, height: popRect.height,
+              inset: popover.style.cssText,
+            },
+            viewport: { w: window.innerWidth, h: window.innerHeight },
+            scroll: { x: window.scrollX, y: window.scrollY },
+          });
+        },
+        // Re-measure once after the next paint AND again 250ms later.
+        // Q(e, o) inside driver.js runs once per step transition and never
+        // re-positions on layout settling (font swap, banner image load,
+        // child-component flicker). refresh() re-runs the position math
+        // against the element's current rect.
+        // Guarded with try/catch in case the tour was destroyed before
+        // the timer fires (e.g. user clicks Next quickly).
+        onHighlighted: () => {
+          const safeRefresh = () => {
+            try { driverObj.refresh(); } catch (_) { /* tour destroyed */ }
+          };
+          requestAnimationFrame(safeRefresh);
+          setTimeout(safeRefresh, 250);
+        },
         // Sticky during onboarding: clicking outside the popover or pressing
         // Esc must NOT abort the tour — users have to follow it through
         // (or click "Got it →" to advance, or "Claim my first trophy" on
