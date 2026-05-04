@@ -210,6 +210,9 @@ export default {
   },
   methods: {
     startOnboardingTour() {
+      // Ensure we start at the top of the page so the first highlight (avatar) is visible.
+      window.scrollTo({ top: 0, behavior: "instant" });
+
       // Use an explicit onNextClick override on the last step's popover
       // to trigger the WelcomeTrophyClaim modal. The previous implementation
       // relied on onDestroyed + isLastStep(), which fires on every dismissal
