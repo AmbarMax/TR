@@ -840,10 +840,16 @@ export default {
 
 /* Highlighted target: brand-tinted overlay instead of default white */
 .driver-overlay {
-  background: rgba(0,0,0,0.75) !important;
+  background: rgba(0,0,0,0.65) !important;
+  opacity: 0.85 !important;
 }
 .driver-active-element {
-  box-shadow: 0 0 0 4px rgba(255,97,0,0.3),
-              0 0 40px rgba(255,97,0,0.4) !important;
+  position: relative !important;
+  z-index: 10000 !important;
+  outline: 2px solid rgba(255,97,0,0.9) !important;
+  outline-offset: 4px !important;
+  box-shadow: 0 0 0 8px rgba(255,97,0,0.15),
+              0 0 60px rgba(255,97,0,0.5) !important;
+  border-radius: 4px !important;
 }
 </style>
