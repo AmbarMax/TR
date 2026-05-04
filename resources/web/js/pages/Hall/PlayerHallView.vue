@@ -209,6 +209,11 @@ export default {
       // (skip, X-close, etc.) and never reliably triggered the modal.
       const driverObj = driver({
         showProgress: false,
+        smoothScroll: true,
+        stagePadding: 12,
+        stageRadius: 8,
+        disableActiveInteraction: true,
+        onHighlightStarted: (element) => { if (element && element.scrollIntoView) element.scrollIntoView({ behavior: "smooth", block: "center" }); },
         // Sticky during onboarding: clicking outside the popover or pressing
         // Esc must NOT abort the tour — users have to follow it through
         // (or click "Got it →" to advance, or "Claim my first trophy" on
