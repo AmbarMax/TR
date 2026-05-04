@@ -15,8 +15,14 @@ class GoogleAuthController
      * Unauthenticated entry point. Redirects the browser to Google's OAuth
      * consent screen via Socialite.
      */
-    public function redirectToGoogle()
+    public function redirectToGoogle(Request $request)
     {
+        // Onboarding wizard return URL — survives the OAuth round-trip via
+        // Laravel session and is read in handleGoogleCallback.
+        if ($returnTo = $request->query('onboarding_return')) {
+            session(['onboarding_return' => $returnTo]);
+        }
+
         return Socialite::driver('google')
             ->stateless()
             ->scopes(['openid', 'profile', 'email'])
@@ -74,11 +80,14 @@ class GoogleAuthController
 
         $token = JWTAuth::fromUser($user);
 
+        $returnTo = session()->pull('onboarding_return');
+        $redirect = ($returnTo && str_starts_with($returnTo, '/')) ? $returnTo : '/dashboard';
+
         // Handoff: server-rendered Blade writes JWT to localStorage then
         // redirects to the SPA. Keeps the token out of URL history/logs.
         return response()->view('auth.oauth-success', [
             'token'    => $token,
-            'redirect' => '/dashboard',
+            'redirect' => $redirect,
         ]);
     }
 }

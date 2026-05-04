@@ -23,7 +23,7 @@
             <p class="ow-subtitle">Your gaming achievements, one place. Let's set you up.</p>
             <p class="ow-hint">Three quick steps. About 2 minutes.</p>
             <div class="ow-actions">
-              <button class="ow-primary" @click="goToStep(2)">Let's start →</button>
+              <button class="ow-primary" @click="advanceFromWelcome">Let's start →</button>
             </div>
           </div>
 
@@ -69,7 +69,7 @@
               <p class="ow-hint">You're ready for the next step.</p>
             </div>
             <div v-if="!syncing" class="ow-actions">
-              <button class="ow-primary" @click="goToStep(4)">Continue →</button>
+              <button class="ow-primary" @click="advanceFromSync">Continue →</button>
             </div>
           </div>
 
@@ -126,9 +126,9 @@ export default {
     };
   },
 
-  mounted() {
-    // Resume support: if user comes back from OAuth with ?onboarding_step=N
-    // in URL, jump to that step
+  async mounted() {
+    // Priority 1: explicit URL marker after OAuth round-trip — that wins
+    // over backend state because it represents a fresh user action.
     const urlParams = new URLSearchParams(window.location.search);
     const resumeStep = parseInt(urlParams.get('onboarding_step'));
 
@@ -137,15 +137,65 @@ export default {
       this.currentStep = 3;
       this.startSync();
       window.history.replaceState({}, '', window.location.pathname);
-    } else if (resumeStep > 1 && resumeStep <= 4) {
+      return;
+    }
+    if (resumeStep > 1 && resumeStep <= 4) {
       this.currentStep = resumeStep;
       window.history.replaceState({}, '', window.location.pathname);
+      return;
+    }
+
+    // Priority 2: read backend onboarding_steps and resume at first incomplete.
+    try {
+      const resp = await api.get('/api/onboarding/state');
+      const steps = resp.data?.steps || {};
+      const completed = !!resp.data?.completed;
+
+      if (completed) {
+        this.$emit('close');
+        return;
+      }
+
+      if (!steps.welcome_seen) {
+        this.currentStep = 1;
+      } else if (!steps.platform_connected && !steps.platform_connected_skipped) {
+        this.currentStep = 2;
+      } else if (!steps.sync_seen) {
+        this.currentStep = 3;
+        // No fresh OAuth, so just show the post-sync state without re-syncing
+        this.lastConnectedPlatform = steps.platform_connected ? 'Platform' : 'No platform';
+        this.syncing = false;
+        this.achievementCount = '?';
+      } else if (!steps.hall_personalized) {
+        this.currentStep = 4;
+      } else {
+        this.$emit('close');
+      }
+    } catch (e) {
+      // Backend unreachable — fall back to STEP 1 (default).
+      console.warn('OnboardingWizard: could not fetch state, defaulting to step 1', e);
     }
   },
 
   methods: {
     goToStep(n) {
       this.currentStep = n;
+    },
+
+    async advanceFromWelcome() {
+      // Mark welcome_seen so resume logic skips this step on reopen.
+      try {
+        await api.post('/api/onboarding/step', { step: 'welcome_seen' });
+      } catch (e) { /* silent — non-critical */ }
+      this.currentStep = 2;
+    },
+
+    async advanceFromSync() {
+      // Mark sync_seen so STEP 3 isn't shown again on resume.
+      try {
+        await api.post('/api/onboarding/step', { step: 'sync_seen' });
+      } catch (e) { /* silent */ }
+      this.currentStep = 4;
     },
 
     async skipStep2() {
@@ -165,21 +215,31 @@ export default {
     },
 
     handlePlatformClick(platformKey) {
-      // Save current step state to URL so we resume here after OAuth
+      // Append the onboarding_return query param so the OAuth callback
+      // can redirect us back to the wizard's STEP 3 instead of the default
+      // post-auth landing (which is /dashboard or /trophy-room depending
+      // on the controller). Each backend controller stashes this in the
+      // Laravel session before OAuth and pulls it on callback.
       const platformName = this.platformDisplayName(platformKey);
-      const returnUrl = `${window.location.pathname}?onboarding_step=3&connected=${encodeURIComponent(platformName)}`;
+      const returnUrl = `/dashboard?onboarding_step=3&connected=${encodeURIComponent(platformName)}`;
 
-      sessionStorage.setItem('onboarding_return_url', returnUrl);
-
+      // Riot has no OAuth flow — no redirectToRiot exists. Skip its entry
+      // until that integration ships.
       const oauthRoutes = {
         steam:    '/login/steam',
         discord:  '/login/discord',
-        riot:     '/api/riot/authorize',
         strava:   '/api/strava/authorize',
         overwolf: '/login/overwolf',
       };
 
-      window.location.href = oauthRoutes[platformKey];
+      const base = oauthRoutes[platformKey];
+      if (!base) {
+        console.warn('OnboardingWizard: no OAuth route for', platformKey);
+        return;
+      }
+
+      const sep = base.includes('?') ? '&' : '?';
+      window.location.href = `${base}${sep}onboarding_return=${encodeURIComponent(returnUrl)}`;
     },
 
     platformDisplayName(key) {

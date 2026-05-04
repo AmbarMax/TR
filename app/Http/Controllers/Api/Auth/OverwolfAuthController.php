@@ -17,8 +17,14 @@ class OverwolfAuthController
      * Generates PKCE code_verifier + state, caches them, and redirects
      * the browser to Overwolf's OIDC authorization endpoint.
      */
-    public function redirectToOverwolf()
+    public function redirectToOverwolf(Request $request)
     {
+        // Onboarding wizard return URL — survives the OAuth round-trip via
+        // Laravel session and is read in handleOverwolfCallback.
+        if ($returnTo = $request->query('onboarding_return')) {
+            session(['onboarding_return' => $returnTo]);
+        }
+
         $clientId    = config('services.overwolf.client_id');
         $redirectUri = config('services.overwolf.redirect');
         $authEndpoint= config('services.overwolf.authorize_endpoint');
@@ -163,9 +169,12 @@ class OverwolfAuthController
 
         $token = JWTAuth::fromUser($user);
 
+        $returnTo = session()->pull('onboarding_return');
+        $redirect = ($returnTo && str_starts_with($returnTo, '/')) ? $returnTo : '/dashboard';
+
         return response()->view('auth.oauth-success', [
             'token'    => $token,
-            'redirect' => '/dashboard',
+            'redirect' => $redirect,
         ]);
     }
 

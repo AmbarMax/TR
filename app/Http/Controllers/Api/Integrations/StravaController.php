@@ -46,6 +46,12 @@ class StravaController
             }
         }
 
+        // Onboarding wizard return URL — survives the OAuth round-trip via
+        // Laravel session and is read in handleStravaCallback.
+        if ($returnTo = $request->query('onboarding_return')) {
+            session(['onboarding_return' => $returnTo]);
+        }
+
         $query = http_build_query([
             'client_id'       => config('services.strava.client_id'),
             'redirect_uri'    => config('services.strava.redirect'),
@@ -132,6 +138,10 @@ class StravaController
             Log::warning('StravaController@handleStravaCallback: Centrifugo publish failed — ' . $e->getMessage());
         }
 
+        $returnTo = session()->pull('onboarding_return');
+        if ($returnTo && str_starts_with($returnTo, '/')) {
+            return redirect($returnTo);
+        }
         return redirect()->route('ambar', ['any' => '/trophy-room']);
     }
 

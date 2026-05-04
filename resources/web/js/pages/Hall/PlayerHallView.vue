@@ -203,12 +203,15 @@ export default {
   },
   methods: {
     startOnboardingTour() {
+      // Use an explicit onNextClick override on the last step's popover
+      // to trigger the WelcomeTrophyClaim modal. The previous implementation
+      // relied on onDestroyed + isLastStep(), which fires on every dismissal
+      // (skip, X-close, etc.) and never reliably triggered the modal.
       const driverObj = driver({
-        showProgress: true,
-        progressText: 'Step {{current}} of {{total}}',
-        nextBtnText: 'Got it →',
+        showProgress: false,
+        allowClose: true,
         prevBtnText: '← Back',
-        doneBtnText: 'Claim my first trophy →',
+        nextBtnText: 'Got it →',
         steps: [
           {
             element: '[data-tour="step-1"]',
@@ -232,17 +235,19 @@ export default {
               title: 'Your trophies live here too',
               description: "Let's claim your first one — it's already waiting.",
               side: 'top',
+              nextBtnText: 'Claim my first trophy →',
+              onNextClick: () => {
+                driverObj.destroy();
+                this.welcomeTrophyOpen = true;
+              },
             },
           },
         ],
         onDestroyed: () => {
-          // If user reached the last step (clicked "Claim..."), open the modal.
-          // Otherwise mark the step as explored without showing the modal.
-          if (driverObj.isLastStep && driverObj.isLastStep()) {
-            this.welcomeTrophyOpen = true;
-          } else {
-            this.markHallExplored();
-          }
+          // Fires on every dismissal (skip, X, esc, last-step destroy).
+          // It's safe to always mark hall_explored — the welcomeTrophyOpen
+          // path is handled by onNextClick above, not here.
+          this.markHallExplored();
         },
       });
 

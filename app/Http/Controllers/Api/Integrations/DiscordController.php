@@ -28,8 +28,14 @@ class DiscordController
         $this->badgeService->setApiIntegration(new DiscordAdapter());
     }
 
-    public function redirectToDiscord()
+    public function redirectToDiscord(Request $request)
     {
+        // Onboarding wizard return URL — survives the OAuth round-trip via
+        // Laravel session and is read in handleDiscordCallback.
+        if ($returnTo = $request->query('onboarding_return')) {
+            session(['onboarding_return' => $returnTo]);
+        }
+
         return Socialite::with('discord')->scopes([
             'email', 'identify', 'guilds', 'guilds.join', 'guilds.members.read'
         ])->redirect();
@@ -86,9 +92,12 @@ class DiscordController
 
         $token = JWTAuth::fromUser($user);
 
+        $returnTo = session()->pull('onboarding_return');
+        $redirect = ($returnTo && str_starts_with($returnTo, '/')) ? $returnTo : '/dashboard';
+
         return response()->view('auth.oauth-success', [
             'token'    => $token,
-            'redirect' => '/dashboard',
+            'redirect' => $redirect,
         ]);
     }
 
