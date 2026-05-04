@@ -190,15 +190,22 @@ export default {
       handler() { this.loadHallData(); },
     },
   },
-  mounted() {
-    this.loadHallData();
+  async mounted() {
+    // Await loadHallData BEFORE starting the tour. The hall data populates
+    // <ForgedTrophies>, <CustomAchievements>, and <PlatformBadges>, which
+    // wrap data-tour="step-3". If we started the tour before data loaded,
+    // those sections rendered empty/short, driver.js measured step-3 at the
+    // wrong y-coordinate, then the API resolved, sections grew, step-3
+    // moved down — popover stayed anchored to the obsolete coords.
+    await this.loadHallData();
 
-    // If returning from the onboarding wizard with the highlights flag,
-    // run the Driver.js tour after a short tick so PlayerHallHero has rendered.
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('onboarding') === 'highlights') {
       window.history.replaceState({}, '', window.location.pathname);
-      setTimeout(() => this.startOnboardingTour(), 600);
+      // Two RAFs after Vue's tick: ensures the DOM has actually painted
+      // with the new data sizes before driver.js calls getBoundingClientRect.
+      await this.$nextTick();
+      requestAnimationFrame(() => requestAnimationFrame(() => this.startOnboardingTour()));
     }
   },
   methods: {
@@ -209,11 +216,14 @@ export default {
       // (skip, X-close, etc.) and never reliably triggered the modal.
       const driverObj = driver({
         showProgress: false,
+        // Driver.js handles its own smooth scroll-into-view per step.
+        // A custom onHighlightStarted scrollIntoView would race against it
+        // and leave the popover anchored to pre-scroll coords (cause of
+        // earlier "popover points at empty area" bug — commit c3b68b1 + retro).
         smoothScroll: true,
         stagePadding: 12,
         stageRadius: 8,
         disableActiveInteraction: true,
-        onHighlightStarted: (element) => { if (element && element.scrollIntoView) element.scrollIntoView({ behavior: "smooth", block: "center" }); },
         // Sticky during onboarding: clicking outside the popover or pressing
         // Esc must NOT abort the tour — users have to follow it through
         // (or click "Got it →" to advance, or "Claim my first trophy" on
