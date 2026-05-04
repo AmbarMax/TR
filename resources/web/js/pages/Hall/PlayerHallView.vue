@@ -216,11 +216,23 @@ export default {
       // (skip, X-close, etc.) and never reliably triggered the modal.
       const driverObj = driver({
         showProgress: false,
-        // Driver.js handles its own smooth scroll-into-view per step.
-        // A custom onHighlightStarted scrollIntoView would race against it
-        // and leave the popover anchored to pre-scroll coords (cause of
-        // earlier "popover points at empty area" bug — commit c3b68b1 + retro).
-        smoothScroll: true,
+        // smoothScroll is INTENTIONALLY false (the default).
+        //
+        // With smoothScroll: true, driver.js calls
+        //   element.scrollIntoView({ behavior: 'smooth' })
+        // and then IMMEDIATELY positions the popover via
+        // element.getBoundingClientRect() — but the smooth scroll is async
+        // (200-500ms browser animation) so the rect is still pre-scroll.
+        // Driver re-measures once around the ~200ms mark, but if the scroll
+        // outlasts that window, the popover ends up anchored to obsolete
+        // coords. Result: popover floats far from its target (e.g. step-1
+        // popover ends up near the "Forged trophies" section instead of
+        // beside the avatar). See driver.js.mjs:180-191 + :50-61.
+        //
+        // With smoothScroll: false, scroll uses behavior:'auto' — instant,
+        // synchronous — and getBoundingClientRect() returns the final
+        // position. No race, popover lines up.
+        smoothScroll: false,
         stagePadding: 12,
         stageRadius: 8,
         disableActiveInteraction: true,
