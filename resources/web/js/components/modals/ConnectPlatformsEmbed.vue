@@ -33,7 +33,7 @@
 
         <div class="cpe-mascot">
           <div class="cpe-mascot-slot">
-            <img src="/images/mascot-onboarding/trex_pointing.png" alt="" class="cpe-mascot-img" />
+            <img :src="'/images/mascot-onboarding/trex_pointing.png'" alt="" class="cpe-mascot-img" />
           </div>
         </div>
       </div>

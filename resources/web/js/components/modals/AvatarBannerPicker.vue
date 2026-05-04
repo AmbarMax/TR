@@ -72,7 +72,7 @@
     <footer class="abp-footer">
       <div class="abp-mascot-mini">
         <div class="abp-mascot-slot">
-          <img src="/images/mascot-onboarding/trex_thinking.png" alt="" class="abp-mascot-img" />
+          <img :src="'/images/mascot-onboarding/trex_thinking.png'" alt="" class="abp-mascot-img" />
         </div>
         <div class="abp-mascot-quote">Looking sharp.</div>
       </div>

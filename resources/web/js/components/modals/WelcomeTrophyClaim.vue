@@ -71,7 +71,7 @@
 
             <div class="wtc-mascot-celebration">
               <div class="wtc-mascot-slot">
-                <img src="/images/mascot-onboarding/trex_victory.png" alt="" class="wtc-mascot-img" />
+                <img :src="'/images/mascot-onboarding/trex_victory.png'" alt="" class="wtc-mascot-img" />
               </div>
             </div>
 

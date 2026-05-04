@@ -23,7 +23,7 @@
              ============================================================ -->
         <div v-if="currentStep === 1" class="ow-welcome">
           <div class="ow-mascot-slot">
-            <img src="/images/mascot-onboarding/trex_welcoming.png" alt="" class="ow-mascot-img" />
+            <img :src="'/images/mascot-onboarding/trex_welcoming.png'" alt="" class="ow-mascot-img" />
           </div>
 
           <div class="ow-eyebrow">Step 01 of 04</div>
@@ -126,7 +126,7 @@
 
             <div class="ow-sync-mascot-row">
               <div class="ow-sync-mascot-slot">
-                <img src="/images/mascot-onboarding/trex_celebrating.png" alt="" class="ow-mascot-img" />
+                <img :src="'/images/mascot-onboarding/trex_celebrating.png'" alt="" class="ow-mascot-img" />
               </div>
               <div class="ow-sync-quote">
                 <div class="ow-sync-quote-label">Trex says</div>
