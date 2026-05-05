@@ -71,6 +71,14 @@ class BrandDashboardTestingSeeder extends Seeder
             return;
         }
 
+        // Requiere que el rol Spatie brand_admin exista. Sin esto, el assignRole
+        // de los brands de testing falla con un error críptico de Spatie.
+        if (!\Spatie\Permission\Models\Role::where('name', 'brand_admin')->exists()) {
+            $this->command->error('🛑 Falta el rol Spatie "brand_admin".');
+            $this->command->error('Corré primero los seeders de roles (probablemente RolePermissionSeeder o similar).');
+            return;
+        }
+
         $this->command->info('🌱 Seeding Brand Dashboard testing data...');
 
         DB::beginTransaction();
@@ -170,7 +178,7 @@ class BrandDashboardTestingSeeder extends Seeder
 
     private function createTestBrand(): User
     {
-        return User::updateOrCreate(
+        $brand = User::updateOrCreate(
             ['username' => self::TEST_BRAND_USERNAME],
             [
                 'name' => 'Test Brand',
@@ -184,11 +192,13 @@ class BrandDashboardTestingSeeder extends Seeder
                 'created_at' => now()->subMonths(3),
             ]
         );
+        $brand->assignRole('brand_admin');
+        return $brand;
     }
 
     private function createCrossBrand(string $username): User
     {
-        return User::updateOrCreate(
+        $brand = User::updateOrCreate(
             ['username' => $username],
             [
                 'name' => ucfirst(str_replace('_test', '', $username)),
@@ -199,6 +209,8 @@ class BrandDashboardTestingSeeder extends Seeder
                 'created_at' => now()->subMonths(rand(2, 6)),
             ]
         );
+        $brand->assignRole('brand_admin');
+        return $brand;
     }
 
     private function createPlayers(int $count)
