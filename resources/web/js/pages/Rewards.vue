@@ -128,7 +128,7 @@ export default defineComponent({
         const resp = await api.post("/api/rewards/convert", { ambar_amount: amount });
         if (resp.data.success) {
           store.state.notification = {
-            message: "Converted " + amount + " Ambar → " + resp.data.uru_received + " Uru",
+            message: "Converted " + Math.floor(amount || 0) + " Ambar → " + Math.floor(resp.data.uru_received || 0) + " Uru",
             type: "success",
             show: true,
           };

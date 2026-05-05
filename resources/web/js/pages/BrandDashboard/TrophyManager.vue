@@ -130,7 +130,7 @@
                     <div class="trophy-item-name">{{ t.name }}</div>
                     <div v-if="t.description" class="trophy-item-meta trophy-item-meta--desc">{{ t.description }}</div>
                     <div class="trophy-item-meta">
-                        <span class="trophy-item-econ">{{ t.price }} Ambar → {{ t.receive }} Uru</span>
+                        <span class="trophy-item-econ">{{ Math.floor(t.price || 0) }} Ambar → {{ Math.floor(t.receive || 0) }} Uru</span>
                         <template v-if="t.badges && t.badges.length">
                             <span class="trophy-req-sep">·</span>
                             <img

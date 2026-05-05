@@ -11,8 +11,8 @@
             </div>
             <div class="bp-card-cost">
               <template v-if="level.status === 'owned' && level.cost === 0">Free with signup</template>
-              <template v-else-if="level.status === 'owned'">Purchased for {{ level.cost }} Uru</template>
-              <template v-else>{{ level.cost }} Uru</template>
+              <template v-else-if="level.status === 'owned'">Purchased for {{ Math.floor(level.cost || 0) }} Uru</template>
+              <template v-else>{{ Math.floor(level.cost || 0) }} Uru</template>
             </div>
           </div>
           <div class="bp-card-right">
@@ -23,7 +23,7 @@
             </div>
             <div v-if="level.status === 'owned'" class="bp-status-owned">Owned</div>
             <button v-else-if="level.status === 'next'" class="bp-buy-btn" @click="$emit('buy-level', level)">
-              Buy — {{ level.cost }} Uru
+              Buy — {{ Math.floor(level.cost || 0) }} Uru
             </button>
           </div>
         </div>

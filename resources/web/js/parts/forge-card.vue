@@ -2,7 +2,7 @@
     <div v-if="!isDeleted" class="achievement_card" @mouseleave="closeDotsDropdown">
         <div v-if="icon_type" class="card_header">
             <div v-if="type === 'take' && page !== 'virtual-hall'" class="label">
-                <div class="text">You get {{achievement_data.count}} Ambars</div>
+                <div class="text">You get {{ Math.floor(achievement_data.count || 0) }} Ambars</div>
                 <div>
                     <img v-if="icon_type === 'Ambar'" src="../../../web/images/web/img/points/ambar.svg">
                 </div>

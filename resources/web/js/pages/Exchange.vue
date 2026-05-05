@@ -120,7 +120,7 @@
             <div style="display: flex; flex-direction: column; gap: 24px" v-if="list.length !== 0 && isMobile">
                 <div style="gap: 0; padding: 0 16px" class="list-wrapper"  v-for="item in list">
                         <div class="mobile-block">
-                                {{ item.inputAmount }} Uru
+                                {{ Math.floor(item.inputAmount || 0) }} Uru
                                 <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36" fill="none">
                                     <path d="M9.5625 14.625L4.5 9.5625M4.5 9.5625L9.5625 4.5M4.5 9.5625H31.5M26.4375 21.375L31.5 26.4375M31.5 26.4375L26.4375 31.5M31.5 26.4375H4.5" stroke="#CAFB01" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                 </svg>

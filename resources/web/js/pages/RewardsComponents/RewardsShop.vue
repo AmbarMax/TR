@@ -11,7 +11,7 @@
           <div class="rshop-name">{{ item.name }}</div>
           <div class="rshop-desc">{{ item.description }}</div>
           <div class="rshop-footer">
-            <div class="rshop-price">{{ item.price }} Uru</div>
+            <div class="rshop-price">{{ Math.floor(item.price || 0) }} Uru</div>
             <button class="rshop-buy-btn" :disabled="userUru < item.price" @click="buyItem(item)">Buy</button>
           </div>
         </div>
@@ -24,7 +24,7 @@
       <div v-else class="rshop-history-list">
         <div v-for="purchase in purchaseHistory" :key="purchase.id" class="rshop-history-row">
           <div class="rshop-history-name">{{ purchase.name }}</div>
-          <div class="rshop-history-price">{{ purchase.price }} Uru</div>
+          <div class="rshop-history-price">{{ Math.floor(purchase.price || 0) }} Uru</div>
           <div class="rshop-history-status" :class="purchase.status === 'delivered' ? 'rshop-status-delivered' : 'rshop-status-pending'">
             {{ purchase.status === 'delivered' ? 'Delivered' : 'Pending' }}
           </div>

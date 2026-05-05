@@ -64,7 +64,7 @@
         <div class="section-label">
           <span class="label-text">Ready to forge</span>
           <span class="section-meta">
-            1 available · +{{ readyTrophy.xp || 0 }} XP · +{{ readyTrophy.receive || 0 }} Uru
+            1 available · +{{ readyTrophy.xp || 0 }} XP · +{{ Math.floor(readyTrophy.receive || 0) }} Uru
           </span>
         </div>
 
@@ -82,11 +82,11 @@
                 <div class="meta-lbl">XP</div>
               </div>
               <div class="meta-item">
-                <div class="meta-val">+{{ readyTrophy.receive || 0 }}</div>
+                <div class="meta-val">+{{ Math.floor(readyTrophy.receive || 0) }}</div>
                 <div class="meta-lbl">Uru</div>
               </div>
               <div class="meta-item">
-                <div class="meta-val meta-val--white">{{ readyTrophy.price || 0 }}</div>
+                <div class="meta-val meta-val--white">{{ Math.floor(readyTrophy.price || 0) }}</div>
                 <div class="meta-lbl">Ambar cost</div>
               </div>
             </div>

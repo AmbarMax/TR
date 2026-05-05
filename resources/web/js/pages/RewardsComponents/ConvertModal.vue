@@ -19,7 +19,7 @@
           />
           <span class="convert-unit">Ambar</span>
         </div>
-        <div class="convert-available">Available: {{ userAmbar }} Ambar</div>
+        <div class="convert-available">Available: {{ Math.floor(userAmbar || 0) }} Ambar</div>
       </div>
 
       <div class="convert-arrow">

@@ -121,7 +121,7 @@
               </div>
             </div>
 
-            <p class="fc-desc">{{ trophy.description || 'No description available.' }}</p>
+            <p v-if="trophy.description" class="fc-desc">{{ trophy.description }}</p>
 
             <div v-if="trophy.badges && trophy.badges.length" class="fc-badges">
               <div
@@ -159,10 +159,10 @@
             <div class="fc-meta">
               <span class="fc-pill fc-pill--xp">+{{ Math.floor(trophy.weight || trophy.price || 0) }} XP</span>
               <span class="fc-pill fc-pill--cost">
-                <span class="pill-dot"></span>{{ trophy.price || 0 }} Ambar
+                <span class="pill-dot"></span>{{ Math.floor(trophy.price || 0) }} Ambar
               </span>
               <span class="fc-pill fc-pill--reward">
-                <span class="pill-dot"></span>+{{ trophy.receive || 0 }} Uru
+                <span class="pill-dot"></span>+{{ Math.floor(trophy.receive || 0) }} Uru
               </span>
             </div>
 
@@ -244,18 +244,18 @@
 
           <div class="fm-costs">
             <div class="fm-cost-cell">
-              <div class="fm-cost-val fm-cost-val--spend">-{{ modalTrophy.price || 0 }}</div>
+              <div class="fm-cost-val fm-cost-val--spend">-{{ Math.floor(modalTrophy.price || 0) }}</div>
               <div class="fm-cost-lbl">Ambar spent</div>
             </div>
             <div class="fm-cost-cell">
-              <div class="fm-cost-val fm-cost-val--earn">+{{ modalTrophy.receive || 0 }}</div>
+              <div class="fm-cost-val fm-cost-val--earn">+{{ Math.floor(modalTrophy.receive || 0) }}</div>
               <div class="fm-cost-lbl">Uru earned</div>
             </div>
           </div>
 
           <div v-if="modalError" class="fm-error">{{ modalError }}</div>
           <div v-if="insufficientFunds && !modalError" class="fm-error">
-            You don't have enough Ambar. Need {{ modalTrophy.price }}, have {{ userAmbar }}.
+            You don't have enough Ambar. Need {{ Math.floor(modalTrophy.price || 0) }}, have {{ userAmbar }}.
           </div>
 
           <div class="fm-actions">

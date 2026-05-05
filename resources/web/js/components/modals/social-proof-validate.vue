@@ -36,7 +36,7 @@
               <img src="../../../../web/images/web/img/points/ambar.svg" alt="rune">
             </div>
             <div class="point_current">
-                You currently have <span class="number">{{ userAmbarForValidate }}/ 200</span>
+                You currently have <span class="number">{{ Math.floor(userAmbarForValidate || 0) }}/ 200</span>
             </div>
 
             <button-white
