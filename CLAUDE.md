@@ -1,27 +1,84 @@
-# TrophyRoom 2.0 — CLAUDE.md
+# TrophyRoom — CLAUDE.md
 
-## What is TrophyRoom?
+Persistent context for Claude Code autonomous sessions on the TrophyRoom repo. Read this first, before touching any file.
 
-A unified achievement showcase platform where users display accomplishments across gaming platforms (Steam, Discord, Riot Games, Valorant via Overwolf) and non-gaming services (Strava, GitHub). Users connect their accounts, achievements sync automatically, and everything lives in one profile — a trophy case for your digital life.
-
-**Business entity:** Ambar Labs (C-Corp, Delaware)  
-**Live URL:** https://app.ambar.gg  
-**Repo:** git@github.com:AmbarMax/throphyroom.git
+**Last updated:** 2026-05-05
 
 ---
 
-## Tech Stack
+## What is TrophyRoom
+
+A gaming achievement aggregator and gamification platform. Users connect their accounts across gaming platforms (Steam, Riot/LoL, Discord, Overwolf for Valorant) and non-gaming services (Strava), achievements sync automatically, and everything is showcased in a unified profile (the "Virtual Hall"). The platform also serves brands and game studios who run trophy campaigns targeting gamers.
+
+A B2B gamification-as-a-service angle is on the radar as a potential expansion.
+
+**Business entity:** Ambar Labs Inc. (C-Corp, Delaware)
+**Live URL:** https://app.trophyroom.gg
+**Repo:** git@github.com:AmbarMax/TR.git
+**Founder/CTO:** Máximo Machado (max@ambar.gg)
+
+---
+
+## Tech stack
 
 - **Backend:** Laravel 10, PHP 8.2
-- **Database:** MySQL (db: `ambar`, user: `deployer`)
-- **Server:** Ubuntu 22.04, Apache, SSL — `164.92.83.95` (hostname: `ambar-prod`)
-- **Project path on server:** `/var/www/throphyroom/`
-- **Frontend:** Vite (Vue/Blade — check `resources/`)
+- **Frontend:** Vue 3 (Options API only — no Composition API, no `<script setup>`), Vuex, Vite 4
+- **Styling:** Tailwind CSS + Bootstrap 4 legacy (do not add new Bootstrap; new code uses Tailwind or scoped CSS)
+- **Database:** MySQL (db: `ambar`, user: `deployer`, password in server `.env`)
+- **Server:** Ubuntu 22.04, Apache, SSL via Let's Encrypt
+- **Real-time:** Centrifugo (on droplet)
 - **Auth:** JWT (tymon/jwt-auth) + Laravel Sanctum + optional 2FA
+- **Node:** v16 on server
+
+### Design system — "Cinematic Ritual"
+
+- Background: `#000003`
+- Primary orange: `#ff6100`
+- Accent chartreuse: `#c1f527`
+- Fonts: `Share Tech Mono` (primary) + `VT323` (display accents)
+- Typography: weight 400 only on Share Tech Mono
+- Aesthetic: dark, CRT-inspired with scanlines/vignette/flicker overlays as `position: fixed` decorative layers
 
 ---
 
-## Architecture — Integration Pattern
+## Server access
+
+- **IP:** `164.92.83.95` (hostname: `ambar-prod`)
+- **Project path:** `/var/www/ambar` (NOT `/var/www/throphyroom` — that's the legacy directory, do NOT touch it)
+- **SSH:** `ssh -i ~/.ssh/id_ed25519_do_control root@164.92.83.95`
+- **Backups:** `/root/web3-backup-20260415.tar.gz` (legacy Web3 code)
+- **Local repo path on Mac:** `~/Documents/trophyroom`
+
+---
+
+## Deploy workflow — CANONICAL
+
+```bash
+# Local: edit, commit, push
+cd ~/Documents/trophyroom
+git add <files>
+git commit -m "..."
+git push origin main
+
+# Server: NEVER git pull. Always reset --hard.
+ssh -i ~/.ssh/id_ed25519_do_control root@164.92.83.95 \
+  "cd /var/www/ambar && git fetch origin main && git reset --hard origin/main && npm run build 2>&1 | tail -10"
+```
+
+**Why `git reset --hard origin/main`?** `git pull` fails intermittently on this server. `reset --hard` is deterministic.
+
+**`public/build/` is gitignored.** Build always happens on the server. Do not try to commit `public/build/`.
+
+**Verification step.** After every deploy, grep the server for a unique string from the change to confirm the code arrived. If grep returns 0, the deploy did not apply.
+
+```bash
+ssh -i ~/.ssh/id_ed25519_do_control root@164.92.83.95 \
+  "grep -c 'UNIQUE_STRING' /var/www/ambar/path/to/file"
+```
+
+---
+
+## Architecture — Integration pattern
 
 All platform integrations follow the **Adapter pattern**:
 
@@ -29,152 +86,163 @@ All platform integrations follow the **Adapter pattern**:
 app/Http/Apis/Integrations/
 ├── ApiIntegrationInterface.php    ← Contract: getBadges(), syncBadges(), setAuthData()
 ├── Steam/
-│   ├── SteamApi.php               ← HTTP client (talks to Steam Web API)
-│   └── SteamAdapter.php           ← Implements interface, delegates to SteamApi
+│   ├── SteamApi.php
+│   └── SteamAdapter.php
 ├── Discord/
-│   ├── DiscordApi.php
-│   └── DiscordAdapter.php
-├── Github/
-│   ├── GithubApi.php
-│   └── GithubAdapter.php
+├── Riot/
+├── Strava/
+└── Overwolf/                      (Valorant via overlay)
 ```
 
 **Orchestrator:** `app/Services/Api/BadgeService.php`
-- `setApiIntegration()` — switch on adapter type → sets `$integrationType`
-- `syncBadges()` — calls adapter's `getBadges()`, runs `synchronize()` to upsert into DB
-- `synchronize()` — matches by name, creates new badges via `FileService` for images
+- `setApiIntegration()` switches on adapter type
+- `syncBadges()` calls `getBadges()` and runs `synchronize()` to upsert into DB
+- `synchronize()` matches by name, creates new badges via `FileService` for images
 
-**Enums:**
-- `IntegrationType`: github, steam, discord
-- `BadgeType`: Common (0), DiscordRole (1), DiscordBadge (2), DiscordBotBadge (3)
+**Active integrations:** Steam, Riot/LoL, Overwolf (Valorant), Discord, Strava, Google OAuth.
 
-**Config:** `config/integrations.php` — names, image URLs, Discord badge mappings
-
-### To add a new integration:
-
-1. Create `app/Http/Apis/Integrations/{Platform}/{Platform}Api.php`
-2. Create `app/Http/Apis/Integrations/{Platform}/{Platform}Adapter.php` implementing `ApiIntegrationInterface`
-3. Add const to `IntegrationType.php`
-4. Add case to `BadgeService::setApiIntegration()` switch
-5. Add to `config/integrations.php` name array and image config
-6. Add controller + routes in `routes/api.php`
-7. Run `IntegrationSeeder` or manually insert integration row
+**To add a new integration:**
+1. Create `{Platform}Api.php` and `{Platform}Adapter.php` implementing the interface
+2. Add const to `IntegrationType.php`
+3. Add case to `BadgeService::setApiIntegration()`
+4. Add to `config/integrations.php`
+5. Add controller + routes in `routes/api.php`
+6. Run/update `IntegrationSeeder`
 
 ---
 
-## Current State & Known Issues
+## Onboarding architecture (live in production)
 
-### CRITICAL — Web3 Decoupling Needed
+**Database fields on `users`:**
+- `onboarding_steps` (JSON) — keys: `welcome_seen`, `platform_connected`, `sync_seen`, `hall_personalized`, plus a final claim step
+- `onboarding_completed` (boolean)
+- `onboarding_skipped_at` (timestamp, nullable)
 
-`AppServiceProvider.php` registers bindings for `TrophyNFT`, `KeyNFT`, and `Pinata` that depend on blockchain env vars (`BLOCKCHAIN_PROVIDER_URL`, `TROPHY_NFT_ADDRESS`, `OWNER_ADDRESS`, etc.). These vars are empty/missing, causing **500 errors** when admin tries to create trophies.
+**Welcome Trophy:** seeded with fixed UUID `00000000-0000-4000-8000-000000000001`. Idempotent claim via `OnboardingController::claimWelcomeTrophy` (route `POST /api/onboarding/claim-welcome-trophy`).
 
-**Decision (confirmed by founder):** Trophies are database objects in 2.0, NOT NFTs. All Web3 dependencies must be removed.
+**Preset assets on server:** 6 avatars (512×512) + 6 banners (1920×400) at `storage/app/public/onboarding/`.
 
-Affected files:
-- `app/Providers/AppServiceProvider.php` — remove Web3 bindings
-- `app/Services/Admin/AdminTrophyService.php` — decouple from TrophyNFT
-- `app/Services/Admin/AdminExchangeService.php` — decouple from Web3
-- `app/Services/Admin/AdminChestService.php` — decouple from Web3
-- `app/Services/Admin/AdminKeyService.php` — decouple from KeyNFT
-- `app/Services/Admin/AdminItemService.php` — decouple from Web3
-- `app/Services/Api/TrophyService.php` — decouple from TrophyNFT
-- `app/Services/AbstractServices/AbstractTrophyService.php` — decouple
-- `app/Services/FileService.php` — check Pinata dependency
+**Flow:**
+1. New signup → `OnboardingWizard.vue` auto-opens (4 steps: Welcome → Connect → Sync result → Personalize avatar/banner)
+2. After wizard, redirect to user's Virtual Hall with `?onboarding=highlights`
+3. `PlayerHallView.vue` runs Driver.js highlight tour (3 steps: identity → stats grid → trophies section)
+4. Last step opens `WelcomeTrophyClaim.vue` modal → user claims first trophy → redirect to `/trophy-room`
 
-**Do NOT delete** `app/Web3/` folder yet — just decouple. Delete in a separate cleanup task.
+**Three verbs:** CONNECT → PERSONALIZE → PARTICIPATE.
 
-### Steam Bug
+**Returning incomplete users** see card-based prompts (not the full wizard). Legacy users (created before onboarding flag) see nothing.
 
-`SteamApi::getBadges()` calls `getListOfAchievements()` which fetches **profile badges** (card sets, community badges) via `IPlayerService/GetBadges/v1` and scrapes HTML with Goutte.
-
-The methods to fetch **per-game achievements** already exist but are unused:
-- `getOwnedGames()` — lists all games
-- `getPlayerAchievements($appid)` — achievements for specific game
-- `getGameSchema($appid)` — achievement definitions (names, icons)
-- `getGlobalAchievementPercentages($appid)` — global unlock %
-
-Fix: rewrite `getBadges()` to use the per-game methods instead of the badge/scraping approach.
-
-### Steam Auth
-
-`SteamApi::setUserId()` uses `env('STEAM_SECRET')` directly. Should use `config('services.steam.client_secret')`. Some methods already use config(), others use env() — inconsistent.
-
----
-
-## Deploy Workflow
-
+**Reset onboarding for testing (Bastian as the canonical test account):**
 ```bash
-# Local: edit code, commit, push
-git push origin main
-
-# Server: SSH in and pull
-ssh root@164.92.83.95
-cd /var/www/throphyroom
-git pull origin main
-php artisan config:clear
-php artisan cache:clear
-# If migrations: php artisan migrate --force
+mysql -u deployer -p'<see .env>' ambar -e "UPDATE users SET onboarding_steps = '{\"welcome_seen\": \"2026-05-04T18:00:00+00:00\", \"platform_connected\": \"2026-05-04T18:00:00+00:00\", \"sync_seen\": \"2026-05-04T18:00:00+00:00\", \"hall_personalized\": \"2026-05-04T18:00:00+00:00\"}', onboarding_completed = 0 WHERE username = 'Bastian';"
 ```
 
-SSH from Mac requires key at `~/.ssh/id_ed25519_do_control` or entering via DigitalOcean web console.
+**Tinker bypass (skip wizard, jump to highlights):**
+```php
+$user->onboarding_steps = ['platform_connected' => now()->toIso8601String()];
+```
 
 ---
 
-## Database Stats (as of 2026-04-14)
+## Driver.js — known gotcha
 
-- Users: 459
-- Badges: 127
-- Integrations: 3 (GitHub, Steam, Discord)
+The popover that driver.js v1 injects must keep `position: fixed`. Any CSS rule in the app that matches `.driver-popover` and changes its `position` (to `relative` or `static`) silently breaks the highlight tour — the popover flows in the document flow instead of anchoring to the viewport.
 
----
+**If applying custom styles to the popover** (e.g. cinematic corner brackets via `::before`/`::after`), do NOT touch `position`, or use `position: fixed !important` to defend against future regressions.
 
-## Roadmap — TrophyRoom 2.0
-
-### Task 0: Decouple Web3 from Trophies
-### Task 1: Fix Steam Achievements (per-game instead of profile badges)
-### Task 2: Add Riot Games / LoL Integration (lol-challenges-v1 + champion-mastery-v4)
-### Task 3: Add Strava Integration
-### Task 4: Remove Web3 folder entirely (cleanup)
-
-See TASKS.md for detailed autonomous task definitions.
+The fix is in `resources/web/js/pages/Hall/PlayerHallView.vue` line ~803 with an explicit comment. Don't remove it.
 
 ---
 
-## Constraints
+## Economy system
 
-- **Do NOT touch** the integration Adapter pattern — it works, extend it
-- **Do NOT delete** data from production DB without explicit confirmation
-- **Do NOT modify** auth system (JWT/Sanctum) unless specifically tasked
-- **PHP warnings** about curl/mbstring modules are harmless — ignore them
-- **Test on server** after every change — no local dev environment currently set up
+- **Ambar (XP):** social currency. Earned by importing badges, connecting platforms, receiving follows/donations. Spent on forging trophies and donating to posts.
+- **Uru:** reward currency. Earned only by forging trophies. Spent in the Exchange.
+- **Rune:** legacy/hidden. Still in DB but not shown in UI. Do not eliminate from schema.
 
----
-
-## Deuda técnica para Brief 9N-D
-
-Items no resueltos durante Brief 9N-B (Halls + Forge v2). Bloquean trabajo futuro y no se pueden ignorar al planear 9N-D.
-
-1. **`trophies.is_active` + `starts_at` / `ends_at` missing.** El campaign lifecycle real no existe en el schema. Brand Halls muestran trophies "activos" usando `deleted_at IS NULL` como proxy — no hay ventana temporal. Blocker para scheduled campaigns / time-limited drops.
-
-2. **`chests.user_id` missing.** `chests` no tiene FK al brand owner, solo `key_id` → `keys`. Imposible filtrar chests por brand Hall. El endpoint `GET /api/users/{username}/active-items` devuelve solo trophies hasta que se agregue esa FK (con su backfill correspondiente).
-
-3. **Dos conceptos paralelos de follow.** `followers` (user-user legacy, generic social graph) coexiste con `hall_followers` (nuevo, específico para subscribe a un Hall). Brand stats leen de `hall_followers`. Queda pendiente la decisión para Player Hall del Step 22: ¿mostrar `followers_count` genérico, `hall_followers_count` nuevo, o ambos? Definir antes de empezar Player Hall UI.
+Currencies are NOT shown in the header. Bell icon redirects to dashboard. Notification API: endpoint `/api/notification` (singular), field is `description` (not `message`), data lives at `response.data[0].data`.
 
 ---
 
-## Deuda técnica para Brief 9N-C (cleanup)
+## Working methodology
 
-Items acumulados durante Brief 9N-B que se atienden en el cleanup posterior, junto con la eliminación de `AdminMiddleware` custom, `Role.php` custom, el shim `ProfileResource.is_staff_legacy` y dead code como el import sin uso en `UserController.php:9`.
+This project uses a **dual-Claude workflow**:
 
-1. **Endpoint `/api/users/{username}/follow-status` faltante.** `BrandHallView.vue` arranca con `isFollowing = false` siempre porque no hay forma de saber si el current user ya sigue al Hall. Un user autenticado que ya sigue ve el botón como "Follow" hasta que lo clickea. Crear endpoint nuevo `GET /api/users/{username}/follow-status` que devuelva `{is_following: bool}` o agregar la flag al response del `/api/users/{username}` cuando hay JWT presente.
+1. **Supervisor/architect** (Claude in claude.ai web): designs mockups, writes operational briefs, audits Claude Code's outputs, integrates corrections from a parallel AI Máximo also consults.
+2. **Executor** (Claude Code CLI with `--dangerously-skip-permissions`): reads this file, executes briefs step by step, verifies with `npm run dev` or grep, commits and pushes.
 
-2. **`HallController::activeItems` select muy angosto.** El query select solo trae `id, name, image, description, type, created_at`. El UI espera `receive` (XP) y un campo de pursuing/conquerors count. Las cards renderizan `"+0 XP"` y `"0 pursuing"` para todo. Ampliar el select o cambiar la response shape para incluir esos campos.
+**For visual decisions:** standalone HTML mockups are produced first, approved, then implemented in Vue. Reference for the current visual direction: `onboarding-mockup.html` (Cinematic Ritual, ~1.9MB with base64 assets).
 
-3. **`PlayerHallView.vue` depende del endpoint legacy `/api/virtual-hall/{username}`.** El nuevo `HallResource` (`/api/users/{username}`) no expone las collections ricas (`badges`, `trophies`, `achievements`) que el Player Hall necesita. Step 22 reusó el endpoint viejo `VirtualHallController::show` para esa data. Bloquea borrar `app/Http/Controllers/Api/User/VirtualHallController.php` y la ruta `/api/virtual-hall/{username}` en el cleanup. Opciones: (a) ampliar `HallResource` con esas collections vía `whenLoaded()`, (b) crear endpoint dedicado `/api/users/{username}/profile-data`. Decidir antes de borrar el legacy controller.
+**Sequential execution.** One change at a time. Verify before moving on. Commit per concern.
 
-4. **Busy-loops sync contra localStorage en 6 archivos.** Mismo antipatrón que se fixeó en Step 18 del Brief 9N-B (componentes de moderación del feed) pero con propósito de identidad de user general (donations, notifications, follows), no role check.
+---
 
-   Archivos:
+## Hard rules — non-negotiable
+
+### Code
+1. **Vue 3 Options API only.** No Composition API, no `<script setup>`.
+2. **Share Tech Mono** is the primary font; `VT323` for display accents only.
+3. **One change at a time.** Modify → verify → commit → next.
+4. **Do not break existing functionality.** API calls, Vuex, routing, auth must keep working.
+5. **No new Bootstrap.** Migrate touched components to Tailwind or scoped CSS.
+6. **Do not modify `auth` system** unless explicitly tasked.
+7. **Do not modify the integration Adapter pattern** — extend it.
+8. **Do not modify legacy old card components** (`achievement-card.vue`, `forge-card.vue`, `validate-card.vue`) — they're being replaced page by page.
+9. **Mobile-first.** Test at 375px. Users come from Discord mobile.
+10. **Commit messages:** `feat:`, `fix:`, `refactor:` prefixes. One concern per commit.
+
+### Deploy
+11. **Always `git reset --hard origin/main`** on server. Never `git pull`.
+12. **Verify with `grep`** that files arrived on server before browser testing.
+13. **Project path is `/var/www/ambar`.** Never `/var/www/throphyroom` (legacy).
+14. **`public/build/` is gitignored.** Build runs on server.
+
+### Database
+15. **Never delete from production DB** without explicit confirmation.
+16. **Never run destructive migrations in production** without backup confirmation.
+
+### Files / secrets
+17. **Never commit `.env`.**
+18. **Do not touch `app/Web3/`** — already deleted, backup at `/root/web3-backup-20260415.tar.gz`.
+
+### Design
+19. **Mockup first** for new pages or major redesigns. Approved before any Vue work.
+20. **Design tokens are definitive.** No palette/font changes without discussion.
+
+---
+
+## Current state (as of 2026-05-05)
+
+**Onboarding — closed.** Wizard, highlight tour, Welcome Trophy claim all working. Last bug fixed in commit `351fbea` (driver.js popover `position: relative` regression in `PlayerHallView.vue`).
+
+**Last stable commit on main:** `351fbea`.
+
+---
+
+## On the horizon (priority order)
+
+1. **Vue component refactor to fully match the approved Cinematic Ritual mockup.** PlayerHallView and surrounding components.
+2. **Mascot PNG processing.** 5 T-Rex mascots (`trex_welcoming`, `trex_pointing`, `trex_celebrating`, `trex_thinking`, `trex_victory`) currently lack alpha channel — JPEG renamed to `.png`. Need background removal + true transparency. Note: `trex_welcoming` is classic CRT pixel art; the other four are 3D-textured pixel art. Style consistency decision deferred.
+3. **`DiscordSFTPService` connecting to dead host** (`v-buf-04.sparkedhost.us`). Fills logs every 30 minutes. Needs replacement or disable.
+4. **Remove/redirect legacy Web3 Vue pages** (Forge, Exchange, MyChests).
+5. **Set up Supervisor for queue workers** on the droplet. Currently `steam-sync` runs on `sync` connection as temporary measure.
+6. **Rotate Steam API key** once account recovery completes; update `STEAM_SECRET` in `.env` and run `php artisan config:cache`.
+7. **Valorant integration via Overwolf overlay** (deferred; RSO requirements make direct Riot API path impractical).
+
+---
+
+## Pending technical debt
+
+### From Brief 9N-D era
+1. **`trophies.is_active` + `starts_at` / `ends_at` missing.** Campaign lifecycle real does not exist in schema. Brand Halls show "active" trophies using `deleted_at IS NULL` as proxy. Blocker for scheduled campaigns / time-limited drops.
+2. **`chests.user_id` missing.** No FK to brand owner, only `key_id` → `keys`. Cannot filter chests by brand Hall. Endpoint `GET /api/users/{username}/active-items` returns only trophies until this FK is added (with backfill).
+3. **Two parallel follow concepts.** `followers` (legacy user-user social graph) coexists with `hall_followers` (subscribe to a Hall). Brand stats read from `hall_followers`. Player Hall display decision pending: show `followers_count`, `hall_followers_count`, or both?
+
+### From Brief 9N-C cleanup
+4. **Endpoint `/api/users/{username}/follow-status` missing.** `BrandHallView.vue` always starts with `isFollowing = false`. Either create endpoint or add flag to `/api/users/{username}` when JWT is present.
+5. **`HallController::activeItems` select too narrow.** Returns only `id, name, image, description, type, created_at`. UI expects `receive` (XP) and pursuing/conquerors count. Cards render "+0 XP" / "0 pursuing" for everything.
+6. **`PlayerHallView.vue` depends on legacy endpoint `/api/virtual-hall/{username}`.** New `HallResource` (`/api/users/{username}`) does not expose rich collections (`badges`, `trophies`, `achievements`). Blocks deletion of `VirtualHallController.php`. Decision: extend `HallResource` with `whenLoaded()` collections, or create dedicated `/api/users/{username}/profile-data`.
+7. **Busy-loops syncing localStorage in 6 files.** Antipattern. Replace with `computed` + fallback to `localStorage` without `while`. Files:
    - `resources/web/js/components/main-header.vue:127`
    - `resources/web/js/pages/Notifications.vue:102`
    - `resources/web/js/pages/Network/Followers.vue:71`
@@ -182,23 +250,52 @@ Items acumulados durante Brief 9N-B que se atienden en el cleanup posterior, jun
    - `resources/web/js/pages/Feed/components/feed-card.vue:222` (sendAmbars)
    - `resources/web/js/pages/Feed/components/feed-card.vue:249` (sendMessage)
 
-   Patrón a aplicar (mismo que Step 18 del Brief 9N-B):
-   - Reemplazar busy-loop con `computed`.
-   - Fallback a `localStorage` sin `while`.
-   - Si la lógica usa `user.id` (no role), leer de `this.$store.state.user.id` con fallback a `JSON.parse(localStorage.getItem('user'))?.id`.
+---
+
+## Stack gotchas (real bugs that bit us)
+
+- **Spatie Permission events are off by default.** `config/permission.php` has `'events_enabled' => false`. With that off, `RoleAttached` / `RoleDetached` / `PermissionAttached` / `PermissionDetached` do **not** fire. Already enabled in this repo. If a permission listener does not run, check this first.
+- **OAuth + session state do not mix.** OAuth callbacks in stateless API routes cannot rely on session-based state. Solution: pass user ID as OAuth `state` parameter.
+- **npm packages need explicit install.** Some packages (e.g. `driver.js@1`) are not picked up by general `npm install` and need explicit `npm install <pkg>@<version>`.
+- **SCP from correct context.** Run SCP from local Mac terminal, not from inside an active SSH session.
+- **`package-lock.json` git conflicts on server.** Resolution: `git checkout -- package-lock.json` before pulling, or remove local server copies.
+- **Driver.js `onDestroyed` + `isLastStep()` does not trigger correctly** for final-step modal transitions. Use alternative completion logic.
+- **Wizard state must be read on mount.** If not, the wizard always starts at Step 1 regardless of backend `onboarding_steps` state.
+- **Fixed `z-index` layers can break third-party position calculations.** Adding full-viewport fixed overlays (scanlines/vignette/flicker) created stacking context changes that nearly broke driver.js highlight positioning. The actual culprit was different (see Driver.js gotcha above), but the lesson stands.
+- **Notification API quirks.** Endpoint is `/api/notification` (singular), field is `description` (not `message`), data at `response.data[0].data`.
 
 ---
 
-## Gotchas del stack
+## Shims and temporary code
 
-Comportamientos no obvios que ya nos mordieron. Primera cosa a chequear si algo "debería funcionar y no funciona".
-
-- **Spatie Permission events.** `config/permission.php` trae `'events_enabled' => false` por default. Con eso apagado, `RoleAttached` / `RoleDetached` / `PermissionAttached` / `PermissionDetached` **no se disparan** — cualquier listener nuestro recibe cero. Ya está activado en este repo (commit Step 11) pero si aparece un listener nuevo y no se ejecuta, esto es lo primero que hay que chequear.
+- **`ProfileResource.is_staff_legacy`.** Bridge for staff checks during the role system migration. Pattern: `is_staff_legacy = hasAnyRole(['tr_moderator','tr_admin','tr_superadmin'])`. Removed in Brief 9N-C cleanup once `$store.getters.isStaff` covers all cases.
+- **`steam-sync` job runs on `sync` connection.** Until Supervisor is set up for queue workers on the droplet.
 
 ---
 
-## Shims temporales
+## Useful server commands
 
-Campos / comportamientos puestos a propósito para puentear transiciones. Cada uno lista cuándo se elimina.
+```bash
+# Tail Laravel log
+tail -f /var/www/ambar/storage/logs/laravel.log
 
-- **`ProfileResource.is_staff_legacy`.** Propósito: mantener la moderación del feed y los checks de staff del sidebar funcionando entre el deploy backend (Step 15 del Brief 9N-B) y el deploy frontend (Step 27). Los 8 lugares del frontend que leían `user.roles.some(r => r.name === 'Master user')` empiezan a devolver `false` después del Step 12 porque `roles` ahora es una lista de strings. El shim `is_staff_legacy = hasAnyRole(['tr_moderator','tr_admin','tr_superadmin'])` permite migrar el frontend en dos saltos: primero de `role.name` → `user.is_staff_legacy`, después de ahí → `$store.getters.isStaff` (composable). **Cuándo se borra:** Brief 9N-C cleanup, junto con `AdminMiddleware` custom y `Role.php` custom, una vez verificado que el composable cubre todos los casos.
+# Clear Laravel caches
+cd /var/www/ambar && php artisan config:clear && php artisan cache:clear && php artisan route:clear
+
+# Cache config (after .env change)
+cd /var/www/ambar && php artisan config:cache
+
+# Apache reload
+systemctl reload apache2
+
+# DB shell
+mysql -u deployer -p'<see .env>' ambar
+```
+
+---
+
+## Documents
+
+- `TROPHYROOM_WORKING_GUIDE.md` — methodology and project overview for new chat sessions.
+- `NEXT_SESSION_PROMPT.md` — handoff prompt updated at end of each session.
+- `onboarding-mockup.html` — approved Cinematic Ritual reference mockup.
