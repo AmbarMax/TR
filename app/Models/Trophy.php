@@ -25,6 +25,7 @@ class Trophy extends Model
 
     protected $fillable = [
         'user_id',
+        'campaign_id',
         'name',
         'image',
         'price',
@@ -32,6 +33,7 @@ class Trophy extends Model
         'description',
         'type',
         'weight',
+        'published_at',
         'max_supply',
         'is_nft',
         'minted',
