@@ -800,7 +800,8 @@ export default {
     0 0 80px rgba(255,97,0,0.3),
     0 0 0 1px rgba(255,97,0,0.1),
     0 0 0 4px rgba(0,0,0,0.5) !important;
-  position: relative;
+  /* fixed required for driver.js viewport positioning — do not change to relative/static */
+  position: fixed !important;
 }
 
 /* Corner brackets via the popover's pseudo-elements */
