@@ -38,6 +38,149 @@ class BrandAnalyticsController extends Controller
         return response()->json($payload);
     }
 
+    /**
+     * GET /api/brand/analytics/secondary-metrics
+     *
+     * Strip de 4 datos secundarios: total_badges_granted, cross_hall_overlap,
+     * multi_platform_users_percent, achievement_velocity.
+     */
+    public function secondaryMetrics(Request $request): JsonResponse
+    {
+        $user = Auth::user();
+        abort_unless(
+            $user->account_type === 'brand' || $user->hasAnyRole(['tr_admin', 'tr_superadmin']),
+            403,
+            'Brand account required'
+        );
+
+        $brandId = $user->id;
+        $payload = Cache::remember(
+            "brand:{$brandId}:analytics:secondary",
+            now()->addMinutes(5),
+            fn () => $this->buildSecondaryMetricsPayload($brandId)
+        );
+
+        return response()->json($payload);
+    }
+
+    private function buildSecondaryMetricsPayload(string $brandId): array
+    {
+        $trophyIds = Trophy::where('user_id', $brandId)->pluck('id');
+        $badgeIds = DB::table('badge_trophy')
+            ->whereIn('trophy_id', $trophyIds)
+            ->pluck('badge_id');
+
+        // Users que tienen ≥1 badge del brand. Base para cross_hall y multi_platform.
+        // Filtra grants y users soft-deleted en la fuente para que el denominador
+        // de cross_hall_overlap y multi_platform_users_percent no se infle con
+        // entidades disabled.
+        $brandUserIds = DB::table('badge_user as bu')
+            ->join('users as u', 'u.id', '=', 'bu.user_id')
+            ->whereIn('bu.badge_id', $badgeIds)
+            ->whereNull('bu.deleted_at')
+            ->whereNull('u.deleted_at')
+            ->distinct()
+            ->pluck('bu.user_id');
+
+        $totalGranted = DB::table('badge_user')
+            ->whereIn('badge_id', $badgeIds)
+            ->whereNull('deleted_at')
+            ->count();
+
+        return [
+            'total_badges_granted' => [
+                'value' => $totalGranted,
+                'label' => 'verified actions',
+            ],
+            'cross_hall_overlap' => $this->buildCrossHallOverlap($brandId, $brandUserIds),
+            'multi_platform_users_percent' => $this->multiPlatformPercent($brandUserIds),
+            'achievement_velocity' => [
+                'value' => $this->achievementVelocity($trophyIds, $badgeIds),
+                'label' => 'per pursuer per day',
+            ],
+        ];
+    }
+
+    /**
+     * Top 3 brands con mayor % de users compartidos con el brand actual.
+     * Excluye brands con overlap = 0 (INNER JOINs naturalmente).
+     * Single query con GROUP BY para evitar N+1.
+     */
+    private function buildCrossHallOverlap(string $brandId, $brandUserIds): array
+    {
+        if ($brandUserIds->isEmpty()) {
+            return [];
+        }
+
+        $denominator = $brandUserIds->count();
+
+        $rows = DB::table('badge_user as bu')
+            ->join('badges as b', 'b.id', '=', 'bu.badge_id')
+            ->join('badge_trophy as bt', 'bt.badge_id', '=', 'b.id')
+            ->join('trophies as t', 't.id', '=', 'bt.trophy_id')
+            ->join('users as u', 'u.id', '=', 't.user_id')
+            ->where('u.account_type', 'brand')
+            ->where('u.id', '!=', $brandId)
+            ->whereIn('bu.user_id', $brandUserIds)
+            ->whereNull('u.deleted_at')
+            ->whereNull('t.deleted_at')
+            ->whereNull('b.deleted_at')
+            ->whereNull('bu.deleted_at')
+            ->select('u.username', DB::raw('COUNT(DISTINCT bu.user_id) as overlap_count'))
+            ->groupBy('u.id', 'u.username')
+            ->orderByDesc('overlap_count')
+            ->limit(3)
+            ->get();
+
+        return $rows->map(fn ($r) => [
+            'brand_username' => $r->username,
+            'overlap_percent' => (int) round(($r->overlap_count / $denominator) * 100),
+        ])->values()->all();
+    }
+
+    /**
+     * % de users del brand con ≥2 providers DISTINTOS en auth_integrations.
+     */
+    private function multiPlatformPercent($brandUserIds): int
+    {
+        if ($brandUserIds->isEmpty()) {
+            return 0;
+        }
+
+        $multiCount = DB::table('auth_integrations')
+            ->whereIn('user_id', $brandUserIds)
+            ->whereNull('deleted_at')
+            ->select('user_id')
+            ->groupBy('user_id')
+            ->havingRaw('COUNT(DISTINCT name) >= 2')
+            ->get()
+            ->count();
+
+        return (int) round(($multiCount / $brandUserIds->count()) * 100);
+    }
+
+    /**
+     * Velocity: grants_30d / pursuers_30d / 30. Float 1 decimal.
+     */
+    private function achievementVelocity($trophyIds, $badgeIds): float
+    {
+        $now = Carbon::now();
+        $start30d = $now->copy()->subDays(30);
+
+        $grants30d = DB::table('badge_user')
+            ->whereIn('badge_id', $badgeIds)
+            ->where('created_at', '>=', $start30d)
+            ->count();
+
+        $pursuers30d = $this->countActivePursuers($trophyIds, $badgeIds, $start30d, $now);
+
+        if ($pursuers30d === 0 || $grants30d === 0) {
+            return 0.0;
+        }
+
+        return round($grants30d / $pursuers30d / 30, 1);
+    }
+
     private function buildPerformancePayload(string $brandId): array
     {
         $trophyIds = Trophy::where('user_id', $brandId)->pluck('id');
