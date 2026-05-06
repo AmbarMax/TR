@@ -140,6 +140,15 @@ class BrandDashboardTestingSeeder extends Seeder
             $this->command->info("✓ Trophy forges seeded: {$forgesCount}");
 
             // ============================================================
+            // 8b. SEED PURSUITS (~40 distribuidos en 30 días, solo trofeos activos)
+            // ============================================================
+            $this->seedPursuits($players, $trophies);
+            $pursuitsCount = DB::table('pursuits')
+                ->whereIn('trophy_id', $trophies->pluck('id'))
+                ->count();
+            $this->command->info("✓ Pursuits seeded: {$pursuitsCount}");
+
+            // ============================================================
             // 9. SEED CROSS-HALL OVERLAP
             // (algunos players también tienen badges de otros brands)
             // ============================================================
@@ -434,10 +443,11 @@ class BrandDashboardTestingSeeder extends Seeder
 
     private function seedTrophyForges($players, $trophies): void
     {
-        // ~85 forges en 30 días, weighted hacia trofeos más viejos
-        // (Domina LoL y Conecta Discord tienen más forges; 100h Steam tiene menos; draft tiene 0)
-        // El draft 'Promo Verano LATAM' se filtra por nombre porque no hay
-        // columna status persistida (decisión A3).
+        // ~85 forges en 30 días con distribución ASCENDENTE en el tiempo
+        // (días recientes tienen más forges que días antiguos). Esto da
+        // shape al sparkline del Performance Overview del Brand Dashboard,
+        // necesario para validar gradientes/glows/dot final del componente.
+        // El draft 'Promo Verano LATAM' se filtra por nombre.
         $activeTrophies = $trophies->reject(fn($t) => $t->name === 'Promo Verano LATAM');
 
         $forgeWeights = [
@@ -446,6 +456,20 @@ class BrandDashboardTestingSeeder extends Seeder
             '100h en Steam' => 16,
         ];
 
+        // Distribución ascendente — mismo shape que seedBadgeGrants.
+        // dayIdx=0 → hace 30 días (más antiguo); dayIdx=29 → hace 1 día.
+        $dailyDistribution = [2,1,3,2,4,3,5,2,3,4,6,4,5,7,3,4,5,8,6,5,7,4,6,9,5,7,8,6,9,4];
+
+        // Pool de días pesados: cada día aparece N veces donde N es su peso.
+        // array_rand sobre este pool da distribución ascendente.
+        $weightedDays = [];
+        for ($dayIdx = 0; $dayIdx < 30; $dayIdx++) {
+            $weight = $dailyDistribution[$dayIdx];
+            for ($i = 0; $i < $weight; $i++) {
+                $weightedDays[] = 30 - $dayIdx; // idx 0 → 30 días atrás, idx 29 → 1 día atrás
+            }
+        }
+
         $playerArray = $players->shuffle()->values();
 
         foreach ($activeTrophies as $trophy) {
@@ -453,14 +477,16 @@ class BrandDashboardTestingSeeder extends Seeder
             $usedPlayerIds = [];
 
             for ($i = 0; $i < $count; $i++) {
-                // Cada player solo forja 1 vez el mismo trophy
+                // Cada player solo forja 1 vez el mismo trophy (defensa proactiva
+                // contra el unique constraint en (user_id, trophy_id)).
                 $available = $playerArray->whereNotIn('id', $usedPlayerIds);
                 if ($available->isEmpty()) break;
 
                 $player = $available->random();
                 $usedPlayerIds[] = $player->id;
 
-                $forgedAt = now()->subDays(rand(0, 29))
+                $daysAgo = $weightedDays[array_rand($weightedDays)];
+                $forgedAt = now()->subDays($daysAgo)
                     ->setTime(rand(0, 23), rand(0, 59), rand(0, 59));
 
                 DB::table('trophy_user')->insertOrIgnore([
@@ -468,6 +494,38 @@ class BrandDashboardTestingSeeder extends Seeder
                     'trophy_id' => $trophy->id,
                     'created_at' => $forgedAt,
                     'updated_at' => $forgedAt,
+                ]);
+            }
+        }
+    }
+
+    private function seedPursuits($players, $trophies): void
+    {
+        // ~40 pursuits distribuidos entre players y los 3 trofeos activos.
+        // El draft 'Promo Verano LATAM' no tiene pursuits (no está publicado).
+        // pursuits ya tiene UNIQUE (user_id, trophy_id) en schema, usamos
+        // insertOrIgnore para defenderse contra colisiones de random.
+        $weights = [
+            'Domina LoL' => 18,
+            'Conecta Discord' => 14,
+            '100h en Steam' => 8,
+        ];
+
+        $activeTrophies = $trophies->reject(fn($t) => $t->name === 'Promo Verano LATAM');
+
+        foreach ($activeTrophies as $trophy) {
+            $count = $weights[$trophy->name] ?? 5;
+
+            for ($i = 0; $i < $count; $i++) {
+                $player = $players->random();
+                $startedAt = now()->subDays(rand(0, 29))
+                    ->setTime(rand(0, 23), rand(0, 59), rand(0, 59));
+
+                DB::table('pursuits')->insertOrIgnore([
+                    'user_id' => $player->id,
+                    'trophy_id' => $trophy->id,
+                    'created_at' => $startedAt,
+                    'updated_at' => $startedAt,
                 ]);
             }
         }
