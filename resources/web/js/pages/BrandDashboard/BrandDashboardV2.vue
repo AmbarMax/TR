@@ -1,8 +1,30 @@
 <template>
-  <div class="brand-dashboard-v2-placeholder">
-    <h1>Brand Dashboard — coming in Bloque 4</h1>
-    <p>The new analytics dashboard will live here.</p>
-  </div>
+  <section class="brand-dashboard-v2">
+    <header class="dash-header">
+      <h1>Brand Dashboard</h1>
+      <p class="dash-subtitle">Performance · Audience · Campaigns</p>
+    </header>
+
+    <div class="dash-stack">
+      <!-- 1. Performance Overview (Commit 2) -->
+      <div class="placeholder">[PerformanceOverview goes here]</div>
+
+      <!-- 2. Secondary Metrics Strip (Commit 3) -->
+      <div class="placeholder">[SecondaryMetricsStrip goes here]</div>
+
+      <!-- 3. Audience Intelligence (Commit 4) -->
+      <div class="placeholder">[AudienceIntelligence goes here]</div>
+
+      <!-- 4. Dual Row: Campaigns + Activity (Commits 5, 6) -->
+      <div class="dual-row">
+        <div class="placeholder">[CampaignsTable goes here]</div>
+        <div class="placeholder">[ActivityFeed goes here]</div>
+      </div>
+
+      <!-- 5. Locked Pro Features (Commit 7) -->
+      <div class="placeholder">[LockedProFeatures goes here]</div>
+    </div>
+  </section>
 </template>
 
 <script>
@@ -12,12 +34,69 @@ export default {
 </script>
 
 <style scoped>
-.brand-dashboard-v2-placeholder {
-  padding: 24px 32px;
-  color: var(--text-color, #c1f527);
+.brand-dashboard-v2 {
+  padding: 24px 40px 80px;
+  max-width: 1500px;
+  color: var(--text, #feeddf);
+  min-height: 100vh;
 }
-.brand-dashboard-v2-placeholder h1 {
+
+/* Header — matches mockup (.dash-header / .dash-title / .dash-subtitle) */
+.dash-header {
+  border-bottom: 1px solid var(--line, rgba(254, 237, 223, 0.08));
+  padding-bottom: 20px;
+  margin-bottom: 32px;
+}
+
+.dash-header h1 {
+  font-family: 'VT323', monospace;
+  font-size: 48px;
+  color: var(--primary, #ff6100);
+  line-height: 1;
+  letter-spacing: 1px;
+  margin: 0 0 8px 0;
+  text-transform: uppercase;
+}
+
+.dash-subtitle {
   font-family: 'Share Tech Mono', monospace;
-  margin-bottom: 8px;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim, rgba(254, 237, 223, 0.6));
+  margin: 0;
+}
+
+/* Section stack — mockup uses ~16px between sections */
+.dash-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Dual row (Campaigns 1.6fr | Activity 1fr) — matches mockup */
+.dual-row {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .dual-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Scaffolding placeholders — replaced in commits 2-7 */
+.placeholder {
+  background: var(--bg-elev, #0a0b0f);
+  border: 1px dashed rgba(255, 97, 0, 0.3);
+  padding: 32px;
+  text-align: center;
+  color: rgba(254, 237, 223, 0.4);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.05em;
 }
 </style>
