@@ -18,7 +18,7 @@
       <!-- 4. Dual Row: Campaigns + Activity -->
       <div class="dual-row">
         <CampaignsTable />
-        <div class="placeholder">[ActivityFeed goes here]</div>
+        <ActivityFeed />
       </div>
 
       <!-- 5. Locked Pro Features (Commit 7) -->
@@ -32,10 +32,11 @@ import PerformanceOverview from './v2/PerformanceOverview.vue';
 import SecondaryMetricsStrip from './v2/SecondaryMetricsStrip.vue';
 import AudienceIntelligence from './v2/AudienceIntelligence.vue';
 import CampaignsTable from './v2/CampaignsTable.vue';
+import ActivityFeed from './v2/ActivityFeed.vue';
 
 export default {
   name: 'BrandDashboardV2',
-  components: { PerformanceOverview, SecondaryMetricsStrip, AudienceIntelligence, CampaignsTable },
+  components: { PerformanceOverview, SecondaryMetricsStrip, AudienceIntelligence, CampaignsTable, ActivityFeed },
 };
 </script>
 
