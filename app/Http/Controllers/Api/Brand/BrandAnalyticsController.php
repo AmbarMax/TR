@@ -340,6 +340,109 @@ class BrandAnalyticsController extends Controller
         ];
     }
 
+    /**
+     * GET /api/brand/analytics/campaigns
+     *
+     * Lista de "campaigns" (= trophies del brand) para la tabla del dashboard.
+     * Query param ?sort acepta: created_at|pursuers|forges|conversion (default created_at desc).
+     * v.2 devuelve hasta 10 sin paginación.
+     *
+     * Cache strategy: una sola entrada por brand con el dataset SIN sortear.
+     * El sort vive en el endpoint público — evita 4x cache waste por sort
+     * y deja la invalidación futura (Cache::forget) con un solo key.
+     */
+    public function campaigns(Request $request): JsonResponse
+    {
+        $user = Auth::user();
+        abort_unless(
+            $user->account_type === 'brand' || $user->hasAnyRole(['tr_admin', 'tr_superadmin']),
+            403,
+            'Brand account required'
+        );
+
+        $allowedSorts = ['created_at', 'pursuers', 'forges', 'conversion'];
+        $sort = $request->query('sort', 'created_at');
+        if (!in_array($sort, $allowedSorts, true)) {
+            $sort = 'created_at';
+        }
+
+        $brandId = $user->id;
+        $items = Cache::remember(
+            "brand:{$brandId}:analytics:campaigns",
+            now()->addMinutes(2),
+            fn () => $this->buildCampaignsItems($brandId)
+        );
+
+        $sorted = match ($sort) {
+            'pursuers' => collect($items)->sortByDesc('pursuers'),
+            'forges' => collect($items)->sortByDesc('forges'),
+            'conversion' => collect($items)->sortByDesc('conversion_percent'),
+            default => collect($items)->sortByDesc('created_at'),
+        };
+
+        return response()->json([
+            'data' => $sorted->values()->take(10)->all(),
+            'meta' => [
+                'total' => count($items),
+                'per_page' => 10,
+                'current_page' => 1,
+            ],
+        ]);
+    }
+
+    /**
+     * Items del brand para la tabla campaigns. Devuelve array sin sortear
+     * y sin meta — el sort y la pagination viven en el endpoint público.
+     */
+    private function buildCampaignsItems(string $brandId): array
+    {
+        // Single query con LEFT JOINs + COUNT(DISTINCT). El cross-product
+        // entre trophy_user y pursuits no infla el count gracias al DISTINCT.
+        // Para v.2 con ~10 trofeos por brand, performance OK.
+        $rows = DB::table('trophies as t')
+            ->leftJoin('trophy_user as tu', function ($join) {
+                $join->on('tu.trophy_id', '=', 't.id')
+                     ->whereNull('tu.deleted_at');
+            })
+            ->leftJoin('pursuits as p', 'p.trophy_id', '=', 't.id')
+            ->where('t.user_id', $brandId)
+            ->whereNull('t.deleted_at')
+            ->select(
+                't.id as trophy_id',
+                't.name',
+                't.published_at',
+                't.created_at',
+                't.image as thumbnail_url',
+                DB::raw('COUNT(DISTINCT p.user_id) as pursuers'),
+                DB::raw('COUNT(DISTINCT tu.id) as forges')
+            )
+            ->groupBy('t.id', 't.name', 't.published_at', 't.created_at', 't.image')
+            ->get();
+
+        return $rows->map(function ($r) {
+            $pursuers = (int) $r->pursuers;
+            $forges = (int) $r->forges;
+            $conversion = $pursuers === 0
+                ? 0
+                : round(($forges / $pursuers) * 100, 2);
+
+            return [
+                'trophy_id' => $r->trophy_id,
+                'name' => $r->name,
+                // 'expired' status no implementado en v.2: schema no tiene
+                // deadline column. Pendiente para deuda menor del cleanup.
+                'status' => $r->published_at !== null ? 'active' : 'draft',
+                'created_at' => Carbon::parse($r->created_at)
+                    ->setTimezone('UTC')
+                    ->format('Y-m-d\TH:i:s.u\Z'),
+                'pursuers' => $pursuers,
+                'forges' => $forges,
+                'conversion_percent' => $conversion,
+                'thumbnail_url' => (string) $r->thumbnail_url,
+            ];
+        })->all();
+    }
+
     private function buildPerformancePayload(string $brandId): array
     {
         $trophyIds = Trophy::where('user_id', $brandId)->pluck('id');
