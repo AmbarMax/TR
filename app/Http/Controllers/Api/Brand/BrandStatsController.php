@@ -8,6 +8,18 @@ use App\Models\GuildConnection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * @deprecated Use BrandAnalyticsController.
+ *
+ * Discord-centric analytics from before the Brand Dashboard v.2
+ * redesign. The new BrandAnalyticsController under the same
+ * namespace exposes 5 endpoints under /api/brand/analytics/*
+ * with broader source coverage (badges, trophies, pursuits,
+ * cross-hall overlap) and proper soft-delete filtering.
+ *
+ * Scheduled for removal once the frontend (Bloque 4) is in
+ * production and confirmed not consuming legacy routes.
+ */
 class BrandStatsController extends Controller
 {
     public function index(Request $request)
