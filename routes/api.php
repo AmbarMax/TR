@@ -34,6 +34,7 @@ use App\Http\Controllers\Api\Brand\BrandEventsController;
 use App\Http\Controllers\Api\Brand\BrandBadgesController;
 use App\Http\Controllers\Api\Brand\BrandTrophiesController;
 use App\Http\Controllers\Api\Brand\BrandGuildController;
+use App\Http\Controllers\Api\Brand\BrandAnalyticsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -76,6 +77,15 @@ Route::prefix('brand')->middleware([JwtMiddleware::class, 'role:brand_admin|tr_a
     Route::put('/trophies/{id}', [BrandTrophiesController::class, 'update']);
     Route::delete('/trophies/{id}', [BrandTrophiesController::class, 'destroy']);
     Route::get('/trophies/{id}/stats', [BrandTrophiesController::class, 'stats']);
+
+    // Analytics (dashboard v.2)
+    Route::prefix('analytics')->controller(BrandAnalyticsController::class)->group(function () {
+        Route::get('/performance', 'performance');
+        Route::get('/secondary-metrics', 'secondaryMetrics');
+        Route::get('/audience', 'audience');
+        Route::get('/campaigns', 'campaigns');
+        Route::get('/activity', 'activity');
+    });
 });
 
 // Bot API routes — authenticated via bot_api_key, no JWT required
