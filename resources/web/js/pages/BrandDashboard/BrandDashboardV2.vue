@@ -12,8 +12,8 @@
       <!-- 2. Secondary Metrics Strip -->
       <SecondaryMetricsStrip />
 
-      <!-- 3. Audience Intelligence (Commit 4) -->
-      <div class="placeholder">[AudienceIntelligence goes here]</div>
+      <!-- 3. Audience Intelligence -->
+      <AudienceIntelligence />
 
       <!-- 4. Dual Row: Campaigns + Activity (Commits 5, 6) -->
       <div class="dual-row">
@@ -30,10 +30,11 @@
 <script>
 import PerformanceOverview from './v2/PerformanceOverview.vue';
 import SecondaryMetricsStrip from './v2/SecondaryMetricsStrip.vue';
+import AudienceIntelligence from './v2/AudienceIntelligence.vue';
 
 export default {
   name: 'BrandDashboardV2',
-  components: { PerformanceOverview, SecondaryMetricsStrip },
+  components: { PerformanceOverview, SecondaryMetricsStrip, AudienceIntelligence },
 };
 </script>
 
