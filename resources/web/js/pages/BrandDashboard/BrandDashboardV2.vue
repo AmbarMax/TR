@@ -15,9 +15,9 @@
       <!-- 3. Audience Intelligence -->
       <AudienceIntelligence />
 
-      <!-- 4. Dual Row: Campaigns + Activity (Commits 5, 6) -->
+      <!-- 4. Dual Row: Campaigns + Activity -->
       <div class="dual-row">
-        <div class="placeholder">[CampaignsTable goes here]</div>
+        <CampaignsTable />
         <div class="placeholder">[ActivityFeed goes here]</div>
       </div>
 
@@ -31,10 +31,11 @@
 import PerformanceOverview from './v2/PerformanceOverview.vue';
 import SecondaryMetricsStrip from './v2/SecondaryMetricsStrip.vue';
 import AudienceIntelligence from './v2/AudienceIntelligence.vue';
+import CampaignsTable from './v2/CampaignsTable.vue';
 
 export default {
   name: 'BrandDashboardV2',
-  components: { PerformanceOverview, SecondaryMetricsStrip, AudienceIntelligence },
+  components: { PerformanceOverview, SecondaryMetricsStrip, AudienceIntelligence, CampaignsTable },
 };
 </script>
 
