@@ -283,20 +283,26 @@ class BrandDashboardTestingSeeder extends Seeder
             $alternatives = array_diff(['steam', 'riot', 'discord', 'strava'], [$existingProvider]);
             $newProvider = $alternatives[array_rand($alternatives)];
 
-            $this->insertAuthIntegration($player, $newProvider);
+            // Secundaria: entre 1 semana y ~2 meses después de la primaria,
+            // para que "primary provider by earliest created_at" sea unívoco.
+            $this->insertAuthIntegration($player, $newProvider, rand(7, 60));
         }
     }
 
-    private function insertAuthIntegration(User $user, string $provider): void
+    private function insertAuthIntegration(User $user, string $provider, int $daysAfter = 0): void
     {
         // auth_integrations.id es UUID — usamos Eloquent para que el trait
         // UUID lo genere. integration_id queda null (decisión A2): los
         // queries del controller miran name, no FK.
+        // $daysAfter > 0 simula que un user conectó su segunda plataforma
+        // días/semanas después de la primera, lo que permite que el endpoint
+        // /audience identifique correctamente el "primary provider" via
+        // earliest created_at (default 0 = creado en $user->created_at).
         AuthIntegration::updateOrCreate(
             ['user_id' => $user->id, 'name' => $provider],
             [
                 'integration_id' => null,
-                'created_at' => $user->created_at,
+                'created_at' => $user->created_at->copy()->addDays($daysAfter),
                 'updated_at' => now(),
             ]
         );
