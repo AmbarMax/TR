@@ -443,6 +443,213 @@ class BrandAnalyticsController extends Controller
         })->all();
     }
 
+    /**
+     * GET /api/brand/analytics/activity
+     *
+     * Activity feed cronológico. Query param ?limit (default 20, range 1-50).
+     * Cache TTL 30s para sensación "live".
+     */
+    public function activity(Request $request): JsonResponse
+    {
+        $user = Auth::user();
+        abort_unless(
+            $user->account_type === 'brand' || $user->hasAnyRole(['tr_admin', 'tr_superadmin']),
+            403,
+            'Brand account required'
+        );
+
+        $rawLimit = $request->query('limit', 20);
+        if (!is_numeric($rawLimit)) {
+            $limit = 20;
+        } else {
+            $limit = (int) $rawLimit;
+            if ($limit < 1) $limit = 1;
+            if ($limit > 50) $limit = 50;
+        }
+
+        $brandId = $user->id;
+        $items = Cache::remember(
+            "brand:{$brandId}:analytics:activity:{$limit}",
+            now()->addSeconds(30),
+            fn () => $this->buildActivityItems($brandId, $limit)
+        );
+
+        return response()->json(['data' => $items]);
+    }
+
+    /**
+     * Mezcla de los 4 tipos de eventos del activity feed.
+     *
+     * Approach B: cada source query trae hasta $limit rows, después en PHP
+     * unimos todas, ordenamos por timestamp desc, y truncamos al $limit final.
+     * Memoria max: ~4 × $limit rows (≤200).
+     *
+     * Limitación conocida: si un source es mucho más activo que los demás
+     * (ej. miles de grants vs decenas de pursuits), el limit por source
+     * pierde eventos viejos del activo. Aceptable para v.2; deuda para v.3
+     * (probablemente requiera UNION ALL en SQL con sort global).
+     */
+    private function buildActivityItems(string $brandId, int $limit): array
+    {
+        $trophyIds = Trophy::where('user_id', $brandId)->pluck('id');
+        $badgeIds = DB::table('badge_trophy')
+            ->whereIn('trophy_id', $trophyIds)
+            ->whereNull('deleted_at')
+            ->pluck('badge_id');
+        $brandUserIds = DB::table('badge_user as bu')
+            ->join('users as u', 'u.id', '=', 'bu.user_id')
+            ->whereIn('bu.badge_id', $badgeIds)
+            ->whereNull('bu.deleted_at')
+            ->whereNull('u.deleted_at')
+            ->distinct()
+            ->pluck('bu.user_id');
+
+        $events = collect()
+            ->concat($this->fetchForgeEvents($trophyIds, $limit))
+            ->concat($this->fetchGrantEvents($badgeIds, $limit))
+            ->concat($this->fetchPursuitEvents($trophyIds, $limit))
+            ->concat($this->fetchCrossHitEvents($brandUserIds, $badgeIds, $brandId, $limit));
+
+        return $events
+            ->sortByDesc('timestamp')
+            ->values()
+            ->take($limit)
+            ->all();
+    }
+
+    private function fetchForgeEvents($trophyIds, int $limit): array
+    {
+        if ($trophyIds->isEmpty()) return [];
+
+        $rows = DB::table('trophy_user as tu')
+            ->join('users as u', 'u.id', '=', 'tu.user_id')
+            ->join('trophies as t', 't.id', '=', 'tu.trophy_id')
+            ->whereIn('tu.trophy_id', $trophyIds)
+            ->whereNull('tu.deleted_at')
+            ->whereNull('u.deleted_at')
+            ->whereNull('t.deleted_at')
+            ->select('tu.id', 'tu.created_at', 'u.username', 'u.avatar', 't.id as trophy_id', 't.name as trophy_name')
+            ->orderByDesc('tu.created_at')
+            ->limit($limit)
+            ->get();
+
+        return $rows->map(fn ($r) => $this->formatEvent(
+            "evt_forge_{$r->id}",
+            'trophy_forged',
+            'T',
+            $r,
+            ['trophy_name' => $r->trophy_name, 'trophy_id' => $r->trophy_id]
+        ))->all();
+    }
+
+    private function fetchGrantEvents($badgeIds, int $limit): array
+    {
+        if ($badgeIds->isEmpty()) return [];
+
+        $rows = DB::table('badge_user as bu')
+            ->join('users as u', 'u.id', '=', 'bu.user_id')
+            ->join('badges as b', 'b.id', '=', 'bu.badge_id')
+            ->join('integrations as i', 'i.id', '=', 'b.integration_id')
+            ->whereIn('bu.badge_id', $badgeIds)
+            ->whereNull('bu.deleted_at')
+            ->whereNull('u.deleted_at')
+            ->whereNull('b.deleted_at')
+            ->whereNull('i.deleted_at')
+            ->select('bu.id', 'bu.created_at', 'u.username', 'u.avatar', 'b.name as badge_name', 'i.name as platform')
+            ->orderByDesc('bu.created_at')
+            ->limit($limit)
+            ->get();
+
+        return $rows->map(fn ($r) => $this->formatEvent(
+            "evt_grant_{$r->id}",
+            'badge_granted',
+            'B',
+            $r,
+            ['badge_name' => $r->badge_name, 'platform' => $r->platform]
+        ))->all();
+    }
+
+    private function fetchPursuitEvents($trophyIds, int $limit): array
+    {
+        if ($trophyIds->isEmpty()) return [];
+
+        // pursuits no tiene deleted_at en schema; las otras tablas sí.
+        $rows = DB::table('pursuits as p')
+            ->join('users as u', 'u.id', '=', 'p.user_id')
+            ->join('trophies as t', 't.id', '=', 'p.trophy_id')
+            ->whereIn('p.trophy_id', $trophyIds)
+            ->whereNull('u.deleted_at')
+            ->whereNull('t.deleted_at')
+            ->select('p.id', 'p.created_at', 'u.username', 'u.avatar', 't.id as trophy_id', 't.name as trophy_name')
+            ->orderByDesc('p.created_at')
+            ->limit($limit)
+            ->get();
+
+        return $rows->map(fn ($r) => $this->formatEvent(
+            "evt_pursuit_{$r->id}",
+            'pursuer_started',
+            'P',
+            $r,
+            ['trophy_name' => $r->trophy_name, 'trophy_id' => $r->trophy_id]
+        ))->all();
+    }
+
+    private function fetchCrossHitEvents($brandUserIds, $badgeIds, string $brandId, int $limit): array
+    {
+        if ($brandUserIds->isEmpty()) return [];
+
+        $rows = DB::table('badge_user as bu')
+            ->join('users as actor', 'actor.id', '=', 'bu.user_id')
+            ->join('badges as b', 'b.id', '=', 'bu.badge_id')
+            ->join('badge_trophy as bt', 'bt.badge_id', '=', 'b.id')
+            ->join('trophies as t', 't.id', '=', 'bt.trophy_id')
+            ->join('users as ob', 'ob.id', '=', 't.user_id')
+            ->whereIn('bu.user_id', $brandUserIds)
+            ->whereNotIn('bu.badge_id', $badgeIds)
+            ->where('ob.account_type', 'brand')
+            ->where('ob.id', '!=', $brandId)
+            ->whereNull('bu.deleted_at')
+            ->whereNull('actor.deleted_at')
+            ->whereNull('b.deleted_at')
+            ->whereNull('bt.deleted_at')
+            ->whereNull('t.deleted_at')
+            ->whereNull('ob.deleted_at')
+            ->select('bu.id', 'bu.created_at', 'actor.username', 'actor.avatar', 'ob.username as other_brand')
+            ->orderByDesc('bu.created_at')
+            ->limit($limit)
+            ->get();
+
+        return $rows->map(fn ($r) => $this->formatEvent(
+            "evt_xhit_{$r->id}",
+            'cross_hall_hit',
+            'X',
+            $r,
+            ['other_brand' => $r->other_brand]
+        ))->all();
+    }
+
+    /**
+     * Shape común de un evento del activity feed. $row debe tener
+     * username + avatar + created_at.
+     */
+    private function formatEvent(string $id, string $type, string $icon, $row, array $target): array
+    {
+        $createdAt = Carbon::parse($row->created_at);
+
+        return [
+            'id' => $id,
+            'type' => $type,
+            'icon' => $icon,
+            'actor' => [
+                'username' => $row->username,
+                'avatar_url' => (string) $row->avatar,
+            ],
+            'target' => $target,
+            'timestamp' => $createdAt->copy()->setTimezone('UTC')->format('Y-m-d\TH:i:s.u\Z'),
+            'human_time' => $createdAt->diffForHumans(),
+        ];
+    }
+
     private function buildPerformancePayload(string $brandId): array
     {
         $trophyIds = Trophy::where('user_id', $brandId)->pluck('id');
