@@ -70,6 +70,7 @@ class Kernel extends HttpKernel
         'brand.admin'     => \App\Http\Middleware\AdminMiddleware::class,
         'role'            => \Spatie\Permission\Middleware\RoleMiddleware::class,
         'permission'      => \Spatie\Permission\Middleware\PermissionMiddleware::class,
+        'account_status'  => \App\Http\Middleware\CheckAccountStatus::class,
 
     ];
 }

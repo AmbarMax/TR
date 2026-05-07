@@ -73,8 +73,8 @@ Route::prefix('brand')->middleware([JwtMiddleware::class, 'role:brand_admin|tr_a
 
     // Trophies
     Route::get('/trophies', [BrandTrophiesController::class, 'index']);
-    Route::post('/trophies', [BrandTrophiesController::class, 'store']);
-    Route::put('/trophies/{id}', [BrandTrophiesController::class, 'update']);
+    Route::post('/trophies', [BrandTrophiesController::class, 'store'])->middleware('account_status:active');
+    Route::put('/trophies/{id}', [BrandTrophiesController::class, 'update'])->middleware('account_status:active');
     Route::delete('/trophies/{id}', [BrandTrophiesController::class, 'destroy']);
     Route::get('/trophies/{id}/stats', [BrandTrophiesController::class, 'stats']);
 
