@@ -21,8 +21,8 @@
         <ActivityFeed />
       </div>
 
-      <!-- 5. Locked Pro Features (Commit 7) -->
-      <div class="placeholder">[LockedProFeatures goes here]</div>
+      <!-- 5. Locked Pro Features -->
+      <LockedProFeatures />
     </div>
   </section>
 </template>
@@ -33,10 +33,11 @@ import SecondaryMetricsStrip from './v2/SecondaryMetricsStrip.vue';
 import AudienceIntelligence from './v2/AudienceIntelligence.vue';
 import CampaignsTable from './v2/CampaignsTable.vue';
 import ActivityFeed from './v2/ActivityFeed.vue';
+import LockedProFeatures from './v2/LockedProFeatures.vue';
 
 export default {
   name: 'BrandDashboardV2',
-  components: { PerformanceOverview, SecondaryMetricsStrip, AudienceIntelligence, CampaignsTable, ActivityFeed },
+  components: { PerformanceOverview, SecondaryMetricsStrip, AudienceIntelligence, CampaignsTable, ActivityFeed, LockedProFeatures },
 };
 </script>
 
