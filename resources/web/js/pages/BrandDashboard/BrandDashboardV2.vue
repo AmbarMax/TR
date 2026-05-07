@@ -6,8 +6,8 @@
     </header>
 
     <div class="dash-stack">
-      <!-- 1. Performance Overview (Commit 2) -->
-      <div class="placeholder">[PerformanceOverview goes here]</div>
+      <!-- 1. Performance Overview -->
+      <PerformanceOverview />
 
       <!-- 2. Secondary Metrics Strip (Commit 3) -->
       <div class="placeholder">[SecondaryMetricsStrip goes here]</div>
@@ -28,8 +28,11 @@
 </template>
 
 <script>
+import PerformanceOverview from './v2/PerformanceOverview.vue';
+
 export default {
   name: 'BrandDashboardV2',
+  components: { PerformanceOverview },
 };
 </script>
 
