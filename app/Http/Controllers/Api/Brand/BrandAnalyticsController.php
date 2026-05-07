@@ -181,6 +181,165 @@ class BrandAnalyticsController extends Controller
         return round($grants30d / $pursuers30d / 30, 1);
     }
 
+    /**
+     * GET /api/brand/analytics/audience
+     *
+     * 4 cards: platforms_breakdown, top_achievements,
+     * keywords_cross_discord (always [] in v.2), funnel.
+     */
+    public function audience(Request $request): JsonResponse
+    {
+        $user = Auth::user();
+        abort_unless(
+            $user->account_type === 'brand' || $user->hasAnyRole(['tr_admin', 'tr_superadmin']),
+            403,
+            'Brand account required'
+        );
+
+        $brandId = $user->id;
+        $payload = Cache::remember(
+            "brand:{$brandId}:analytics:audience",
+            now()->addMinutes(5),
+            fn () => $this->buildAudiencePayload($brandId)
+        );
+
+        return response()->json($payload);
+    }
+
+    private function buildAudiencePayload(string $brandId): array
+    {
+        $trophyIds = Trophy::where('user_id', $brandId)->pluck('id');
+        $badgeIds = DB::table('badge_trophy')
+            ->whereIn('trophy_id', $trophyIds)
+            ->pluck('badge_id');
+
+        $brandUserIds = DB::table('badge_user as bu')
+            ->join('users as u', 'u.id', '=', 'bu.user_id')
+            ->whereIn('bu.badge_id', $badgeIds)
+            ->whereNull('bu.deleted_at')
+            ->whereNull('u.deleted_at')
+            ->distinct()
+            ->pluck('bu.user_id');
+
+        return [
+            'platforms_breakdown' => $this->buildPlatformsBreakdown($brandUserIds),
+            'top_achievements' => $this->buildTopAchievements($badgeIds),
+            // TODO: implement when Discord message ingestion is in place.
+            // v.2 returns empty by design — frontend renders "Connect Discord to unlock".
+            'keywords_cross_discord' => [],
+            'funnel' => $this->buildFunnel($trophyIds, $badgeIds),
+        ];
+    }
+
+    /**
+     * Distribución de users del brand por su provider PRIMARIO (más antiguo
+     * por created_at). Single query + group-by en PHP — más simple y portable
+     * que window functions, y el dataset es chico (~brandUserIds × ~2 rows).
+     */
+    private function buildPlatformsBreakdown($brandUserIds): array
+    {
+        if ($brandUserIds->isEmpty()) {
+            return [];
+        }
+
+        $rows = DB::table('auth_integrations')
+            ->whereIn('user_id', $brandUserIds)
+            ->whereNull('deleted_at')
+            ->orderBy('created_at')
+            ->get(['user_id', 'name']);
+
+        $primary = [];
+        foreach ($rows as $row) {
+            if (!isset($primary[$row->user_id])) {
+                $primary[$row->user_id] = $row->name;
+            }
+        }
+
+        if (empty($primary)) {
+            return [];
+        }
+
+        $counts = array_count_values($primary);
+        $total = array_sum($counts);
+        arsort($counts);
+
+        return collect($counts)->map(fn ($count, $name) => [
+            'platform' => $name,
+            'user_count' => $count,
+            'percent' => round(($count / $total) * 100, 1),
+        ])->values()->all();
+    }
+
+    /**
+     * Top 3 badges del brand por count de grants.
+     * INNER JOIN a integrations excluye badges cuya integration está soft-deleted.
+     */
+    private function buildTopAchievements($badgeIds): array
+    {
+        if ($badgeIds->isEmpty()) {
+            return [];
+        }
+
+        $rows = DB::table('badges as b')
+            ->join('badge_user as bu', 'bu.badge_id', '=', 'b.id')
+            ->join('integrations as i', 'i.id', '=', 'b.integration_id')
+            ->whereIn('b.id', $badgeIds)
+            ->whereNull('b.deleted_at')
+            ->whereNull('bu.deleted_at')
+            ->whereNull('i.deleted_at')
+            ->select(
+                'b.id as badge_id',
+                'b.name as badge_name',
+                'i.name as platform',
+                DB::raw('COUNT(bu.id) as grants')
+            )
+            ->groupBy('b.id', 'b.name', 'i.name')
+            ->orderByDesc('grants')
+            ->limit(3)
+            ->get();
+
+        return $rows->map(fn ($r) => [
+            'badge_id' => $r->badge_id,
+            'badge_name' => $r->badge_name,
+            'grants' => (int) $r->grants,
+            'platform' => $r->platform,
+        ])->values()->all();
+    }
+
+    /**
+     * 3 etapas del funnel + conversion %.
+     * pursuits no tiene deleted_at en schema → no filter de soft-delete ahí.
+     * Las otras dos pivots sí filtran.
+     */
+    private function buildFunnel($trophyIds, $badgeIds): array
+    {
+        $startedPursuit = DB::table('pursuits')
+            ->whereIn('trophy_id', $trophyIds)
+            ->count();
+
+        $earnedFirstBadge = DB::table('badge_user')
+            ->whereIn('badge_id', $badgeIds)
+            ->whereNull('deleted_at')
+            ->select(DB::raw('COUNT(DISTINCT user_id) as cnt'))
+            ->value('cnt');
+
+        $forgedTrophy = DB::table('trophy_user')
+            ->whereIn('trophy_id', $trophyIds)
+            ->whereNull('deleted_at')
+            ->count();
+
+        $conversion = $startedPursuit === 0
+            ? 0.0
+            : round(($forgedTrophy / $startedPursuit) * 100, 2);
+
+        return [
+            'started_pursuit' => $startedPursuit,
+            'earned_first_badge' => (int) $earnedFirstBadge,
+            'forged_trophy' => $forgedTrophy,
+            'conversion_start_to_forge_percent' => $conversion,
+        ];
+    }
+
     private function buildPerformancePayload(string $brandId): array
     {
         $trophyIds = Trophy::where('user_id', $brandId)->pluck('id');
