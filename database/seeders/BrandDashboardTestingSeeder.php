@@ -514,9 +514,9 @@ class BrandDashboardTestingSeeder extends Seeder
         // pursuits ya tiene UNIQUE (user_id, trophy_id) en schema, usamos
         // insertOrIgnore para defenderse contra colisiones de random.
         $weights = [
-            'Domina LoL' => 18,
-            'Conecta Discord' => 14,
-            '100h en Steam' => 8,
+            'Domina LoL' => 200,
+            'Conecta Discord' => 350,
+            '100h en Steam' => 100,
         ];
 
         $activeTrophies = $trophies->reject(fn($t) => $t->name === 'Promo Verano LATAM');
