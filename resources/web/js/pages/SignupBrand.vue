@@ -103,8 +103,8 @@
 
       <!-- SIGNUP FORM -->
       <div class="form-field">
-        <label class="form-label">Name</label>
-        <input type="text" class="form-input" v-model="name" :class="{ 'has-error': getError('name') }" placeholder="Your name" />
+        <label class="form-label">Brand name</label>
+        <input type="text" class="form-input" v-model="name" :class="{ 'has-error': getError('name') }" placeholder="Brand name" />
         <span class="form-error" v-if="getError('name')">{{ getError('name') }}</span>
       </div>
 
@@ -149,9 +149,9 @@
 
       <div class="brand-cta-divider"></div>
       <div class="brand-cta-block">
-        <div class="brand-cta-label">For brands & studios</div>
-        <router-link to="/signup/brand" class="brand-cta-link">
-          Create brand account →
+        <div class="brand-cta-label">Looking for a player account?</div>
+        <router-link to="/sign-up" class="brand-cta-link">
+          Player signup →
         </router-link>
       </div>
     </div>
@@ -168,6 +168,7 @@ import { consumePendingIntent } from "../services/pending-intent.js";
 import trexHero from '../../../web/images/web/img/mascot/trex-voxel-hero.png';
 
 export default {
+    name: 'SignupBrand',
     components: {
         buttonWhite
     },
@@ -204,6 +205,7 @@ export default {
                 email: this.email,
                 password: this.password,
                 confirm_password: this.confirm_password,
+                account_type: 'brand',
             }).then( response => {
                 if (response.status === 201) {
                     localStorage.setItem('access_token', response.data.token.access_token);

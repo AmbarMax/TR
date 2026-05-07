@@ -1,5 +1,6 @@
 import Login from "../pages/Login.vue";
 import Signup from "../pages/Signup.vue";
+import SignupBrand from "../pages/SignupBrand.vue";
 import Profile from "../pages/Profile.vue";
 import DashboardResolver from "../pages/DashboardResolver.vue";
 import Main from "../Main.vue";
@@ -111,6 +112,11 @@ const routes = [
                 path: '/sign-up',
                 component: Signup,
                 name: 'sign-up'
+            },
+            {
+                path: '/signup/brand',
+                component: SignupBrand,
+                name: 'signup-brand'
             },
             {
                 path: '/forgot-password',

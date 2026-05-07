@@ -137,6 +137,14 @@
         <div class="form-footer">
           Don't have an account? <router-link to="/sign-up">Create one →</router-link>
         </div>
+
+        <div class="brand-cta-divider"></div>
+        <div class="brand-cta-block">
+          <div class="brand-cta-label">For brands & studios</div>
+          <router-link to="/signup/brand" class="brand-cta-link">
+            Create brand account →
+          </router-link>
+        </div>
       </div>
 
       <!-- 2FA FORM — Block 2 -->
@@ -708,5 +716,34 @@ export default {
   .auth-copy-title { font-size: 28px; }
   .form-head-title { font-size: 24px; }
   .social-row { grid-template-columns: 1fr; }
+}
+
+.brand-cta-divider {
+  margin-top: 24px;
+  margin-bottom: 16px;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.12), transparent);
+}
+.brand-cta-block {
+  text-align: center;
+}
+.brand-cta-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 8px;
+}
+.brand-cta-link {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 13px;
+  color: #c1f527;
+  text-decoration: none;
+  letter-spacing: 0.5px;
+  transition: opacity 0.2s;
+}
+.brand-cta-link:hover {
+  opacity: 0.8;
 }
 </style>

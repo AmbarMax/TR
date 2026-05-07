@@ -59,7 +59,7 @@ function isAdminFromLocalStorage() {
 
 function publicPages(name) {
     const pages = [
-        'login', 'sign-up', 'forgot-password', 'reset-password','virtual-hall', 'hall', 'reset-2fa'
+        'login', 'sign-up', 'signup-brand', 'forgot-password', 'reset-password','virtual-hall', 'hall', 'reset-2fa'
     ];
 
     if(pages.includes(name)){ return true }
