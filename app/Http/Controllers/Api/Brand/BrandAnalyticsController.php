@@ -655,6 +655,7 @@ class BrandAnalyticsController extends Controller
         $trophyIds = Trophy::where('user_id', $brandId)->pluck('id');
         $badgeIds = DB::table('badge_trophy')
             ->whereIn('trophy_id', $trophyIds)
+            ->whereNull('deleted_at')
             ->pluck('badge_id');
 
         $now = Carbon::now();
@@ -667,13 +668,18 @@ class BrandAnalyticsController extends Controller
         $pursuersPrev7d = $this->countActivePursuers($trophyIds, $badgeIds, $start14d, $start7d);
         $delta7d = $this->percentDelta($pursuersPrev7d, $pursuers7d);
 
-        $forgesAll = DB::table('trophy_user')->whereIn('trophy_id', $trophyIds)->count();
+        $forgesAll = DB::table('trophy_user')
+            ->whereIn('trophy_id', $trophyIds)
+            ->whereNull('deleted_at')
+            ->count();
         $forges30d = DB::table('trophy_user')
             ->whereIn('trophy_id', $trophyIds)
+            ->whereNull('deleted_at')
             ->where('created_at', '>=', $start30d)
             ->count();
         $forgesPrev30d = DB::table('trophy_user')
             ->whereIn('trophy_id', $trophyIds)
+            ->whereNull('deleted_at')
             ->where('created_at', '>=', $start60d)
             ->where('created_at', '<', $start30d)
             ->count();
@@ -681,13 +687,18 @@ class BrandAnalyticsController extends Controller
 
         $sparkline = $this->buildForgesSparkline($trophyIds, 30);
 
-        $grantsAll = DB::table('badge_user')->whereIn('badge_id', $badgeIds)->count();
+        $grantsAll = DB::table('badge_user')
+            ->whereIn('badge_id', $badgeIds)
+            ->whereNull('deleted_at')
+            ->count();
         $grants30d = DB::table('badge_user')
             ->whereIn('badge_id', $badgeIds)
+            ->whereNull('deleted_at')
             ->where('created_at', '>=', $start30d)
             ->count();
         $grantsPrev30d = DB::table('badge_user')
             ->whereIn('badge_id', $badgeIds)
+            ->whereNull('deleted_at')
             ->where('created_at', '>=', $start60d)
             ->where('created_at', '<', $start30d)
             ->count();
@@ -731,6 +742,7 @@ class BrandAnalyticsController extends Controller
         $userIds = $userIds->concat(
             DB::table('badge_user')
                 ->whereIn('badge_id', $badgeIds)
+                ->whereNull('deleted_at')
                 ->where('created_at', '>=', $from)
                 ->where('created_at', '<', $to)
                 ->pluck('user_id')
@@ -739,6 +751,7 @@ class BrandAnalyticsController extends Controller
         $userIds = $userIds->concat(
             DB::table('trophy_user')
                 ->whereIn('trophy_id', $trophyIds)
+                ->whereNull('deleted_at')
                 ->where('created_at', '>=', $from)
                 ->where('created_at', '<', $to)
                 ->pluck('user_id')
@@ -766,6 +779,7 @@ class BrandAnalyticsController extends Controller
 
         $rows = DB::table('trophy_user')
             ->whereIn('trophy_id', $trophyIds)
+            ->whereNull('deleted_at')
             ->whereBetween('created_at', [$startDay, $endDay])
             ->selectRaw('DATE(created_at) as day, count(*) as count')
             ->groupBy('day')
