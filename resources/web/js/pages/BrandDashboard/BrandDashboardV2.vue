@@ -1,8 +1,13 @@
 <template>
   <section class="brand-dashboard-v2">
     <header class="dash-header">
-      <h1>Brand Dashboard</h1>
-      <p class="dash-subtitle">Performance · Audience · Campaigns</p>
+      <div class="dash-header-text">
+        <h1>Brand Dashboard</h1>
+        <p class="dash-subtitle">Performance · Audience · Campaigns</p>
+      </div>
+      <a v-if="brandHallPath" :href="brandHallPath" class="dash-hall-btn">
+        → View public hall
+      </a>
     </header>
 
     <div class="dash-stack">
@@ -38,6 +43,16 @@ import LockedProFeatures from './v2/LockedProFeatures.vue';
 export default {
   name: 'BrandDashboardV2',
   components: { PerformanceOverview, SecondaryMetricsStrip, AudienceIntelligence, CampaignsTable, ActivityFeed, LockedProFeatures },
+  computed: {
+    brandHallPath() {
+      try {
+        const stored = JSON.parse(localStorage.getItem('user') || '{}');
+        return stored.username ? `/${stored.username}` : null;
+      } catch (e) {
+        return null;
+      }
+    },
+  },
 };
 </script>
 
@@ -51,9 +66,14 @@ export default {
 
 /* Header — matches mockup (.dash-header / .dash-title / .dash-subtitle) */
 .dash-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
   border-bottom: 1px solid var(--line, rgba(254, 237, 223, 0.08));
   padding-bottom: 20px;
   margin-bottom: 32px;
+  gap: 24px;
+  flex-wrap: wrap;
 }
 
 .dash-header h1 {
@@ -106,5 +126,30 @@ export default {
   font-family: 'Share Tech Mono', monospace;
   font-size: 12px;
   letter-spacing: 0.05em;
+}
+
+.dash-header-text {
+  /* Container for title + subtitle. Layout handled by parent flex. */
+}
+
+.dash-hall-btn {
+  display: inline-block;
+  border: 1px solid var(--accent, #c1f527);
+  color: var(--accent, #c1f527);
+  background: transparent;
+  padding: 10px 20px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: all 150ms ease;
+  white-space: nowrap;
+  align-self: center;
+}
+
+.dash-hall-btn:hover {
+  background: var(--accent, #c1f527);
+  color: var(--bg, #000003);
 }
 </style>
