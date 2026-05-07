@@ -1,0 +1,1517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brand Dashboard v.2 — TrophyRoom Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&display=swap" rel="stylesheet">
+<style>
+:root {
+    --bg: #000003;
+    --bg-elev: #0a0b0f;
+    --bg-elev-2: #14161a;
+    --primary: #ff6100;
+    --primary-dim: rgba(255, 97, 0, 0.6);
+    --primary-faint: rgba(255, 97, 0, 0.12);
+    --primary-line: rgba(255, 97, 0, 0.25);
+    --accent: #c1f527;
+    --accent-dim: rgba(193, 245, 39, 0.7);
+    --accent-faint: rgba(193, 245, 39, 0.1);
+    --text: #feeddf;
+    --text-dim: rgba(254, 237, 223, 0.6);
+    --text-faint: rgba(254, 237, 223, 0.35);
+    --line: rgba(254, 237, 223, 0.08);
+    --line-strong: rgba(254, 237, 223, 0.15);
+    --warn: #ffb800;
+    --danger: #ff3860;
+    --mono: 'Share Tech Mono', monospace;
+    --display: 'VT323', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 14px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+}
+
+.bg-scanlines {
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(0deg,
+        rgba(255,97,0,0.02) 0px,
+        rgba(255,97,0,0.02) 1px,
+        transparent 1px,
+        transparent 3px);
+    pointer-events: none;
+    z-index: 999;
+    mix-blend-mode: overlay;
+}
+.bg-vignette {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.7) 100%);
+    pointer-events: none;
+    z-index: 998;
+}
+
+.app {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    min-height: 100vh;
+}
+
+/* ============ SIDEBAR ============ */
+.sidebar {
+    background: var(--bg-elev);
+    border-right: 1px solid var(--line);
+    padding: 20px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.sidebar-logo {
+    font-family: var(--display);
+    font-size: 28px;
+    color: var(--primary);
+    margin-bottom: 24px;
+    letter-spacing: 2px;
+}
+.sidebar-logo small {
+    color: var(--text-dim);
+    font-size: 11px;
+    letter-spacing: 3px;
+    display: block;
+    margin-top: -4px;
+}
+.nav-section-label {
+    font-size: 10px;
+    color: var(--text-faint);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 16px 12px 8px;
+}
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    color: var(--text-dim);
+    font-size: 13px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    border-left: 2px solid transparent;
+    transition: all 150ms;
+}
+.nav-item:hover {
+    color: var(--text);
+    background: var(--primary-faint);
+    border-left-color: var(--primary-dim);
+}
+.nav-item.active {
+    color: var(--primary);
+    background: var(--primary-faint);
+    border-left-color: var(--primary);
+}
+.nav-item .ico {
+    width: 16px; height: 16px;
+    border: 1px solid currentColor;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    font-family: var(--mono);
+}
+.acct-pill {
+    margin-top: auto;
+    padding: 12px;
+    border: 1px dashed var(--line-strong);
+    font-size: 11px;
+    color: var(--text-faint);
+    letter-spacing: 1.5px;
+}
+.acct-pill .acct-type {
+    color: var(--accent);
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+.acct-pill .acct-name {
+    color: var(--text);
+    margin-top: 4px;
+}
+
+/* ============ MAIN ============ */
+.main {
+    padding: 24px 40px 80px;
+    max-width: 1500px;
+}
+
+/* Header */
+.dash-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 20px;
+    margin-bottom: 32px;
+}
+.dash-title {
+    font-family: var(--display);
+    font-size: 48px;
+    color: var(--primary);
+    line-height: 1;
+    letter-spacing: 1px;
+}
+.dash-subtitle {
+    color: var(--text-dim);
+    font-size: 12px;
+    letter-spacing: 2px;
+    margin-top: 8px;
+}
+.dash-status {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+}
+.dash-status-time {
+    font-family: var(--display);
+    font-size: 18px;
+    color: var(--accent);
+    letter-spacing: 1px;
+}
+.dash-status-meta {
+    font-size: 11px;
+    color: var(--text-faint);
+    letter-spacing: 2px;
+}
+.live-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    margin-right: 6px;
+    animation: pulse 1.5s infinite;
+    box-shadow: 0 0 8px var(--accent);
+}
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+/* Section labels */
+.section-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 11px;
+    color: var(--primary);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin: 32px 0 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px dashed var(--primary-line);
+}
+.section-label::before {
+    content: '◆';
+    color: var(--accent);
+}
+.section-label .section-meta {
+    margin-left: auto;
+    color: var(--text-faint);
+    letter-spacing: 1px;
+    font-size: 10px;
+}
+
+/* ============ HERO STATS — 4 cards ============ */
+.hero-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 16px;
+}
+.stat-card {
+    border: 1px solid var(--line-strong);
+    padding: 20px;
+    background: var(--bg-elev);
+    position: relative;
+    overflow: hidden;
+}
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--primary);
+    transition: width 600ms;
+}
+.stat-card:hover::before { width: 100%; }
+.stat-card.locked {
+    border-color: var(--line);
+    background: linear-gradient(135deg, var(--bg-elev) 0%, rgba(255,184,0,0.03) 100%);
+}
+.stat-card-label {
+    font-size: 10px;
+    color: var(--text-faint);
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+}
+.stat-card-value {
+    font-family: var(--display);
+    font-size: 56px;
+    color: var(--text);
+    line-height: 1;
+    letter-spacing: 2px;
+}
+.stat-card.accent .stat-card-value {
+    color: var(--accent);
+    text-shadow: 0 0 18px rgba(193,245,39,0.4);
+}
+.stat-card.primary .stat-card-value {
+    color: var(--primary);
+    text-shadow: 0 0 16px rgba(255,97,0,0.4);
+}
+.stat-card-trend {
+    margin-top: 8px;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 1px;
+}
+.stat-card-trend.down { color: var(--danger); }
+.stat-card-trend.neutral { color: var(--text-faint); }
+.stat-card-locked-val {
+    font-family: var(--display);
+    font-size: 36px;
+    color: var(--warn);
+    letter-spacing: 2px;
+}
+.stat-card-locked-hint {
+    margin-top: 6px;
+    font-size: 10px;
+    color: var(--warn);
+    letter-spacing: 1.5px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.lock-ico {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    border: 1px solid var(--warn);
+    position: relative;
+}
+.lock-ico::after {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: 1px;
+    width: 5px;
+    height: 4px;
+    border: 1px solid var(--warn);
+    border-bottom: none;
+    border-radius: 2px 2px 0 0;
+}
+
+/* Sparkline inside card */
+.sparkline-wrap {
+    margin-top: 12px;
+    height: 28px;
+    position: relative;
+}
+.sparkline-wrap svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+.sparkline-path {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 1.5;
+    stroke-linejoin: round;
+    filter: drop-shadow(0 0 3px rgba(193,245,39,0.5));
+}
+.sparkline-area {
+    fill: url(#sparklineGradient);
+    opacity: 0.4;
+}
+.sparkline-dot {
+    fill: var(--accent);
+    filter: drop-shadow(0 0 4px rgba(193,245,39,0.8));
+}
+
+.coming-soon-ribbon {
+    position: absolute;
+    top: 8px;
+    right: -28px;
+    background: var(--warn);
+    color: var(--bg);
+    font-size: 8px;
+    font-weight: bold;
+    padding: 2px 32px;
+    transform: rotate(45deg);
+    letter-spacing: 1.5px;
+}
+
+/* ============ SECONDARY METRICS STRIP ============ */
+.secondary-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border: 1px solid var(--line-strong);
+    background: var(--bg-elev);
+    margin-bottom: 8px;
+    overflow: hidden;
+}
+.secondary-cell {
+    padding: 14px 18px;
+    border-right: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    position: relative;
+}
+.secondary-cell:last-child { border-right: none; }
+.secondary-cell::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 2px;
+    height: 100%;
+    background: var(--primary);
+    opacity: 0;
+    transition: opacity 200ms;
+}
+.secondary-cell:hover::before { opacity: 1; }
+.secondary-label {
+    font-size: 9px;
+    color: var(--text-faint);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+.secondary-value {
+    font-family: var(--display);
+    font-size: 24px;
+    color: var(--text);
+    letter-spacing: 1px;
+    line-height: 1.1;
+}
+.secondary-value.accent { color: var(--accent); }
+.secondary-value.primary { color: var(--primary); }
+.secondary-value .unit {
+    font-size: 14px;
+    color: var(--text-dim);
+    margin-left: 4px;
+}
+.secondary-meta {
+    font-size: 10px;
+    color: var(--text-faint);
+    letter-spacing: 1px;
+}
+.secondary-meta strong {
+    color: var(--accent);
+}
+
+/* ============ AUDIENCE INTELLIGENCE — 4 cards ============ */
+.audience-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+.audience-card {
+    border: 1px solid var(--line-strong);
+    background: var(--bg-elev);
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+}
+.audience-card-title {
+    font-size: 11px;
+    color: var(--primary);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px dashed var(--primary-line);
+}
+.audience-card-title .badge-meta {
+    color: var(--text-faint);
+    margin-left: 8px;
+    font-size: 10px;
+    text-transform: none;
+    letter-spacing: 1px;
+}
+
+/* Platform breakdown */
+.platform-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.platform-row {
+    display: grid;
+    grid-template-columns: 70px 1fr 40px;
+    align-items: center;
+    gap: 10px;
+    font-size: 11px;
+}
+.platform-name {
+    color: var(--text);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-size: 10px;
+}
+.platform-bar-track {
+    height: 5px;
+    background: var(--line);
+    position: relative;
+    overflow: hidden;
+}
+.platform-bar-fill {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+    transform-origin: left;
+    animation: growBar 1s cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
+}
+@keyframes growBar {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(var(--w, 1)); }
+}
+.platform-pct {
+    font-family: var(--display);
+    color: var(--accent);
+    font-size: 14px;
+    text-align: right;
+    letter-spacing: 1px;
+}
+
+/* Achievement list */
+.ach-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.ach-row {
+    display: grid;
+    grid-template-columns: 22px 1fr auto;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 11px;
+}
+.ach-row:last-child { border-bottom: none; }
+.ach-rank {
+    font-family: var(--display);
+    color: var(--primary);
+    font-size: 16px;
+    letter-spacing: 1px;
+}
+.ach-name {
+    color: var(--text-dim);
+    font-size: 11px;
+}
+.ach-game {
+    color: var(--text);
+    margin-right: 4px;
+}
+.ach-count {
+    font-family: var(--display);
+    color: var(--accent);
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+/* Keywords */
+.kw-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.kw-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    border: 1px solid var(--primary-line);
+    background: var(--primary-faint);
+    font-size: 10px;
+    letter-spacing: 0.5px;
+    color: var(--text);
+}
+.kw-pill .kw-count {
+    color: var(--accent);
+    font-family: var(--display);
+    font-size: 12px;
+    border-left: 1px solid var(--primary-line);
+    padding-left: 6px;
+}
+.kw-pill.hot {
+    border-color: var(--accent);
+    background: var(--accent-faint);
+}
+.kw-footer-note {
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px dashed var(--line);
+    color: var(--text-faint);
+    font-size: 10px;
+    letter-spacing: 0.5px;
+    line-height: 1.5;
+}
+.kw-footer-note strong { color: var(--accent); }
+
+/* Funnel compact (4th card) */
+.funnel-compact {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.funnel-step {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.funnel-step-bar {
+    position: relative;
+    height: 28px;
+    background: var(--line);
+    overflow: hidden;
+}
+.funnel-step-fill {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, var(--primary-faint) 0%, var(--primary) 100%);
+    transform-origin: left;
+    animation: growBar 1.2s cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
+}
+.funnel-step-fill.final {
+    background: linear-gradient(90deg, var(--accent-faint) 0%, var(--accent) 100%);
+}
+.funnel-step-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px;
+    height: 100%;
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: var(--text);
+    text-transform: uppercase;
+}
+.funnel-step-num {
+    font-family: var(--display);
+    font-size: 14px;
+    color: var(--text);
+    letter-spacing: 1px;
+}
+.funnel-step.final .funnel-step-num {
+    color: var(--bg);
+    font-weight: bold;
+}
+.funnel-arrow {
+    text-align: center;
+    color: var(--text-faint);
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    padding: 2px 0;
+}
+
+/* ============ TWO-COLUMN ROW: CAMPAIGNS + ACTIVITY ============ */
+.dual-section {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 16px;
+    align-items: start;
+}
+.dual-col {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Campaigns table */
+.campaigns-table {
+    border: 1px solid var(--line-strong);
+    background: var(--bg-elev);
+    overflow: hidden;
+}
+.campaigns-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--line);
+    background: var(--bg);
+    flex-wrap: wrap;
+}
+.search-input {
+    flex: 1;
+    min-width: 120px;
+    background: transparent;
+    border: none;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 4px 0;
+    outline: none;
+    border-bottom: 1px solid transparent;
+    transition: border 150ms;
+}
+.search-input::placeholder { color: var(--text-faint); }
+.search-input:focus { border-bottom-color: var(--primary); }
+.filter-pill {
+    font-size: 10px;
+    padding: 4px 8px;
+    border: 1px solid var(--line-strong);
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 150ms;
+}
+.filter-pill:hover { border-color: var(--primary); color: var(--text); }
+.filter-pill.active {
+    background: var(--primary-faint);
+    border-color: var(--primary);
+    color: var(--primary);
+}
+.btn-create {
+    background: var(--primary);
+    color: var(--bg);
+    border: none;
+    padding: 6px 12px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: background 150ms;
+}
+.btn-create:hover { background: #ff7a25; }
+
+.campaigns-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.campaigns-table th {
+    text-align: left;
+    font-size: 9px;
+    color: var(--text-faint);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
+    background: var(--bg);
+    font-weight: normal;
+}
+.campaigns-table td {
+    padding: 12px;
+    border-bottom: 1px solid var(--line);
+    font-size: 12px;
+}
+.campaigns-table tr:last-child td { border-bottom: none; }
+.campaigns-table tr:hover td { background: var(--primary-faint); cursor: pointer; }
+.camp-name-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.camp-icon {
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--primary-line);
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--display);
+    color: var(--accent);
+    font-size: 14px;
+}
+.camp-name {
+    color: var(--text);
+    font-size: 12px;
+}
+.camp-meta {
+    font-size: 10px;
+    color: var(--text-faint);
+    margin-top: 2px;
+    letter-spacing: 0.5px;
+}
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 6px;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    border: 1px solid;
+}
+.status-pill.active { color: var(--accent); border-color: var(--accent); }
+.status-pill.active::before { content: '●'; color: var(--accent); font-size: 8px; }
+.status-pill.draft { color: var(--text-faint); border-color: var(--line-strong); }
+.status-pill.draft::before { content: '○'; font-size: 8px; }
+.status-pill.paused { color: var(--warn); border-color: var(--warn); }
+.status-pill.paused::before { content: '⏸'; font-size: 7px; }
+.metric-num {
+    font-family: var(--display);
+    font-size: 16px;
+    color: var(--text);
+    letter-spacing: 1px;
+}
+.metric-num.accent { color: var(--accent); }
+.conv-rate {
+    font-family: var(--display);
+    font-size: 16px;
+    letter-spacing: 1px;
+}
+.conv-rate.good { color: var(--accent); }
+.conv-rate.mid { color: var(--warn); }
+.conv-rate.low { color: var(--danger); }
+.cpt-cell {
+    font-family: var(--display);
+    color: var(--warn);
+    letter-spacing: 1px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* Activity feed (right column) */
+.activity-feed {
+    border: 1px solid var(--line-strong);
+    background: var(--bg-elev);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+.activity-header {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--bg);
+}
+.activity-header-title {
+    font-size: 10px;
+    color: var(--primary);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+.activity-header-meta {
+    font-size: 9px;
+    color: var(--accent);
+    letter-spacing: 1.5px;
+}
+.activity-list {
+    display: flex;
+    flex-direction: column;
+    padding: 6px 0;
+    max-height: 600px;
+    overflow-y: auto;
+}
+.activity-list::-webkit-scrollbar {
+    width: 6px;
+}
+.activity-list::-webkit-scrollbar-track { background: var(--bg); }
+.activity-list::-webkit-scrollbar-thumb { background: var(--primary-line); }
+.activity-row {
+    display: grid;
+    grid-template-columns: 22px 1fr;
+    gap: 10px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--line);
+    font-size: 11px;
+}
+.activity-row:last-child { border-bottom: none; }
+.activity-icon {
+    width: 22px;
+    height: 22px;
+    border: 1px solid var(--primary-line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: var(--primary);
+}
+.activity-icon.forge { color: var(--accent); border-color: var(--accent); }
+.activity-icon.follow { color: var(--text); border-color: var(--text-dim); }
+.activity-text {
+    color: var(--text-dim);
+    line-height: 1.45;
+}
+.activity-text strong { color: var(--accent); font-weight: normal; }
+.activity-text em { color: var(--primary); font-style: normal; }
+.activity-time {
+    font-family: var(--display);
+    color: var(--text-faint);
+    letter-spacing: 1px;
+    font-size: 12px;
+    margin-top: 2px;
+}
+
+/* ============ LOCKED PRO SECTION ============ */
+.locked-section {
+    border: 1px dashed var(--line-strong);
+    padding: 32px;
+    text-align: center;
+    margin-top: 8px;
+    position: relative;
+    background: linear-gradient(135deg, var(--bg-elev) 0%, rgba(255,184,0,0.02) 100%);
+}
+.locked-section .lock-title {
+    font-family: var(--display);
+    font-size: 32px;
+    color: var(--warn);
+    margin-bottom: 8px;
+    letter-spacing: 2px;
+}
+.locked-section .lock-desc {
+    color: var(--text-dim);
+    font-size: 12px;
+    letter-spacing: 1px;
+    max-width: 540px;
+    margin: 0 auto 16px;
+    line-height: 1.7;
+}
+.locked-section .lock-cta {
+    display: inline-block;
+    padding: 8px 20px;
+    border: 1px solid var(--warn);
+    color: var(--warn);
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 150ms;
+}
+.locked-section .lock-cta:hover {
+    background: var(--warn);
+    color: var(--bg);
+}
+.locked-section .lock-features {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+.locked-section .lock-feat {
+    color: var(--text-faint);
+    font-size: 11px;
+    letter-spacing: 1px;
+}
+.locked-section .lock-feat::before {
+    content: '◇';
+    color: var(--warn);
+    margin-right: 6px;
+}
+
+/* Footer */
+.terminal-footer {
+    margin-top: 60px;
+    padding: 14px 16px;
+    border-top: 1px solid var(--line);
+    font-size: 11px;
+    color: var(--text-faint);
+    letter-spacing: 1.5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.terminal-footer .blink {
+    animation: blink 1s steps(2, start) infinite;
+}
+@keyframes blink { to { visibility: hidden; } }
+
+/* Annotation */
+.annotation {
+    border-left: 3px solid var(--accent);
+    background: var(--accent-faint);
+    padding: 12px 16px;
+    margin: 16px 0 24px;
+    font-size: 12px;
+    color: var(--text);
+    letter-spacing: 0.5px;
+    line-height: 1.7;
+}
+.annotation strong { color: var(--accent); letter-spacing: 1px; }
+.annotation .ann-label {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--bg);
+    padding: 1px 6px;
+    font-size: 9px;
+    letter-spacing: 2px;
+    margin-right: 8px;
+    font-weight: bold;
+}
+</style>
+</head>
+<body>
+
+<div class="bg-scanlines"></div>
+<div class="bg-vignette"></div>
+
+<div class="app">
+
+    <!-- ============ SIDEBAR ============ -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            TROPHY
+            <small>v.2.0 — BRAND</small>
+        </div>
+
+        <div class="nav-section-label">Brand</div>
+        <a class="nav-item active"><span class="ico">D</span><span>Dashboard</span></a>
+        <a class="nav-item"><span class="ico">S</span><span>Studio</span></a>
+        <a class="nav-item"><span class="ico">F</span><span>Feed</span></a>
+        <a class="nav-item"><span class="ico">H</span><span>Brand Hall</span></a>
+
+        <div class="nav-section-label" style="margin-top: 16px;">Coming soon</div>
+        <a class="nav-item" style="opacity: 0.5;"><span class="ico" style="border-style: dashed;">$</span><span>Billing</span></a>
+        <a class="nav-item" style="opacity: 0.5;"><span class="ico" style="border-style: dashed;">⚡</span><span>AI Builder</span></a>
+
+        <div class="acct-pill">
+            <div class="acct-type">◆ BRAND ACCOUNT</div>
+            <div class="acct-name">@hepamida</div>
+            <div style="margin-top: 4px; color: var(--text-faint);">Verified · Free tier</div>
+        </div>
+    </aside>
+
+    <!-- ============ MAIN ============ -->
+    <main class="main">
+
+        <div class="annotation">
+            <span class="ann-label">README</span>
+            <strong>Brand Dashboard v.2 — TrophyRoom mockup.</strong> Reorganized: Performance overview → Secondary metrics strip → Audience intelligence (4 cards) → Campaigns + Activity feed (two columns) → Pro features locked. Real analytics over trophy/badge data, framed in ads-manager language. Pricing-related features appear as <span style="color: var(--warn);">locked / coming soon</span>.
+        </div>
+
+        <!-- Header -->
+        <div class="dash-header">
+            <div>
+                <div class="dash-title">DASHBOARD</div>
+                <div class="dash-subtitle">@HEPAMIDA · CAMPAIGN PERFORMANCE · LAST 30 DAYS</div>
+            </div>
+            <div class="dash-status">
+                <div class="dash-status-time"><span class="live-dot"></span>LIVE</div>
+                <div class="dash-status-meta">SYNC: 14:32:18 UTC</div>
+            </div>
+        </div>
+
+        <!-- ============ PERFORMANCE OVERVIEW ============ -->
+        <div class="section-label">
+            Performance overview
+            <span class="section-meta">vs. previous 30 days</span>
+        </div>
+
+        <!-- Hidden SVG defs for sparkline gradient -->
+        <svg width="0" height="0" style="position: absolute;">
+            <defs>
+                <linearGradient id="sparklineGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#c1f527;stop-opacity:0.6" />
+                    <stop offset="100%" style="stop-color:#c1f527;stop-opacity:0" />
+                </linearGradient>
+            </defs>
+        </svg>
+
+        <div class="hero-stats">
+
+            <div class="stat-card accent">
+                <div class="stat-card-label">Total reach</div>
+                <div class="stat-card-value">2,847</div>
+                <div class="stat-card-trend">↑ +18.2% vs prev period</div>
+            </div>
+
+            <div class="stat-card primary">
+                <div class="stat-card-label">Active campaigns</div>
+                <div class="stat-card-value">7</div>
+                <div class="stat-card-trend">3 starting · 2 ending soon</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-card-label">Trophies forged · 30d</div>
+                <div class="stat-card-value">142</div>
+                <div class="sparkline-wrap">
+                    <svg viewBox="0 0 200 28" preserveAspectRatio="none">
+                        <!-- area fill -->
+                        <path class="sparkline-area" d="M 0,22 L 7,20 L 14,18 L 21,21 L 28,17 L 35,15 L 42,18 L 49,12 L 56,14 L 63,11 L 70,13 L 77,9 L 84,15 L 91,10 L 98,8 L 105,12 L 112,7 L 119,11 L 126,5 L 133,9 L 140,4 L 147,7 L 154,3 L 161,8 L 168,2 L 175,5 L 182,4 L 189,2 L 196,5 L 200,3 L 200,28 L 0,28 Z" />
+                        <!-- line -->
+                        <path class="sparkline-path" d="M 0,22 L 7,20 L 14,18 L 21,21 L 28,17 L 35,15 L 42,18 L 49,12 L 56,14 L 63,11 L 70,13 L 77,9 L 84,15 L 91,10 L 98,8 L 105,12 L 112,7 L 119,11 L 126,5 L 133,9 L 140,4 L 147,7 L 154,3 L 161,8 L 168,2 L 175,5 L 182,4 L 189,2 L 196,5 L 200,3" />
+                        <!-- last point dot -->
+                        <circle class="sparkline-dot" cx="200" cy="3" r="2.5" />
+                    </svg>
+                </div>
+                <div class="stat-card-trend" style="margin-top: 4px;">↑ +9.4% · last 30d</div>
+            </div>
+
+            <div class="stat-card locked">
+                <div class="coming-soon-ribbon">LOCKED</div>
+                <div class="stat-card-label">Avg cost per trophy</div>
+                <div class="stat-card-locked-val">— $4.30 est.</div>
+                <div class="stat-card-locked-hint"><span class="lock-ico"></span>Activate billing for real CPT</div>
+            </div>
+
+        </div>
+
+        <!-- ============ SECONDARY METRICS STRIP ============ -->
+        <div class="secondary-strip">
+
+            <div class="secondary-cell">
+                <div class="secondary-label">Total badges granted</div>
+                <div class="secondary-value accent">2,143</div>
+                <div class="secondary-meta">verified actions across <strong>7 campaigns</strong></div>
+            </div>
+
+            <div class="secondary-cell">
+                <div class="secondary-label">Cross-hall overlap</div>
+                <div class="secondary-value">@doritos <span class="unit">43%</span></div>
+                <div class="secondary-meta">also: @redbull <strong>28%</strong> · @samsung <strong>12%</strong></div>
+            </div>
+
+            <div class="secondary-cell">
+                <div class="secondary-label">Multi-platform users</div>
+                <div class="secondary-value primary">58<span class="unit">%</span></div>
+                <div class="secondary-meta">connect <strong>2+ platforms</strong></div>
+            </div>
+
+            <div class="secondary-cell">
+                <div class="secondary-label">Achievement velocity</div>
+                <div class="secondary-value accent">3.4<span class="unit">/day</span></div>
+                <div class="secondary-meta">avg per active pursuer</div>
+            </div>
+
+        </div>
+
+        <!-- ============ AUDIENCE INTELLIGENCE — 4 cards ============ -->
+        <div class="section-label">
+            Audience intelligence
+            <span class="section-meta">cross-gaming signal · unique to TrophyRoom</span>
+        </div>
+
+        <div class="audience-grid">
+
+            <!-- Card 1: Platforms -->
+            <div class="audience-card">
+                <div class="audience-card-title">
+                    Platforms
+                    <span class="badge-meta">912 pursuers</span>
+                </div>
+                <div class="platform-list">
+                    <div class="platform-row">
+                        <span class="platform-name">Discord</span>
+                        <div class="platform-bar-track"><div class="platform-bar-fill" style="--w: 0.88;"></div></div>
+                        <span class="platform-pct">88%</span>
+                    </div>
+                    <div class="platform-row">
+                        <span class="platform-name">Steam</span>
+                        <div class="platform-bar-track"><div class="platform-bar-fill" style="--w: 0.71;"></div></div>
+                        <span class="platform-pct">71%</span>
+                    </div>
+                    <div class="platform-row">
+                        <span class="platform-name">Riot · LoL</span>
+                        <div class="platform-bar-track"><div class="platform-bar-fill" style="--w: 0.42;"></div></div>
+                        <span class="platform-pct">42%</span>
+                    </div>
+                    <div class="platform-row">
+                        <span class="platform-name">Strava</span>
+                        <div class="platform-bar-track"><div class="platform-bar-fill" style="--w: 0.18;"></div></div>
+                        <span class="platform-pct">18%</span>
+                    </div>
+                    <div class="platform-row">
+                        <span class="platform-name">Overwolf</span>
+                        <div class="platform-bar-track"><div class="platform-bar-fill" style="--w: 0.09;"></div></div>
+                        <span class="platform-pct">9%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: Top achievements -->
+            <div class="audience-card">
+                <div class="audience-card-title">
+                    Top achievements
+                    <span class="badge-meta">your audience</span>
+                </div>
+                <div class="ach-list">
+                    <div class="ach-row">
+                        <span class="ach-rank">01</span>
+                        <span class="ach-name"><span class="ach-game">CS2:</span>Global Elite</span>
+                        <span class="ach-count">487</span>
+                    </div>
+                    <div class="ach-row">
+                        <span class="ach-rank">02</span>
+                        <span class="ach-name"><span class="ach-game">Dota 2:</span>Immortal</span>
+                        <span class="ach-count">312</span>
+                    </div>
+                    <div class="ach-row">
+                        <span class="ach-rank">03</span>
+                        <span class="ach-name"><span class="ach-game">Val:</span>Ascendant 1+</span>
+                        <span class="ach-count">241</span>
+                    </div>
+                    <div class="ach-row">
+                        <span class="ach-rank">04</span>
+                        <span class="ach-name"><span class="ach-game">Apex:</span>Diamond</span>
+                        <span class="ach-count">198</span>
+                    </div>
+                    <div class="ach-row">
+                        <span class="ach-rank">05</span>
+                        <span class="ach-name"><span class="ach-game">LoL:</span>Mastery 7</span>
+                        <span class="ach-count">156</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3: Keywords -->
+            <div class="audience-card">
+                <div class="audience-card-title">
+                    Affinity keywords
+                    <span class="badge-meta">discord roles</span>
+                </div>
+                <div class="kw-list">
+                    <span class="kw-pill hot">hepamida-fan <span class="kw-count">214</span></span>
+                    <span class="kw-pill">vip <span class="kw-count">189</span></span>
+                    <span class="kw-pill">hepa-og <span class="kw-count">142</span></span>
+                    <span class="kw-pill">streamer <span class="kw-count">88</span></span>
+                    <span class="kw-pill">esports-pro <span class="kw-count">76</span></span>
+                    <span class="kw-pill">latam-mod <span class="kw-count">62</span></span>
+                    <span class="kw-pill">creator <span class="kw-count">54</span></span>
+                    <span class="kw-pill">beta <span class="kw-count">47</span></span>
+                </div>
+                <div class="kw-footer-note">
+                    Across <strong>23 servers</strong> in your audience's Discord. Affinity beyond your community.
+                </div>
+            </div>
+
+            <!-- Card 4: Funnel compact -->
+            <div class="audience-card">
+                <div class="audience-card-title">
+                    Conversion funnel
+                    <span class="badge-meta">all campaigns</span>
+                </div>
+                <div class="funnel-compact">
+                    <div class="funnel-step">
+                        <div class="funnel-step-bar">
+                            <div class="funnel-step-fill" style="--w: 1;"></div>
+                            <div class="funnel-step-content">
+                                <span>Reached</span>
+                                <span class="funnel-step-num">2,847</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="funnel-arrow">↓ 32%</div>
+                    <div class="funnel-step">
+                        <div class="funnel-step-bar">
+                            <div class="funnel-step-fill" style="--w: 0.55;"></div>
+                            <div class="funnel-step-content">
+                                <span>Pursuing</span>
+                                <span class="funnel-step-num">912</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="funnel-arrow">↓ 38%</div>
+                    <div class="funnel-step">
+                        <div class="funnel-step-bar">
+                            <div class="funnel-step-fill" style="--w: 0.4;"></div>
+                            <div class="funnel-step-content">
+                                <span>In progress</span>
+                                <span class="funnel-step-num">347</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="funnel-arrow">↓ 41%</div>
+                    <div class="funnel-step final">
+                        <div class="funnel-step-bar">
+                            <div class="funnel-step-fill final" style="--w: 0.3;"></div>
+                            <div class="funnel-step-content">
+                                <span>Forged ✓</span>
+                                <span class="funnel-step-num">142</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ============ DUAL ROW: CAMPAIGNS + ACTIVITY ============ -->
+        <div class="section-label">
+            Campaigns &amp; activity
+            <span class="section-meta">live · click campaign to drill down</span>
+        </div>
+
+        <div class="dual-section">
+
+            <!-- LEFT: Campaigns table -->
+            <div class="dual-col">
+                <div class="campaigns-table">
+
+                    <div class="campaigns-controls">
+                        <input type="text" class="search-input" placeholder="Search campaigns…">
+                        <span class="filter-pill active">ALL · 7</span>
+                        <span class="filter-pill">ACTIVE · 5</span>
+                        <span class="filter-pill">DRAFT · 1</span>
+                        <span class="filter-pill">PAUSED · 1</span>
+                        <button class="btn-create">+ NEW</button>
+                    </div>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Campaign</th>
+                                <th>Status</th>
+                                <th>Reach</th>
+                                <th>Pursuing</th>
+                                <th>Forged</th>
+                                <th>Conv</th>
+                                <th>CPT</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="camp-name-row">
+                                        <div class="camp-icon">H</div>
+                                        <div>
+                                            <div class="camp-name">Hepamida Crash Survivor</div>
+                                            <div class="camp-meta">ENGAGEMENT · 3 badges</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="status-pill active">ACTIVE</span></td>
+                                <td><span class="metric-num">1,240</span></td>
+                                <td><span class="metric-num accent">87</span></td>
+                                <td><span class="metric-num accent">23</span></td>
+                                <td><span class="conv-rate good">26.4%</span></td>
+                                <td><span class="cpt-cell"><span class="lock-ico"></span>$4.30</span></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="camp-name-row">
+                                        <div class="camp-icon">H</div>
+                                        <div>
+                                            <div class="camp-name">Champion Tier — Top 100 LATAM</div>
+                                            <div class="camp-meta">CONVERSION · 5 badges</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="status-pill active">ACTIVE</span></td>
+                                <td><span class="metric-num">684</span></td>
+                                <td><span class="metric-num accent">42</span></td>
+                                <td><span class="metric-num accent">8</span></td>
+                                <td><span class="conv-rate mid">19.0%</span></td>
+                                <td><span class="cpt-cell"><span class="lock-ico"></span>$8.10</span></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="camp-name-row">
+                                        <div class="camp-icon">H</div>
+                                        <div>
+                                            <div class="camp-name">Brand Believer</div>
+                                            <div class="camp-meta">AWARENESS · 1 badge</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="status-pill active">ACTIVE</span></td>
+                                <td><span class="metric-num">923</span></td>
+                                <td><span class="metric-num accent">312</span></td>
+                                <td><span class="metric-num accent">98</span></td>
+                                <td><span class="conv-rate good">31.4%</span></td>
+                                <td><span class="cpt-cell"><span class="lock-ico"></span>$1.20</span></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="camp-name-row">
+                                        <div class="camp-icon">H</div>
+                                        <div>
+                                            <div class="camp-name">Strava 50K Challenge</div>
+                                            <div class="camp-meta">ENGAGEMENT · 2 badges</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="status-pill active">ACTIVE</span></td>
+                                <td><span class="metric-num">204</span></td>
+                                <td><span class="metric-num accent">31</span></td>
+                                <td><span class="metric-num accent">11</span></td>
+                                <td><span class="conv-rate good">35.5%</span></td>
+                                <td><span class="cpt-cell"><span class="lock-ico"></span>$2.80</span></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="camp-name-row">
+                                        <div class="camp-icon">H</div>
+                                        <div>
+                                            <div class="camp-name">Valorant · Diamond grind</div>
+                                            <div class="camp-meta">CONVERSION · 4 badges</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="status-pill paused">PAUSED</span></td>
+                                <td><span class="metric-num">412</span></td>
+                                <td><span class="metric-num">18</span></td>
+                                <td><span class="metric-num">2</span></td>
+                                <td><span class="conv-rate low">11.1%</span></td>
+                                <td><span class="cpt-cell"><span class="lock-ico"></span>$15.40</span></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="camp-name-row">
+                                        <div class="camp-icon">H</div>
+                                        <div>
+                                            <div class="camp-name">Holiday Edition · Drop</div>
+                                            <div class="camp-meta">AWARENESS · scheduled Dec 15</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="status-pill draft">DRAFT</span></td>
+                                <td><span class="metric-num">—</span></td>
+                                <td><span class="metric-num">—</span></td>
+                                <td><span class="metric-num">—</span></td>
+                                <td><span class="conv-rate" style="color: var(--text-faint);">—</span></td>
+                                <td><span class="cpt-cell"><span class="lock-ico"></span>—</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- RIGHT: Activity feed -->
+            <div class="dual-col">
+                <div class="activity-feed">
+                    <div class="activity-header">
+                        <span class="activity-header-title">◆ Activity feed</span>
+                        <span class="activity-header-meta"><span class="live-dot"></span>LIVE</span>
+                    </div>
+                    <div class="activity-list">
+                        <div class="activity-row">
+                            <span class="activity-icon forge">✓</span>
+                            <div>
+                                <div class="activity-text"><strong>@maxshadow</strong> forged <em>Crash Survivor</em></div>
+                                <div class="activity-time">2m ago</div>
+                            </div>
+                        </div>
+                        <div class="activity-row">
+                            <span class="activity-icon">→</span>
+                            <div>
+                                <div class="activity-text"><strong>@kira_pro</strong> pursuing <em>Champion Tier</em></div>
+                                <div class="activity-time">8m ago</div>
+                            </div>
+                        </div>
+                        <div class="activity-row">
+                            <span class="activity-icon">◆</span>
+                            <div>
+                                <div class="activity-text"><strong>@neon_cs</strong> badge "First Win" for <em>Brand Believer</em></div>
+                                <div class="activity-time">14m ago</div>
+                            </div>
+                        </div>
+                        <div class="activity-row">
+                            <span class="activity-icon follow">+</span>
+                            <div>
+                                <div class="activity-text"><strong>@vortex</strong> followed your Hall</div>
+                                <div class="activity-time">22m ago</div>
+                            </div>
+                        </div>
+                        <div class="activity-row">
+                            <span class="activity-icon forge">✓</span>
+                            <div>
+                                <div class="activity-text"><strong>@latam_kid</strong> forged <em>Strava 50K</em></div>
+                                <div class="activity-time">31m ago</div>
+                            </div>
+                        </div>
+                        <div class="activity-row">
+                            <span class="activity-icon">→</span>
+                            <div>
+                                <div class="activity-text"><strong>@aria</strong> pursuing <em>Crash Survivor</em></div>
+                                <div class="activity-time">45m ago</div>
+                            </div>
+                        </div>
+                        <div class="activity-row">
+                            <span class="activity-icon">⚡</span>
+                            <div>
+                                <div class="activity-text"><strong>@nightowl</strong> connected Steam · matched 2 criteria</div>
+                                <div class="activity-time">1h ago</div>
+                            </div>
+                        </div>
+                        <div class="activity-row">
+                            <span class="activity-icon forge">✓</span>
+                            <div>
+                                <div class="activity-text"><strong>@kira_pro</strong> forged <em>Brand Believer</em></div>
+                                <div class="activity-time">1h ago</div>
+                            </div>
+                        </div>
+                        <div class="activity-row">
+                            <span class="activity-icon">◆</span>
+                            <div>
+                                <div class="activity-text"><strong>@spectre</strong> badge "MVP" for <em>Champion Tier</em></div>
+                                <div class="activity-time">2h ago</div>
+                            </div>
+                        </div>
+                        <div class="activity-row">
+                            <span class="activity-icon follow">+</span>
+                            <div>
+                                <div class="activity-text"><strong>@frostbyte</strong> followed your Hall</div>
+                                <div class="activity-time">2h ago</div>
+                            </div>
+                        </div>
+                        <div class="activity-row">
+                            <span class="activity-icon">→</span>
+                            <div>
+                                <div class="activity-text"><strong>@silvermoon</strong> pursuing <em>Strava 50K</em></div>
+                                <div class="activity-time">3h ago</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ============ LOCKED PRO ============ -->
+        <div class="section-label" style="color: var(--warn); border-color: rgba(255,184,0,0.25);">
+            Pro features
+            <span class="section-meta" style="color: var(--warn);">unlock with billing</span>
+        </div>
+
+        <div class="locked-section">
+            <div class="lock-title">📊 OPTIMIZE FOR ROI</div>
+            <div class="lock-desc">
+                Activate paid campaigns to unlock real-time cost-per-trophy tracking, audience targeting by platform &amp; affinity keywords, AI-suggested badge configurations, cross-brand benchmarking against your sector, and scheduled campaign launches.
+            </div>
+            <div class="lock-cta">→ Contact us to activate</div>
+            <div class="lock-features">
+                <div class="lock-feat">Real CPT tracking</div>
+                <div class="lock-feat">Audience targeting</div>
+                <div class="lock-feat">AI campaign builder</div>
+                <div class="lock-feat">Sector benchmarking</div>
+                <div class="lock-feat">Scheduled launches</div>
+                <div class="lock-feat">Custom reports</div>
+            </div>
+        </div>
+
+        <div class="terminal-footer">
+            <span>trophyroom.v2.0 — brand session — @hepamida</span>
+            <span>session 0h 14m · build 4.7 <span class="blink">_</span></span>
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>
