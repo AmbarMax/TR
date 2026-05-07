@@ -522,13 +522,13 @@ export default {
 
 /* ========== LOCKED ITEMS (Coming Soon section) ========== */
 .nav-item.locked {
-  opacity: 0.5;
+  opacity: 0.85;
   cursor: not-allowed;
-  color: rgba(193, 245, 39, 0.4);
+  color: rgba(193, 245, 39, 0.75);
 }
 .nav-item.locked:hover {
   background: transparent;
-  color: rgba(193, 245, 39, 0.4);
+  color: rgba(193, 245, 39, 0.75);
 }
 .locked-badge {
   font-size: 9px;
@@ -536,7 +536,7 @@ export default {
   border: 1px solid currentColor;
   border-radius: 3px;
   margin-left: auto;
-  opacity: 0.6;
+  opacity: 0.9;
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
