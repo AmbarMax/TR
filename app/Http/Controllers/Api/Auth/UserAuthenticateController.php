@@ -35,23 +35,57 @@ class UserAuthenticateController extends Controller
      */
     public function register(RegisterRequest $request): JsonResponse
     {
-        if ($this->userService->store($request->except(['confirm_password', '_token']))){
-            if ($token = JWTAuth::attempt($request->only('email', 'password'))){
-                return response()->json([
-                    'message' => 'Account created successfully',
-                    'token' => $this->authService->getTokenData(
-                        token: $token,
-                        user: Auth::user()
-                    ),
-                ],
-                    ResponseAlias::HTTP_CREATED
-                );
+        $validated = $request->validated();
+        $accountType = $validated['account_type'] ?? 'player';
 
+        // Safety check: si es signup de brand, el rol Spatie brand_admin debe existir
+        if ($accountType === 'brand') {
+            if (!\Spatie\Permission\Models\Role::where('name', 'brand_admin')->exists()) {
+                Log::error('UserAuthenticateController@register: rol brand_admin no existe en Spatie. Brand signup bloqueado.');
+                return response()->json([
+                    'message' => 'Brand signup is temporarily unavailable. Please try again later.'
+                ], ResponseAlias::HTTP_SERVICE_UNAVAILABLE);
             }
         }
-       return response()->json([
-           'message' => 'Account creation failed'
-       ], ResponseAlias::HTTP_BAD_REQUEST);
+
+        // Sanitizar payload: NUNCA permitir mass-assignment de account_type/account_status desde el request
+        $payload = collect($validated)
+            ->except(['confirm_password', '_token', 'account_type'])
+            ->toArray();
+
+        // Setear account_type y account_status explícitamente según whitelist
+        $payload['account_type'] = $accountType;
+        $payload['account_status'] = $accountType === 'brand' ? 'pending' : 'active';
+
+        if (!$this->userService->store($payload)) {
+            return response()->json([
+                'message' => 'Account creation failed'
+            ], ResponseAlias::HTTP_BAD_REQUEST);
+        }
+
+        // Si es brand, asignar rol Spatie post-creación
+        if ($accountType === 'brand') {
+            $newUser = User::where('email', $validated['email'])->first();
+            if ($newUser) {
+                $newUser->assignRole('brand_admin');
+            } else {
+                Log::error('UserAuthenticateController@register: brand user creado pero no encontrado para asignar rol. Email: ' . $validated['email']);
+            }
+        }
+
+        if ($token = JWTAuth::attempt($request->only('email', 'password'))) {
+            return response()->json([
+                'message' => 'Account created successfully',
+                'token' => $this->authService->getTokenData(
+                    token: $token,
+                    user: Auth::user()
+                ),
+            ], ResponseAlias::HTTP_CREATED);
+        }
+
+        return response()->json([
+            'message' => 'Account creation failed'
+        ], ResponseAlias::HTTP_BAD_REQUEST);
     }
 
     public function startLogin(TwoFaLoginRequest $request): JsonResponse

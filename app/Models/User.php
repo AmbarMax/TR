@@ -66,6 +66,7 @@ class User extends Authenticatable implements JWTSubject
         'overwolf_id',
         'overwolf_username',
         'account_type',
+        'account_status',
         'onboarding_steps',
         'onboarding_completed',
         'onboarding_skipped_at',
@@ -251,7 +252,7 @@ class User extends Authenticatable implements JWTSubject
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['account_type', 'username'])
+            ->logOnly(['account_type', 'account_status', 'username'])
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs()
             ->useLogName('user');
