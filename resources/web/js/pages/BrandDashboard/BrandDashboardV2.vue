@@ -9,8 +9,8 @@
       <!-- 1. Performance Overview -->
       <PerformanceOverview />
 
-      <!-- 2. Secondary Metrics Strip (Commit 3) -->
-      <div class="placeholder">[SecondaryMetricsStrip goes here]</div>
+      <!-- 2. Secondary Metrics Strip -->
+      <SecondaryMetricsStrip />
 
       <!-- 3. Audience Intelligence (Commit 4) -->
       <div class="placeholder">[AudienceIntelligence goes here]</div>
@@ -29,10 +29,11 @@
 
 <script>
 import PerformanceOverview from './v2/PerformanceOverview.vue';
+import SecondaryMetricsStrip from './v2/SecondaryMetricsStrip.vue';
 
 export default {
   name: 'BrandDashboardV2',
-  components: { PerformanceOverview },
+  components: { PerformanceOverview, SecondaryMetricsStrip },
 };
 </script>
 
