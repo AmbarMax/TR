@@ -1,7 +1,7 @@
 import Login from "../pages/Login.vue";
 import Signup from "../pages/Signup.vue";
 import Profile from "../pages/Profile.vue";
-import Dashboard from "../pages/Dashboard.vue";
+import DashboardResolver from "../pages/DashboardResolver.vue";
 import Main from "../Main.vue";
 import Auth from "../Auth.vue";
 import Validate from "../pages/Validate.vue"
@@ -29,7 +29,7 @@ const routes = [
         children: [
             {
                 path: '/dashboard',
-                component: Dashboard,
+                component: DashboardResolver,
                 name: 'dashboard'
             },
             {
