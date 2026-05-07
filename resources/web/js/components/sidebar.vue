@@ -28,8 +28,8 @@
         <span class="nav-label">Dashboard</span>
       </router-link>
 
-      <!-- Trophy Room -->
-      <router-link to="/trophy-room" class="nav-item" :class="{ active_item: $route.path === '/trophy-room' }">
+      <!-- Trophy Room (player-only; staff override visible) -->
+      <router-link v-if="showPlayerItems" to="/trophy-room" class="nav-item" :class="{ active_item: $route.path === '/trophy-room' }">
         <span class="nav-icon">
           <span class="nav-icon-svg">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round">
@@ -46,8 +46,8 @@
         <span class="nav-label">Trophy Room</span>
       </router-link>
 
-      <!-- Forge -->
-      <router-link to="/forge" class="nav-item" :class="{ active_item: $route.path === '/forge' }">
+      <!-- Forge (player-only; staff override visible) -->
+      <router-link v-if="showPlayerItems" to="/forge" class="nav-item" :class="{ active_item: $route.path === '/forge' }">
         <span class="nav-icon">
           <span class="nav-icon-svg">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round">
@@ -63,8 +63,8 @@
         <span class="nav-label">Forge</span>
       </router-link>
 
-      <!-- Rewards -->
-      <router-link to="/rewards" class="nav-item" :class="{ active_item: $route.path === '/rewards' }">
+      <!-- Rewards (player-only; staff override visible) -->
+      <router-link v-if="showPlayerItems" to="/rewards" class="nav-item" :class="{ active_item: $route.path === '/rewards' }">
         <span class="nav-icon">
           <span class="nav-icon-svg">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round">
@@ -111,6 +111,51 @@
         </span>
         <span class="nav-label">Studio</span>
       </router-link>
+
+      <!-- Brand Hall (brand or staff override; needs username in store) -->
+      <router-link v-if="showBrandItems && brandHallPath" :to="brandHallPath" class="nav-item" :class="{ active_item: brandHallPath && $route.path === brandHallPath }">
+        <span class="nav-icon">
+          <span class="nav-icon-svg">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round">
+              <path d="M4 21 L4 9 L12 3 L20 9 L20 21 Z" fill="rgba(255,97,0,0.15)"/>
+              <path d="M9 21 L9 14 L15 14 L15 21"/>
+              <path d="M10 7 L14 7" stroke="#c1f527" stroke-width="2.5"/>
+            </svg>
+          </span>
+          <span class="nav-icon-pixel" :style="pixelStyle('raptor-trophy')"></span>
+        </span>
+        <span class="nav-label">Brand Hall</span>
+      </router-link>
+
+      <!-- Coming Soon (brand only, hidden for staff override) -->
+      <template v-if="showBrandComingSoon">
+        <div class="nav-section-divider"></div>
+        <div class="nav-item locked">
+          <span class="nav-icon">
+            <span class="nav-icon-svg">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round">
+                <rect x="3" y="7" width="18" height="13" rx="1"/>
+                <path d="M7 7 L7 5 C7 4 8 3 9 3 L15 3 C16 3 17 4 17 5 L17 7"/>
+                <path d="M3 12 L21 12"/>
+              </svg>
+            </span>
+          </span>
+          <span class="nav-label">Billing</span>
+          <span class="locked-badge">soon</span>
+        </div>
+        <div class="nav-item locked">
+          <span class="nav-icon">
+            <span class="nav-icon-svg">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round">
+                <path d="M12 3 L13.5 8.5 L19 10 L13.5 11.5 L12 17 L10.5 11.5 L5 10 L10.5 8.5 Z"/>
+                <path d="M19 17 L19.5 19 L21.5 19.5 L19.5 20 L19 22 L18.5 20 L16.5 19.5 L18.5 19 Z"/>
+              </svg>
+            </span>
+          </span>
+          <span class="nav-label">AI Builder</span>
+          <span class="locked-badge">soon</span>
+        </div>
+      </template>
 
       <!-- Admin (guarded by isAdmin — TR staff only) -->
       <router-link v-if="isAdmin" to="/admin" class="nav-item" :class="{ active_item: $route.path.startsWith('/admin') }">
@@ -186,6 +231,22 @@ export default {
         },
         isBrand() {
             return this.$store.getters.isBrand;
+        },
+        isStaffOverride() {
+            return this.isStaff;
+        },
+        showPlayerItems() {
+            return !this.isBrand || this.isStaffOverride;
+        },
+        showBrandItems() {
+            return this.isBrand || this.isStaffOverride;
+        },
+        showBrandComingSoon() {
+            return this.isBrand && !this.isStaffOverride;
+        },
+        brandHallPath() {
+            const username = this.$store.state.user?.username;
+            return username ? `/${username}` : null;
         },
     },
     methods: {
@@ -457,6 +518,32 @@ export default {
   .nav-item.active_item .nav-icon-pixel {
     animation: none;
   }
+}
+
+/* ========== LOCKED ITEMS (Coming Soon section) ========== */
+.nav-item.locked {
+  opacity: 0.5;
+  cursor: not-allowed;
+  color: rgba(193, 245, 39, 0.4);
+}
+.nav-item.locked:hover {
+  background: transparent;
+  color: rgba(193, 245, 39, 0.4);
+}
+.locked-badge {
+  font-size: 9px;
+  padding: 2px 6px;
+  border: 1px solid currentColor;
+  border-radius: 3px;
+  margin-left: auto;
+  opacity: 0.6;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.nav-section-divider {
+  height: 1px;
+  background: rgba(255, 97, 0, 0.2);
+  margin: 12px 16px;
 }
 
 /* ========== LOGOUT ========== */
