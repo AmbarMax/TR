@@ -17,6 +17,7 @@ export default function getProfileData()
                 balances: user.balances,
                 roles: user.roles ?? [],
                 account_type: user.account_type ?? null,
+                account_status: user.account_status ?? null,
                 permissions: user.permissions ?? [],
                 is_staff_legacy: user.is_staff_legacy ?? false,
             }));
@@ -24,6 +25,7 @@ export default function getProfileData()
             store.state.user.balances = user.balances;
             store.state.user.roles = user.roles ?? [];
             store.state.user.account_type = user.account_type ?? null;
+            store.state.user.account_status = user.account_status ?? null;
             store.state.user.permissions = user.permissions ?? [];
             if (user.avatar === '/images/avatar/default-profile-img.png') {
                 store.state.userAvatar = '';

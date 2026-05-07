@@ -1,5 +1,14 @@
 <template>
   <section class="brand-dashboard-v2">
+    <!-- Pending approval banner (only when account_status === 'pending') -->
+    <div v-if="isPending" class="bd-pending-banner">
+      <div class="bd-pending-icon">▲</div>
+      <div class="bd-pending-content">
+        <div class="bd-pending-title">Account pending approval</div>
+        <div class="bd-pending-text">Your brand account is under review. The dashboard is yours to explore — trophy creation and your public hall unlock once approved.</div>
+      </div>
+    </div>
+
     <header class="dash-header">
       <div class="dash-header-text">
         <h1>Brand Dashboard</h1>
@@ -51,6 +60,9 @@ export default {
       } catch (e) {
         return null;
       }
+    },
+    isPending() {
+      return this.$store.state.user?.account_status === 'pending';
     },
   },
 };
@@ -151,5 +163,36 @@ export default {
 .dash-hall-btn:hover {
   background: var(--accent, #c1f527);
   color: var(--bg, #000003);
+}
+
+/* Pending approval banner — shown when account_status === 'pending' */
+.bd-pending-banner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  border: 1px solid var(--warn, #ffb800);
+  background: linear-gradient(135deg, rgba(20, 22, 26, 0.9) 0%, rgba(255, 184, 0, 0.04) 100%);
+}
+.bd-pending-icon {
+  font-family: 'VT323', monospace;
+  font-size: 32px;
+  color: var(--warn, #ffb800);
+}
+.bd-pending-content { flex: 1; }
+.bd-pending-title {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--warn, #ffb800);
+  margin-bottom: 4px;
+}
+.bd-pending-text {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  color: var(--text-dim, rgba(254, 237, 223, 0.6));
 }
 </style>

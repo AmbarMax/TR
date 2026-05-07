@@ -129,6 +129,7 @@ const store = createStore({
                 },
                 roles: [],
                 account_type: null,
+                account_status: null,
                 permissions: [],
             },
             refreshTokenPromise: null,
