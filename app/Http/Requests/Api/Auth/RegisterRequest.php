@@ -33,6 +33,7 @@ class RegisterRequest extends FormRequest
             'email' => ['required', 'string', 'email', 'unique:users'],
             'password' => ['required', 'string'],
             'confirm_password' => ['required', 'string', 'same:password'],
+            'account_type' => ['nullable', 'string', 'in:player,brand'],
         ];
     }
 }
