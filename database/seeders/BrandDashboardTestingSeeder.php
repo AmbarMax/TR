@@ -436,6 +436,7 @@ class BrandDashboardTestingSeeder extends Seeder
 
                 $grantedAt = now()->subDays($daysAgo)
                     ->setTime(rand(0, 23), rand(0, 59), rand(0, 59));
+                if ($grantedAt->isFuture()) $grantedAt = now();
 
                 DB::table('badge_user')->insertOrIgnore([
                     'user_id' => $player->id,
@@ -494,6 +495,7 @@ class BrandDashboardTestingSeeder extends Seeder
                 $daysAgo = $weightedDays[array_rand($weightedDays)];
                 $forgedAt = now()->subDays($daysAgo)
                     ->setTime(rand(0, 23), rand(0, 59), rand(0, 59));
+                if ($forgedAt->isFuture()) $forgedAt = now();
 
                 DB::table('trophy_user')->insertOrIgnore([
                     'user_id' => $player->id,
@@ -526,6 +528,7 @@ class BrandDashboardTestingSeeder extends Seeder
                 $player = $players->random();
                 $startedAt = now()->subDays(rand(0, 29))
                     ->setTime(rand(0, 23), rand(0, 59), rand(0, 59));
+                if ($startedAt->isFuture()) $startedAt = now();
 
                 DB::table('pursuits')->insertOrIgnore([
                     'user_id' => $player->id,
@@ -588,10 +591,13 @@ class BrandDashboardTestingSeeder extends Seeder
             $overlapPlayers = $players->shuffle()->take($overlapPlayerCount);
 
             foreach ($overlapPlayers as $player) {
+                $crossGrantedAt = now()->subDays(rand(1, 30));
+                if ($crossGrantedAt->isFuture()) $crossGrantedAt = now();
+
                 DB::table('badge_user')->insertOrIgnore([
                     'user_id' => $player->id,
                     'badge_id' => $crossBadge->id,
-                    'created_at' => now()->subDays(rand(1, 30)),
+                    'created_at' => $crossGrantedAt,
                     'updated_at' => now(),
                 ]);
             }
