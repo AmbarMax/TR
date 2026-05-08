@@ -50,25 +50,25 @@ use App\Http\Controllers\Api\Brand\BrandAnalyticsController;
 // Brand Dashboard API — JWT + admin role required
 Route::prefix('brand')->middleware([JwtMiddleware::class, 'role:brand_admin|tr_admin|tr_superadmin'])->group(function () {
     Route::get('/guild', [BrandGuildController::class, 'index']);
-    Route::post('/guild/select', [BrandGuildController::class, 'select']);
+    Route::post('/guild/select', [BrandGuildController::class, 'select'])->middleware('account_status:active');
     Route::delete('/guild', [BrandGuildController::class, 'disconnect']);
     Route::get('/stats', [BrandStatsController::class, 'index']);
     Route::get('/channels', [BrandChannelsController::class, 'index']);
     Route::get('/rules', [BrandRulesController::class, 'index']);
-    Route::post('/rules', [BrandRulesController::class, 'store']);
-    Route::put('/rules/{id}', [BrandRulesController::class, 'update']);
+    Route::post('/rules', [BrandRulesController::class, 'store'])->middleware('account_status:active');
+    Route::put('/rules/{id}', [BrandRulesController::class, 'update'])->middleware('account_status:active');
     Route::get('/badges', [BrandBadgesController::class, 'index']);
     Route::post('/badges', [BrandBadgesController::class, 'store']);
     Route::put('/badges/{id}', [BrandBadgesController::class, 'update']);
     Route::delete('/badges/{id}', [BrandBadgesController::class, 'destroy']);
     Route::get('/polls', [BrandPollsController::class, 'index']);
-    Route::post('/polls', [BrandPollsController::class, 'store']);
-    Route::post('/polls/{id}/close', [BrandPollsController::class, 'close']);
+    Route::post('/polls', [BrandPollsController::class, 'store'])->middleware('account_status:active');
+    Route::post('/polls/{id}/close', [BrandPollsController::class, 'close'])->middleware('account_status:active');
     Route::delete('/polls/{id}', [BrandPollsController::class, 'destroy']);
     Route::get('/polls/{id}/results', [BrandPollsController::class, 'results']);
     Route::get('/events', [BrandEventsController::class, 'index']);
-    Route::post('/events', [BrandEventsController::class, 'store']);
-    Route::post('/events/{id}/complete', [BrandEventsController::class, 'complete']);
+    Route::post('/events', [BrandEventsController::class, 'store'])->middleware('account_status:active');
+    Route::post('/events/{id}/complete', [BrandEventsController::class, 'complete'])->middleware('account_status:active');
     Route::delete('/events/{id}', [BrandEventsController::class, 'destroy']);
 
     // Trophies
@@ -153,7 +153,7 @@ Route::middleware([JwtMiddleware::class])->group(function () {
             Route::get('/{id}/destroy', [BadgeController::class, 'destroy'])->name('destroy');
             Route::get('/{id}/showcase', [BadgeController::class, 'showcase'])->name('showcase');
             Route::get('/{id}/remove', [BadgeController::class, 'remove'])->name('remove');
-            Route::post('/share', [BadgeController::class, 'share'])->name('share');
+            Route::post('/share', [BadgeController::class, 'share'])->name('share')->middleware('account_status:active');
 
         });
 
@@ -248,13 +248,13 @@ Route::middleware([JwtMiddleware::class])->group(function () {
         ->name('feed.')
         ->group(function (){
             Route::get('/', [FeedController::class, 'index'])->name('index');
-            Route::post('/share', [FeedController::class, 'share'])->name('share');
-            Route::post('/create-achievement', [FeedController::class, 'createAchievement'])->name('createAchievement');
+            Route::post('/share', [FeedController::class, 'share'])->name('share')->middleware('account_status:active');
+            Route::post('/create-achievement', [FeedController::class, 'createAchievement'])->name('createAchievement')->middleware('account_status:active');
             Route::get('/my-posts', [FeedController::class, 'getMyFeed'])->name('my-posts');
             Route::get('/posts', [FeedController::class, 'followingFeed'])->name('posts');
             Route::post('/donate', [FeedController::class, 'donate'])->name('donate');
             Route::post('/remove', [FeedController::class, 'remove'])->name('remove');
-            Route::post('/comment', [FeedController::class, 'createComment'])->name('createComment');
+            Route::post('/comment', [FeedController::class, 'createComment'])->name('createComment')->middleware('account_status:active');
             Route::get('/comments/{id}', [FeedController::class, 'getComments'])->name('getPostComments');
             /** Only for moderator **/
             Route::post('/destroy', [FeedController::class, 'destroy'])->name('destroy');
@@ -265,11 +265,11 @@ Route::middleware([JwtMiddleware::class])->group(function () {
         ->name('achievement.')
         ->group(function (){
             Route::get('/', [AchievementController::class, 'index'])->name('index');
-            Route::post('/', [AchievementController::class, 'achievementCreate'])->name('create');
+            Route::post('/', [AchievementController::class, 'achievementCreate'])->name('create')->middleware('account_status:active');
             Route::post('/revalidate', [AchievementController::class, 'revalidate'])->name('revalidate');
             Route::post('/revalidate-social', [AchievementController::class, 'revalidateSocial'])->name('revalidateSocial');
             Route::post('/delete', [AchievementController::class, 'delete'])->name('delete');
-            Route::post('/share', [AchievementController::class, 'share'])->name('share');
+            Route::post('/share', [AchievementController::class, 'share'])->name('share')->middleware('account_status:active');
             Route::post('/reject', [AchievementController::class, 'reject'])->name('reject');
             Route::post('/social-approve', [AchievementController::class, 'socialApprove'])->name('approve');
             Route::post('/social-approve/reject', [AchievementController::class, 'socialApproveReject'])->name('socialApproveReject');
