@@ -1,10 +1,19 @@
 <template>
     <div class="tm">
 
+        <!-- Locked banner (account_status != active) -->
+        <div v-if="!isAccountActive" class="tm-locked-banner">
+            <div class="tm-locked-icon">▲</div>
+            <div class="tm-locked-content">
+                <div class="tm-locked-title">Trophy creation locked</div>
+                <div class="tm-locked-text">Your brand account is pending approval. Trophy creation will unlock once your account is reviewed.</div>
+            </div>
+        </div>
+
         <!-- Header -->
         <div class="trophies-header">
             <div class="sec-label tm-header-label"><span class="label-text">Trophies</span></div>
-            <button class="btn-create" @click="openCreate">+ Create Trophy</button>
+            <button class="btn-create" :disabled="!isAccountActive" @click="openCreate">+ Create Trophy</button>
         </div>
 
         <!-- Form Panel (create / edit) -->
@@ -107,7 +116,7 @@
                     <button
                         type="submit"
                         class="btn-create"
-                        :disabled="submitting || (!editingTrophy && !form.image)"
+                        :disabled="submitting || !isAccountActive || (!editingTrophy && !form.image)"
                     >
                         {{ submitting ? 'Saving…' : (editingTrophy ? 'Save Changes' : '+ Create Trophy') }}
                     </button>
@@ -154,7 +163,7 @@
                 </div>
 
                 <div class="trophy-item-actions">
-                    <button class="btn-ghost" @click="openEdit(t)">Edit</button>
+                    <button class="btn-ghost" :disabled="!isAccountActive" @click="openEdit(t)">Edit</button>
                     <button class="btn-danger" @click="deleteTrophy(t.id)">Delete</button>
                 </div>
             </div>
@@ -194,6 +203,14 @@ export default {
         this.load();
     },
 
+    computed: {
+        isAccountActive() {
+            const status = this.$store.state.user?.account_status;
+            if (status === undefined || status === null) return false;
+            return status === 'active';
+        },
+    },
+
     methods: {
         async load() {
             this.loading = true;
@@ -214,6 +231,7 @@ export default {
         // ── Form open/close ──────────────────────────────────────────────────
 
         openCreate() {
+            if (!this.isAccountActive) return;
             this.editingTrophy = null;
             this.form = {
                 name: '', description: '', type: 'trophy',
@@ -226,6 +244,7 @@ export default {
         },
 
         openEdit(trophy) {
+            if (!this.isAccountActive) return;
             this.editingTrophy = trophy;
             this.form = {
                 name:         trophy.name,
@@ -787,5 +806,36 @@ export default {
     .field-row-2, .field-row-4 { grid-template-columns: 1fr; }
     .trophy-item-meta--desc { max-width: 100%; }
     .trophy-item-pills, .trophy-item-actions { width: 100%; }
+}
+
+/* Locked banner — shown when account_status != active */
+.tm-locked-banner {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    border: 1px solid var(--warn, #ffb800);
+    background: linear-gradient(135deg, rgba(20, 22, 26, 0.9) 0%, rgba(255, 184, 0, 0.04) 100%);
+}
+.tm-locked-icon {
+    font-family: 'VT323', monospace;
+    font-size: 32px;
+    color: var(--warn, #ffb800);
+}
+.tm-locked-content { flex: 1; }
+.tm-locked-title {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--warn, #ffb800);
+    margin-bottom: 4px;
+}
+.tm-locked-text {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    color: var(--text-dim, rgba(254, 237, 223, 0.6));
 }
 </style>

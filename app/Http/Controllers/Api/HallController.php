@@ -18,6 +18,10 @@ class HallController extends Controller
     {
         $user = User::where('username', $username)->firstOrFail();
 
+        if ($user->account_type === 'brand' && $user->account_status !== 'active') {
+            abort(404);
+        }
+
         return new HallResource($user);
     }
 
@@ -28,6 +32,13 @@ class HallController extends Controller
         if ($user->account_type !== 'brand') {
             return response()->json(
                 ['message' => 'Conquerors only available for brand Halls'],
+                Response::HTTP_NOT_FOUND
+            );
+        }
+
+        if ($user->account_status !== 'active') {
+            return response()->json(
+                ['message' => 'Hall not found'],
                 Response::HTTP_NOT_FOUND
             );
         }
@@ -89,6 +100,13 @@ class HallController extends Controller
             );
         }
 
+        if ($user->account_status !== 'active') {
+            return response()->json(
+                ['message' => 'Hall not found'],
+                Response::HTTP_NOT_FOUND
+            );
+        }
+
         // Trophies "active" = not soft-deleted. The trophies table has no
         // is_active/expiration_date column, so soft-delete is the only
         // sensible liveness signal today.
@@ -114,6 +132,7 @@ class HallController extends Controller
     {
         $halls = User::query()
             ->where('account_type', 'brand')
+            ->where('account_status', 'active')
             ->where('is_featured', true)
             ->orderByDesc('created_at')
             ->limit(4)
@@ -128,6 +147,7 @@ class HallController extends Controller
     {
         $halls = User::query()
             ->where('account_type', 'brand')
+            ->where('account_status', 'active')
             ->where(function ($q) {
                 $q->where('is_featured', false)->orWhereNull('is_featured');
             })

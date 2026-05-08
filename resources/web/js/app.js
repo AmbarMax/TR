@@ -17,6 +17,23 @@ import.meta.glob([
     '../images/**',
 ]);
 
+// Rehydrate selected user fields from localStorage BEFORE mount, so components using
+// $store.state.user have correct values on first render after a page refresh.
+// Tolerates malformed payloads silently (logs only).
+try {
+    const stored = JSON.parse(localStorage.getItem('user') || '{}');
+    if (stored && stored.id) {
+        const fieldsToHydrate = ['balances', 'roles', 'account_type', 'account_status', 'permissions'];
+        fieldsToHydrate.forEach(key => {
+            if (stored[key] !== undefined) {
+                Store.state.user[key] = stored[key];
+            }
+        });
+    }
+} catch (e) {
+    console.warn('User hydration from localStorage failed:', e);
+}
+
 createApp(App)
     .use(Router)
     .use(Store)

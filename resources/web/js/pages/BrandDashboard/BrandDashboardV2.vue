@@ -1,5 +1,17 @@
 <template>
   <section class="brand-dashboard-v2">
+    <!-- Status banner — shown when account_status is pending or rejected -->
+    <div
+      v-if="accountStatusBanner"
+      :class="['bd-status-banner', `bd-status-banner--${accountStatusBanner.variant}`]"
+    >
+      <div class="bd-status-icon">▲</div>
+      <div class="bd-status-content">
+        <div class="bd-status-title">{{ accountStatusBanner.title }}</div>
+        <div class="bd-status-text">{{ accountStatusBanner.body }}</div>
+      </div>
+    </div>
+
     <header class="dash-header">
       <div class="dash-header-text">
         <h1>Brand Dashboard</h1>
@@ -51,6 +63,24 @@ export default {
       } catch (e) {
         return null;
       }
+    },
+    accountStatusBanner() {
+      const status = this.$store.state.user?.account_status;
+      if (status === 'pending') {
+        return {
+          variant: 'pending',
+          title: 'Account pending approval',
+          body: 'Your brand account is under review. The dashboard is yours to explore — trophy creation and your public hall unlock once approved.',
+        };
+      }
+      if (status === 'rejected') {
+        return {
+          variant: 'rejected',
+          title: 'Account not approved',
+          body: "We weren't able to approve your account at this time. Reach out to hello@trophyroom.gg to discuss next steps.",
+        };
+      }
+      return null;
     },
   },
 };
@@ -151,5 +181,46 @@ export default {
 .dash-hall-btn:hover {
   background: var(--accent, #c1f527);
   color: var(--bg, #000003);
+}
+
+/* Status banner — shown when account_status is pending or rejected */
+.bd-status-banner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  border: 1px solid;
+  background: linear-gradient(135deg, rgba(20, 22, 26, 0.9) 0%, var(--banner-tint, transparent) 100%);
+}
+.bd-status-banner--pending {
+  --banner-tint: rgba(255, 184, 0, 0.04);
+  border-color: var(--warn, #ffb800);
+}
+.bd-status-banner--rejected {
+  --banner-tint: rgba(255, 80, 80, 0.04);
+  border-color: rgba(255, 80, 80, 0.6);
+}
+.bd-status-icon {
+  font-family: 'VT323', monospace;
+  font-size: 32px;
+}
+.bd-status-banner--pending .bd-status-icon { color: var(--warn, #ffb800); }
+.bd-status-banner--rejected .bd-status-icon { color: rgba(255, 120, 120, 0.95); }
+.bd-status-content { flex: 1; }
+.bd-status-title {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.bd-status-banner--pending .bd-status-title { color: var(--warn, #ffb800); }
+.bd-status-banner--rejected .bd-status-title { color: rgba(255, 120, 120, 0.95); }
+.bd-status-text {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  color: var(--text-dim, rgba(254, 237, 223, 0.6));
 }
 </style>

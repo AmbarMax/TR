@@ -73,8 +73,8 @@ Route::prefix('brand')->middleware([JwtMiddleware::class, 'role:brand_admin|tr_a
 
     // Trophies
     Route::get('/trophies', [BrandTrophiesController::class, 'index']);
-    Route::post('/trophies', [BrandTrophiesController::class, 'store']);
-    Route::put('/trophies/{id}', [BrandTrophiesController::class, 'update']);
+    Route::post('/trophies', [BrandTrophiesController::class, 'store'])->middleware('account_status:active');
+    Route::put('/trophies/{id}', [BrandTrophiesController::class, 'update'])->middleware('account_status:active');
     Route::delete('/trophies/{id}', [BrandTrophiesController::class, 'destroy']);
     Route::get('/trophies/{id}/stats', [BrandTrophiesController::class, 'stats']);
 
@@ -361,6 +361,12 @@ Route::prefix('admin')->middleware([JwtMiddleware::class, 'role:tr_admin|tr_supe
         ->name('admin.brands.update');
     Route::delete('/brands/{username}/demote', [App\Http\Controllers\Api\Admin\AdminBrandsController::class, 'demote'])
         ->name('admin.brands.demote');
+    Route::post('/brands/{username}/approve', [App\Http\Controllers\Api\Admin\AdminBrandsController::class, 'approve'])
+        ->name('admin.brands.approve');
+    Route::post('/brands/{username}/reject', [App\Http\Controllers\Api\Admin\AdminBrandsController::class, 'reject'])
+        ->name('admin.brands.reject');
+    Route::post('/brands/{username}/reapprove', [App\Http\Controllers\Api\Admin\AdminBrandsController::class, 'reapprove'])
+        ->name('admin.brands.reapprove');
     Route::get('/users/searchable', [App\Http\Controllers\Api\Admin\AdminBrandsController::class, 'searchablePlayers'])
         ->name('admin.users.searchable');
 

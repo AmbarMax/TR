@@ -32,6 +32,7 @@ class ProfileResource extends JsonResource
             'unread_notifications_count' => Notification::getUnreadCount($this->id),
             'google2fa_status' => $this->google2fa_status,
             'account_type' => $this->account_type,
+            'account_status' => $this->account_status,
             'roles' => $this->getRoleNames(),
             'permissions' => $this->getAllPermissions()->pluck('name'),
             // Temporary backward-compat shim — remove in Brief 9N-C cleanup (post frontend refactor).
