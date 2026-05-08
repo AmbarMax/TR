@@ -14,9 +14,10 @@ class AdminBrandsController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $q     = trim((string) $request->query('q', ''));
-        $sort  = (string) $request->query('sort', 'created_at');
-        $order = strtolower((string) $request->query('order', 'desc')) === 'asc' ? 'asc' : 'desc';
+        $q      = trim((string) $request->query('q', ''));
+        $sort   = (string) $request->query('sort', 'created_at');
+        $order  = strtolower((string) $request->query('order', 'desc')) === 'asc' ? 'asc' : 'desc';
+        $status = (string) $request->query('status', 'all');
 
         $allowedSorts = ['created_at', 'verified_at', 'is_featured', 'username'];
         if (! in_array($sort, $allowedSorts, true)) {
@@ -32,6 +33,24 @@ class AdminBrandsController extends Controller
             });
         }
 
+        // Snapshot status counts BEFORE applying the status filter, so the
+        // segmented control on the frontend always shows totals scoped to the
+        // current search but independent of the active tab.
+        $countsRaw = (clone $query)
+            ->select('account_status', DB::raw('COUNT(*) as c'))
+            ->groupBy('account_status')
+            ->pluck('c', 'account_status')
+            ->toArray();
+
+        $statusCounts = array_merge(
+            ['pending' => 0, 'active' => 0, 'rejected' => 0],
+            array_map('intval', $countsRaw),
+        );
+
+        if (in_array($status, ['pending', 'active', 'rejected'], true)) {
+            $query->where('account_status', $status);
+        }
+
         $brands = $query->orderBy($sort, $order)->paginate(20);
 
         $items = collect($brands->items())->map(fn (User $u) => $this->serialize($u))->values();
@@ -39,10 +58,11 @@ class AdminBrandsController extends Controller
         return response()->json([
             'data' => $items,
             'meta' => [
-                'current_page' => $brands->currentPage(),
-                'last_page'    => $brands->lastPage(),
-                'per_page'     => $brands->perPage(),
-                'total'        => $brands->total(),
+                'current_page'  => $brands->currentPage(),
+                'last_page'     => $brands->lastPage(),
+                'per_page'      => $brands->perPage(),
+                'total'         => $brands->total(),
+                'status_counts' => $statusCounts,
             ],
         ]);
     }
@@ -93,7 +113,10 @@ class AdminBrandsController extends Controller
             );
         }
 
-        $user->forceFill(['account_type' => 'brand'])->save();
+        $user->forceFill([
+            'account_type'   => 'brand',
+            'account_status' => 'active',
+        ])->save();
         $user->assignRole('brand_admin');
 
         return response()->json(['data' => $this->serialize($user->fresh())]);
@@ -114,6 +137,60 @@ class AdminBrandsController extends Controller
         $brand->forceFill($payload)->save();
 
         return response()->json(['data' => $this->serialize($brand->fresh())]);
+    }
+
+    public function approve(string $username): JsonResponse
+    {
+        $user = User::where('username', $username)
+            ->where('account_type', 'brand')
+            ->firstOrFail();
+
+        if ($user->account_status !== 'pending') {
+            return response()->json([
+                'message'        => 'Only pending brands can be approved.',
+                'current_status' => $user->account_status,
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $user->forceFill(['account_status' => 'active'])->save();
+
+        return response()->json(['data' => $this->serialize($user->fresh())]);
+    }
+
+    public function reject(string $username): JsonResponse
+    {
+        $user = User::where('username', $username)
+            ->where('account_type', 'brand')
+            ->firstOrFail();
+
+        if ($user->account_status !== 'pending') {
+            return response()->json([
+                'message'        => 'Only pending brands can be rejected.',
+                'current_status' => $user->account_status,
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $user->forceFill(['account_status' => 'rejected'])->save();
+
+        return response()->json(['data' => $this->serialize($user->fresh())]);
+    }
+
+    public function reapprove(string $username): JsonResponse
+    {
+        $user = User::where('username', $username)
+            ->where('account_type', 'brand')
+            ->firstOrFail();
+
+        if ($user->account_status !== 'rejected') {
+            return response()->json([
+                'message'        => 'Only rejected brands can be re-approved.',
+                'current_status' => $user->account_status,
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $user->forceFill(['account_status' => 'active'])->save();
+
+        return response()->json(['data' => $this->serialize($user->fresh())]);
     }
 
     public function demote(string $username): JsonResponse
@@ -152,6 +229,7 @@ class AdminBrandsController extends Controller
             'verified_at'    => optional($user->verified_at)->toIso8601String(),
             'is_verified'    => (bool) $user->verified_at,
             'is_featured'    => (bool) $user->is_featured,
+            'account_status' => $user->account_status,
             'banner'         => $user->background,
             'created_at'     => optional($user->created_at)->toIso8601String(),
             'active_trophies' => $activeTrophies,

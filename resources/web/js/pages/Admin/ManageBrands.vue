@@ -19,6 +19,24 @@
       </div>
     </div>
 
+    <div class="mb-status-tabs" role="tablist">
+      <button
+        v-for="opt in statusOptions"
+        :key="opt.value"
+        type="button"
+        role="tab"
+        :class="['mb-status-tab', { 'is-active': selectedStatus === opt.value }]"
+        :aria-selected="selectedStatus === opt.value"
+        @click="selectStatus(opt.value)"
+      >
+        <span class="mb-status-tab-label">{{ opt.label }}</span>
+        <span
+          v-if="opt.value === 'pending' && pendingCount > 0"
+          class="mb-status-badge"
+        >{{ pendingCount }}</span>
+      </button>
+    </div>
+
     <div v-if="error" class="mb-error">{{ error }}</div>
 
     <BrandsTable
@@ -30,6 +48,9 @@
       @sort="onSort"
       @edit="openEdit"
       @demote="onDemote"
+      @approve="onApprove"
+      @reject="onReject"
+      @reapprove="onReapprove"
     />
 
     <PromoteUserModal
@@ -72,6 +93,17 @@ export default {
 
       sort: { key: "created_at", order: "desc" },
 
+      // null = first load not yet resolved. Decided in loadBrands() based on
+      // meta.status_counts.pending: 'pending' if any pending brand exists,
+      // otherwise 'all'. Once resolved, never null again.
+      selectedStatus: null,
+      statusOptions: [
+        { value: "all",      label: "All" },
+        { value: "pending",  label: "Pending" },
+        { value: "active",   label: "Active" },
+        { value: "rejected", label: "Rejected" },
+      ],
+
       promoteModalOpen: false,
       editModalOpen: false,
       editingBrand: null,
@@ -87,6 +119,9 @@ export default {
       if (!total) return "No brands yet";
       return `${total} ${total === 1 ? "brand" : "brands"} total`;
     },
+    pendingCount() {
+      return this.meta?.status_counts?.pending ?? 0;
+    },
   },
   mounted() {
     this.loadBrands();
@@ -100,21 +135,49 @@ export default {
       this.loading = true;
       this.error = "";
       try {
-        const { data } = await api.get("/api/admin/brands", {
-          params: {
-            q: this.searchQuery || undefined,
-            sort: this.sort.key,
-            order: this.sort.order,
-          },
-        });
+        const params = {
+          q: this.searchQuery || undefined,
+          sort: this.sort.key,
+          order: this.sort.order,
+        };
+        // Only forward status when an explicit non-'all' filter is selected.
+        // null means "first load — don't filter, decide afterwards from counts".
+        if (this.selectedStatus && this.selectedStatus !== "all") {
+          params.status = this.selectedStatus;
+        }
+
+        const { data } = await api.get("/api/admin/brands", { params });
         this.brands = data?.data ?? [];
         this.meta = data?.meta ?? null;
+
+        // First-load default landing: if any pending brand exists, jump to the
+        // Pending tab automatically (admin queue first). Otherwise default to All.
+        // The pending re-fetch is intentional — server-side pagination needs the
+        // filter applied to return the correct slice.
+        if (this.selectedStatus === null) {
+          const pending = this.meta?.status_counts?.pending ?? 0;
+          if (pending > 0) {
+            this.selectedStatus = "pending";
+            this.loading = false;
+            return this.loadBrands();
+          }
+          this.selectedStatus = "all";
+        }
       } catch (e) {
         this.error = e.response?.data?.message || "Failed to load brands.";
         this.brands = [];
+        if (this.selectedStatus === null) {
+          this.selectedStatus = "all";
+        }
       } finally {
         this.loading = false;
       }
+    },
+
+    selectStatus(value) {
+      if (this.selectedStatus === value) return;
+      this.selectedStatus = value;
+      this.loadBrands();
     },
 
     onSearchInput() {
@@ -168,6 +231,38 @@ export default {
         this.loadBrands();
       } catch (e) {
         this.flashToast(e.response?.data?.message || "Demote failed", "error");
+      }
+    },
+
+    async onApprove(brand) {
+      try {
+        await api.post(`/api/admin/brands/${encodeURIComponent(brand.username)}/approve`);
+        this.flashToast(`Approved @${brand.username}`, "success");
+        this.loadBrands();
+      } catch (e) {
+        this.flashToast(e.response?.data?.message || "Approve failed", "error");
+      }
+    },
+
+    async onReject(brand) {
+      if (!window.confirm(`Reject @${brand.username}? Their public hall will stay locked and trophy creation remains disabled.`)) return;
+      try {
+        await api.post(`/api/admin/brands/${encodeURIComponent(brand.username)}/reject`);
+        this.flashToast(`Rejected @${brand.username}`, "success");
+        this.loadBrands();
+      } catch (e) {
+        this.flashToast(e.response?.data?.message || "Reject failed", "error");
+      }
+    },
+
+    async onReapprove(brand) {
+      if (!window.confirm(`Re-approve @${brand.username}? Their account will become active and unlock the brand features.`)) return;
+      try {
+        await api.post(`/api/admin/brands/${encodeURIComponent(brand.username)}/reapprove`);
+        this.flashToast(`Re-approved @${brand.username}`, "success");
+        this.loadBrands();
+      } catch (e) {
+        this.flashToast(e.response?.data?.message || "Re-approve failed", "error");
       }
     },
 
@@ -232,6 +327,45 @@ export default {
   transition: border-color 0.15s;
 }
 .manage-brands .mb-search-input:focus { outline: none; border-color: var(--mb-primary); }
+
+/* Status filter — segmented control row below the toolbar */
+.manage-brands .mb-status-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--mb-border);
+}
+.manage-brands .mb-status-tab {
+  display: inline-flex; align-items: center; gap: 8px;
+  appearance: none;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid transparent;
+  padding: 10px 16px;
+  margin-bottom: -1px;
+  font-family: var(--mb-mono);
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--mb-text-dim);
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+.manage-brands .mb-status-tab:hover { color: var(--mb-text); }
+.manage-brands .mb-status-tab.is-active {
+  color: var(--mb-text);
+  border-bottom-color: var(--mb-primary);
+}
+.manage-brands .mb-status-badge {
+  display: inline-block;
+  padding: 2px 6px;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  background: rgba(255, 184, 0, 0.15);
+  color: #ffb800;
+  border-radius: 2px;
+}
 
 .manage-brands .mb-error {
   padding: 12px 16px;
@@ -323,6 +457,8 @@ export default {
 .manage-brands .row-btn:hover { color: var(--mb-text); border-color: var(--mb-text-dim); }
 .manage-brands .row-btn--danger { color: var(--mb-danger); border-color: rgba(225, 27, 43, 0.35); }
 .manage-brands .row-btn--danger:hover { background: var(--mb-danger); color: var(--mb-bg); border-color: var(--mb-danger); }
+.manage-brands .row-btn--primary { color: var(--mb-accent); border-color: rgba(193, 245, 39, 0.45); }
+.manage-brands .row-btn--primary:hover { background: var(--mb-accent); color: var(--mb-bg); border-color: var(--mb-accent); }
 
 /* Buttons */
 .manage-brands .mb-btn {
