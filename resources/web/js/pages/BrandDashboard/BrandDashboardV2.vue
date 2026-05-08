@@ -17,8 +17,15 @@
         <h1>Brand Dashboard</h1>
         <p class="dash-subtitle">Performance · Audience · Campaigns</p>
       </div>
-      <a v-if="brandHallPath" :href="brandHallPath" class="dash-hall-btn">
+      <a
+        v-if="brandHallPath"
+        :href="brandHallPath"
+        :class="['dash-hall-btn', { 'dash-hall-btn--locked': isLocked }]"
+        :title="isLocked ? lockedTitle : null"
+        @click="isLocked ? $event.preventDefault() : null"
+      >
         → View public hall
+        <span v-if="isLocked" class="bd-lock-icon">▲</span>
       </a>
     </header>
 
@@ -81,6 +88,13 @@ export default {
         };
       }
       return null;
+    },
+    isLocked() {
+      const status = this.$store.state.user?.account_status;
+      return status && status !== 'active';
+    },
+    lockedTitle() {
+      return 'Locked until your account is approved';
     },
   },
 };
@@ -222,5 +236,25 @@ export default {
   font-size: 11px;
   letter-spacing: 0.5px;
   color: var(--text-dim, rgba(254, 237, 223, 0.6));
+}
+
+/* Locked state for the View public hall button (brand pending/rejected) */
+.dash-hall-btn--locked {
+  opacity: 0.4;
+  cursor: url('/images/cursor-trex.png') 22 11, not-allowed;
+  pointer-events: auto;
+}
+.dash-hall-btn--locked:hover {
+  opacity: 0.4;
+  background: transparent;
+  border-color: var(--accent, #c1f527);
+  color: var(--accent, #c1f527);  /* mantener chartreuse en hover, consistente con at-rest */
+}
+.bd-lock-icon {
+  margin-left: 6px;
+  font-family: 'VT323', monospace;
+  font-size: 14px;
+  color: var(--warn, #ffb800);
+  opacity: 0.8;
 }
 </style>
