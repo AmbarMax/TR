@@ -80,7 +80,13 @@
       </router-link>
 
       <!-- Achievements -->
-      <router-link to="/feed" class="nav-item" :class="{ active_item: $route.path === '/feed' }">
+      <router-link
+        to="/feed"
+        class="nav-item"
+        :class="{ active_item: $route.path === '/feed', 'nav-item--locked': isLocked }"
+        :title="isLocked ? lockedTitle : null"
+        @click="isLocked ? $event.preventDefault() : null"
+      >
         <span class="nav-icon">
           <span class="nav-icon-svg">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round">
@@ -93,10 +99,18 @@
           <span class="nav-icon-pixel" :style="pixelStyle('raptor-podium')"></span>
         </span>
         <span class="nav-label">Achievements</span>
+        <span v-if="isLocked" class="nav-lock-icon">▲</span>
       </router-link>
 
       <!-- Studio (visible for brand owners + TR staff) -->
-      <router-link v-if="isBrand || isStaff" to="/brand-dashboard" class="nav-item" :class="{ active_item: $route.path.startsWith('/brand-dashboard') }">
+      <router-link
+        v-if="isBrand || isStaff"
+        to="/brand-dashboard"
+        class="nav-item"
+        :class="{ active_item: $route.path.startsWith('/brand-dashboard'), 'nav-item--locked': isLocked }"
+        :title="isLocked ? lockedTitle : null"
+        @click="isLocked ? $event.preventDefault() : null"
+      >
         <span class="nav-icon">
           <span class="nav-icon-svg">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round">
@@ -110,10 +124,18 @@
           <span class="nav-icon-pixel" :style="pixelStyle('raptor-admin')"></span>
         </span>
         <span class="nav-label">Studio</span>
+        <span v-if="isLocked" class="nav-lock-icon">▲</span>
       </router-link>
 
       <!-- Brand Hall (brand or staff override; needs username in store) -->
-      <router-link v-if="showBrandItems && brandHallPath" :to="brandHallPath" class="nav-item" :class="{ active_item: brandHallPath && $route.path === brandHallPath }">
+      <router-link
+        v-if="showBrandItems && brandHallPath"
+        :to="brandHallPath"
+        class="nav-item"
+        :class="{ active_item: brandHallPath && $route.path === brandHallPath, 'nav-item--locked': isLocked }"
+        :title="isLocked ? lockedTitle : null"
+        @click="isLocked ? $event.preventDefault() : null"
+      >
         <span class="nav-icon">
           <span class="nav-icon-svg">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round">
@@ -125,6 +147,7 @@
           <span class="nav-icon-pixel" :style="pixelStyle('raptor-trophy')"></span>
         </span>
         <span class="nav-label">Brand Hall</span>
+        <span v-if="isLocked" class="nav-lock-icon">▲</span>
       </router-link>
 
       <!-- Coming Soon (brand only, hidden for staff override) -->
@@ -247,6 +270,15 @@ export default {
         brandHallPath() {
             const username = this.$store.state.user?.username;
             return username ? `/${username}` : null;
+        },
+        accountStatus() {
+            return this.$store.state.user?.account_status;
+        },
+        isLocked() {
+            return this.isBrand && !this.isStaff && this.accountStatus && this.accountStatus !== 'active';
+        },
+        lockedTitle() {
+            return 'Locked until your account is approved';
         },
     },
     methods: {
@@ -507,6 +539,35 @@ export default {
   50% {
     transform: scale(1) translateY(-2px);
   }
+}
+
+/* Locked nav items (brand pending/rejected) */
+.nav-item--locked {
+  opacity: 0.4;
+  cursor: url('/images/cursor-trex.png') 22 11, not-allowed;
+  pointer-events: auto;
+}
+.nav-item--locked:hover {
+  opacity: 0.4;
+  background: transparent;
+  color: inherit;
+}
+.nav-item--locked:hover:not(.active_item) .nav-icon-svg {
+  transform: none;
+  opacity: 1;
+  transition: none;
+}
+.nav-item--locked:hover:not(.active_item) .nav-icon-pixel {
+  transform: scale(0);
+  opacity: 0;
+  transition: none;
+}
+.nav-item--locked .nav-lock-icon {
+  margin-left: auto;
+  font-family: 'VT323', monospace;
+  font-size: 18px;
+  color: var(--warn, #ffb800);
+  opacity: 0.8;
 }
 
 /* Motion reduction */
