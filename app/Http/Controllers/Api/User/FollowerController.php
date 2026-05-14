@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Follow\FollowActionRequest;
+use App\Http\Resources\FollowerResource;
 use App\Models\User;
 use App\Repositories\Api\FollowerRepository;
 use App\Services\Api\FollowService;
@@ -30,8 +31,10 @@ class FollowerController extends Controller
         $count = $request->input('count', 10);
 
         return response()->json([
-            'followers' => $this->followerRepository->getFollowersPaginated($user, $page, $count),
+            'followers' => $this->followerRepository->getFollowersPaginated($user, $page, $count)
+                ->through(fn ($u) => (new FollowerResource($u))->resolve()),
             'followings' => $this->followerRepository->getFollowingPaginated($user, $page, $count)
+                ->through(fn ($u) => (new FollowerResource($u))->resolve()),
         ]);
     }
 
@@ -44,7 +47,8 @@ class FollowerController extends Controller
         $page = $request->input('page', 1);
         $count = $request->input('count', 10);
 
-        $following = $this->followerRepository->getFollowingPaginated($user, $page, $count);
+        $following = $this->followerRepository->getFollowingPaginated($user, $page, $count)
+            ->through(fn ($u) => (new FollowerResource($u))->resolve());
 
         return response()->json([
             $following,
@@ -61,7 +65,8 @@ class FollowerController extends Controller
         $page = $request->input('page', 1);
         $count = $request->input('count', 10);
 
-        $followers = $this->followerRepository->getFollowersPaginated($user, $page, $count);
+        $followers = $this->followerRepository->getFollowersPaginated($user, $page, $count)
+            ->through(fn ($u) => (new FollowerResource($u))->resolve());
 
         return response()->json([
             $followers,

@@ -18,7 +18,7 @@
                 <div @click="handleSelectUser(item.id)" class="item notification-message" v-for="item in users" :key="item.id" :class="{ 'selected-user': selectedUser.includes(item.id) }">
                   <div class="left-part">
                     <img v-if="!item.avatar" src="../../../images/web/img/user.svg" alt="user">
-                    <img v-else :src="'storage/users/' + item.id + '/avatar/' + item.avatar +'.jpg'" alt="user">
+                    <img v-else :src="item.avatar" alt="user">
                     <span>
                    <span class="email-title">{{ item.email }}</span>
                    <span class="name-title">{{ item.name }}</span>
