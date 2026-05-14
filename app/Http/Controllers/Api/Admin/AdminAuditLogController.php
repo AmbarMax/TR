@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Admin;
 
+use App\Enums\AvatarType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\AuditLogIndexRequest;
 use Illuminate\Http\JsonResponse;
@@ -34,7 +35,9 @@ class AdminAuditLogController extends Controller
                     'id'       => $a->causer->id ?? null,
                     'username' => $a->causer->username ?? null,
                     'name'     => $a->causer->name ?? null,
-                    'avatar'   => $a->causer->avatar ?? null,
+                    'avatar'   => $a->causer->avatar
+                        ? $a->causer->getAvatarFile(AvatarType::Small())
+                        : null,
                 ] : null,
                 'subject'     => $a->subject ? [
                     'type'  => class_basename($a->subject_type),
