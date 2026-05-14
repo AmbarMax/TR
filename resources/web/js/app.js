@@ -23,7 +23,20 @@ import.meta.glob([
 try {
     const stored = JSON.parse(localStorage.getItem('user') || '{}');
     if (stored && stored.id) {
-        const fieldsToHydrate = ['balances', 'roles', 'account_type', 'account_status', 'permissions'];
+        const fieldsToHydrate = [
+            'id',
+            'username',
+            'name',
+            'email',
+            'avatar',
+            'background',
+            'is_staff_legacy',
+            'balances',
+            'roles',
+            'account_type',
+            'account_status',
+            'permissions',
+        ];
         fieldsToHydrate.forEach(key => {
             if (stored[key] !== undefined) {
                 Store.state.user[key] = stored[key];
