@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Follow\FollowActionRequest;
 use App\Http\Resources\ExchangeListResource;
 use App\Models\User;
-use App\Repositories\Api\FollowerRepository;
 use App\Services\Api\ExchangeService;
 use App\Services\Api\FollowService;
 use App\Services\Api\UserService;

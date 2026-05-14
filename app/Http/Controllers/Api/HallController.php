@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\AvatarType;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\HallResource;
 use App\Models\HallFollow;
@@ -184,7 +185,9 @@ class HallController extends Controller
             'accent_color' => $user->accent_color,
             'verified_at'  => optional($user->verified_at)->toIso8601String(),
             'is_verified'  => (bool) $user->verified_at,
-            'avatar'       => $user->avatar,
+            'avatar'       => $user->avatar
+                ? $user->getAvatarFile(AvatarType::Small())
+                : null,
             'live_trophies' => $liveTrophies,
             'pursuing_now'  => $pursuingNow,
         ];
