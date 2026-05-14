@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Admin;
 
+use App\Enums\AvatarType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\AssignRoleRequest;
 use App\Models\User;
@@ -115,7 +116,9 @@ class AdminRolesController extends Controller
             'username'     => $user->username,
             'name'         => $user->name,
             'email'        => $user->email,
-            'avatar'       => $user->avatar,
+            'avatar'       => $user->avatar
+                ? $user->getAvatarFile(AvatarType::Small())
+                : null,
             'account_type' => $user->account_type,
             'roles'        => $user->getRoleNames()->values()->all(),
         ];

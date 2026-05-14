@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Admin;
 
+use App\Enums\AvatarType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UpdateBrandRequest;
 use App\Models\User;
@@ -92,7 +93,9 @@ class AdminBrandsController extends Controller
                 'username'     => $u->username,
                 'name'         => $u->name,
                 'email'        => $u->email,
-                'avatar'       => $u->avatar,
+                'avatar'       => $u->avatar
+                    ? $u->getAvatarFile(AvatarType::Small())
+                    : null,
                 'account_type' => $u->account_type,
             ])->values(),
         ]);
@@ -223,14 +226,18 @@ class AdminBrandsController extends Controller
             'username'       => $user->username,
             'name'           => $user->name,
             'email'          => $user->email,
-            'avatar'         => $user->avatar,
+            'avatar'         => $user->avatar
+                ? $user->getAvatarFile(AvatarType::Small())
+                : null,
             'accent_color'   => $user->accent_color,
             'tagline'        => $user->tagline,
             'verified_at'    => optional($user->verified_at)->toIso8601String(),
             'is_verified'    => (bool) $user->verified_at,
             'is_featured'    => (bool) $user->is_featured,
             'account_status' => $user->account_status,
-            'banner'         => $user->background,
+            'banner'         => $user->background
+                ? $user->getBackgroundFile()
+                : null,
             'created_at'     => optional($user->created_at)->toIso8601String(),
             'active_trophies' => $activeTrophies,
             'followers'      => $followers,
