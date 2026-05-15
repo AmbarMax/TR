@@ -25,6 +25,7 @@
         "react/http": "^1.6.0",
         "react/promise": "^2.9.0",
         "react/socket": "^1.13",
+        "resend/resend-laravel": "^1.4",
         "simplito/elliptic-php": "~1.0.6",
         "socialiteproviders/discord": "^4.2",
         "socialiteproviders/steam": "^4.2",

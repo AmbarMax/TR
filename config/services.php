@@ -78,4 +78,8 @@ return [
         'token_endpoint'    => 'https://id.overwolf.com/oidc/token',
         'userinfo_endpoint' => 'https://id.overwolf.com/oidc/me',
     ],
+
+    'resend' => [
+        'key' => env('RESEND_KEY'),
+    ],
 ];
