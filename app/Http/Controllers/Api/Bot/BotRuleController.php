@@ -13,6 +13,7 @@ class BotRuleController extends Controller
 
         $rules = $guildConnection->badgeRules()
             ->where('active', true)
+            ->whereHas('badge')
             ->with('badge:id,name,image')
             ->get()
             ->map(function ($rule) {
