@@ -13,7 +13,10 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
          $schedule->command('app:discord-role-synchronization')->everyThirtyMinutes();
-         $schedule->command('app:discord-badge-synchronization')->everyThirtyMinutes();
+         // 2026-05-18: Disabled — host SFTP v-buf-04.sparkedhost.us is dead since April.
+         // Was filling logs with connection errors every 30 min.
+         // Re-enable when a new Discord badge source is implemented.
+         // $schedule->command('app:discord-badge-synchronization')->everyThirtyMinutes();
     }
 
     /**
