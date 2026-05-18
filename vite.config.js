@@ -23,7 +23,6 @@ export default defineConfig({
                 'resources/admin/js/pages/chests.js',
                 'resources/admin/js/pages/keys.js',
                 'resources/admin/js/pages/assignment-of-trophies.js',
-                'resources/views/api/mail/css/styles.css'
             ],
             refresh: true,
         }),
