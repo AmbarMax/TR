@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api\Auth;
 use App\Enums\SessionStatus;
 use App\Http\Requests\Admin\Auth\AdminForgetPasswordRequest;
 use App\Http\Controllers\Controller;
-use App\Mail\UserResetPasswordMailer;
 use App\Models\User;
 use App\Notifications\AdminResetPasswordNotification;
 use App\Notifications\UserResetPasswordNotification;
