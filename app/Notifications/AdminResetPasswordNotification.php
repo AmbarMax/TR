@@ -36,11 +36,10 @@ class AdminResetPasswordNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->theme('admin')
-            ->line("You're receiving this email because you requested a password reset for your account.")
-            ->action('Reset Password', $this->resetLink)
-            ->line("This password reset link will expire in 60 minutes.")
-            ->line("If you did not request this change, no further action is required.");
+            ->subject('Admin credentials reset — TrophyRoom')
+            ->view('emails.admin-password-reset', [
+                'url' => $this->resetLink,
+            ]);
     }
 
     /**

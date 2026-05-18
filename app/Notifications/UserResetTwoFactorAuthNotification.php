@@ -6,8 +6,6 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use Illuminate\Support\Facades\Vite;
-use Illuminate\Support\HtmlString;
 
 class UserResetTwoFactorAuthNotification extends Notification
 {
@@ -41,13 +39,11 @@ class UserResetTwoFactorAuthNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->line(new HtmlString("<img class='logo' src=". Vite::apiMail('logo.png')." alt='Forgot password V2' />"))
-            ->line(new HtmlString('<div class="header_text">Disabling two-factor authentication</div>'))
-            ->line(new HtmlString("<div class='img-center'><img class='icon' src=". Vite::apiMail('lock.png')." alt='Forgot password V2' /></div>"))
-            ->line(new HtmlString("<div class='greeting_text'>Dear {$this->name},</div>"))
-            ->line(new HtmlString("<div class='content_text'>You are receiving this email because we have received a request to disable two-factor authentication for your account.</div>"))
-            ->action('Disable authorization', $this->resetLink)
-            ->line(new HtmlString("<div class='content_text light'>This link will expire in 60 minutes. If you do not want to disable two-factor authentication, no further action is required</div>"));
+            ->subject('Confirm 2FA removal — TrophyRoom')
+            ->view('emails.two-factor-reset', [
+                'name' => $this->name,
+                'url'  => $this->resetLink,
+            ]);
     }
 
     /**
